@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MythBridge — Comparing Mythologies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1c1410; --bg2: #241a13; --card: #2b2018; --card2: #32261c;
+    --ink: #f2e6d0; --ink-soft: #c9b494;
+    --gold: #d4a24e; --gold-bright: #f0c674;
+    --myth-green: #9ab06a; --crimson: #b3492f; --teal: #5f8f8b; --purple: #8a6fa8;
+    --line: #4a3a2a; --shadow: 0 4px 18px rgba(0,0,0,0.45); --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    background:
+      radial-gradient(ellipse at 20% 0%, #2e2118 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, #2a1f2c 0%, transparent 50%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--ink); line-height: 1.55; font-size: 17px;
+  }
+  header { text-align: center; padding: 42px 20px 10px; }
+  header::before { content: "❦ ✦ ❦"; display: block; color: var(--gold); letter-spacing: 12px; font-size: 0.9rem; margin-bottom: 10px; }
+  header h1 {
+    margin: 0; font-family: "Cinzel Decorative", Georgia, serif; font-size: 2.8rem; font-weight: 900; letter-spacing: 3px;
+    background: linear-gradient(180deg, #f5d99a 0%, #d4a24e 55%, #a9762f 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 30px rgba(212,162,78,0.25);
+  }
+  header p { margin: 10px auto 0; max-width: 640px; color: var(--ink-soft); font-style: italic; font-size: 1.08rem; }
+  nav { display: flex; justify-content: center; gap: 14px; margin: 22px 0 26px; flex-wrap: wrap; }
+  .nav-tab {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 2px;
+    padding: 11px 30px; border-radius: 999px; border: 1.5px solid var(--line);
+    background: #1a130d; color: var(--ink-soft); cursor: pointer; transition: all 0.18s;
+  }
+  .nav-tab:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .nav-tab.active {
+    background: linear-gradient(180deg, var(--gold) 0%, #a9762f 100%);
+    border-color: var(--gold); color: #1c1410;
+  }
+  .pick-counter { display: inline-block; margin-left: 8px; font-size: 0.78rem; background: rgba(0,0,0,0.3); border-radius: 999px; padding: 2px 9px; }
+  main { max-width: 1220px; margin: 0 auto; padding: 0 20px 60px; }
+  .view { display: none; }
+  .view.active { display: block; animation: fadeUp 0.35s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  section {
+    background: linear-gradient(160deg, var(--card) 0%, var(--card2) 100%);
+    border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 28px; margin-bottom: 30px; position: relative;
+  }
+  section::before {
+    content: ""; position: absolute; top: 0; left: 24px; right: 24px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold-bright) 50%, var(--gold) 70%, transparent);
+    opacity: 0.6;
+  }
+  h2 { margin: 0 0 4px; font-family: "Cinzel", Georgia, serif; font-size: 1.55rem; font-weight: 800; letter-spacing: 2px; color: var(--gold-bright); }
+  .section-sub { margin: 0 0 18px; color: var(--ink-soft); font-size: 1rem; font-style: italic; }
+
+  /* list controls */
+  .search-wrap { margin-bottom: 14px; }
+  #search {
+    width: 100%; max-width: 480px; padding: 12px 18px;
+    font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.05rem;
+    border: 1.5px solid var(--line); border-radius: 12px; background: #1a130d; color: var(--ink);
+  }
+  #search:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 12px rgba(212,162,78,0.25); }
+  .type-filter { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px;
+    padding: 7px 18px; border-radius: 999px; border: 1.5px solid var(--line);
+    background: #1a130d; color: var(--ink-soft); cursor: pointer; transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .chip.active { background: linear-gradient(180deg, var(--gold) 0%, #a9762f 100%); border-color: var(--gold); color: #1c1410; }
+  #region-note { margin-top: 10px; color: #8f7d63; font-style: italic; font-size: 0.9rem; }
+
+  #myth-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; margin-top: 18px; }
+  .myth-card {
+    border: 1.5px solid var(--line); border-radius: 14px;
+    background: linear-gradient(165deg, #241b13 0%, #1c150e 100%);
+    cursor: pointer; transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .myth-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+  .myth-card.selected-a { border-color: var(--myth-green); box-shadow: 0 0 0 2.5px var(--myth-green), var(--shadow); }
+  .myth-card.selected-b { border-color: var(--gold-bright); box-shadow: 0 0 0 2.5px var(--gold-bright), var(--shadow); }
+  .myth-card.selected-c { border-color: var(--teal); box-shadow: 0 0 0 2.5px var(--teal), var(--shadow); }
+  .myth-card.selected-d { border-color: var(--purple); box-shadow: 0 0 0 2.5px var(--purple), var(--shadow); }
+  .obscure-badge {
+    position: absolute; top: 10px; right: 10px; z-index: 3;
+    font-family: "Cinzel", Georgia, serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 1.5px;
+    background: rgba(138,111,168,0.9); color: #f2e6d0; padding: 3px 10px; border-radius: 999px;
+  }
+  .emblem-box { height: 140px; position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .emblem-box svg { width: 100%; height: 100%; display: block; }
+  .card-body { padding: 14px 18px 16px; display: flex; flex-direction: column; flex: 1; }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .tag {
+    display: inline-block; font-family: "Cinzel", Georgia, serif; font-size: 0.68rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px; padding: 3px 12px; border-radius: 999px;
+  }
+  .tag.malaysia { background: rgba(154,176,106,0.18); color: var(--myth-green); border: 1px solid rgba(154,176,106,0.5); }
+  .tag.world { background: rgba(212,162,78,0.15); color: var(--gold-bright); border: 1px solid rgba(212,162,78,0.5); }
+  .region-badge {
+    display: inline-block; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px;
+    padding: 3px 12px; border-radius: 999px; background: rgba(255,255,255,0.06);
+    color: var(--ink); border: 1px solid var(--line);
+  }
+  .era-badge {
+    display: inline-block; font-size: 0.72rem; letter-spacing: 1px; padding: 3px 12px; border-radius: 999px;
+    background: rgba(143,166,196,0.12); color: #9db3cf; border: 1px solid rgba(143,166,196,0.4); font-style: italic;
+  }
+  .myth-card h3 { margin: 2px 0 4px; font-family: "Cinzel", Georgia, serif; font-size: 1.12rem; font-weight: 600; color: var(--gold-bright); line-height: 1.3; }
+  .myth-card .origin { color: var(--ink-soft); font-size: 0.88rem; font-style: italic; }
+  .myth-card .kind-line {
+    margin-top: 8px; font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--teal);
+  }
+  .myth-card p { margin: 6px 0 0; font-size: 0.95rem; color: var(--ink-soft); }
+  .source-line { margin-top: 12px; padding-top: 10px; font-size: 0.8rem; color: #8f7d63; font-style: italic; border-top: 1px dashed rgba(74,58,42,0.8); }
+  .select-hint { font-size: 0.78rem; margin-top: 8px; font-family: "Cinzel", Georgia, serif; letter-spacing: 1px; font-weight: 600; color: var(--ink-soft); }
+  .myth-card.selected-a .select-hint { color: var(--myth-green); }
+  .myth-card.selected-b .select-hint { color: var(--gold-bright); }
+  .myth-card.selected-c .select-hint { color: var(--teal); }
+  .myth-card.selected-d .select-hint { color: var(--purple); }
+  .empty-note { grid-column: 1 / -1; text-align: center; color: var(--ink-soft); font-style: italic; padding: 30px 10px; }
+
+  /* Detail modal (card system) */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(12,8,4,0.78); backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center; z-index: 50; overflow-y: auto; padding: 40px 16px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 780px;
+    background: linear-gradient(165deg, #2e2318 0%, #241b13 100%);
+    border: 1.5px solid var(--gold); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    overflow: hidden; position: relative;
+    animation: cardOpen 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+  }
+  @keyframes cardOpen { from { opacity: 0; transform: translateY(26px) scale(0.92) rotateX(6deg); } to { opacity: 1; transform: none; } }
+  .modal .emblem-box { height: 200px; }
+  .modal-close {
+    position: absolute; top: 12px; right: 14px; z-index: 5;
+    background: rgba(0,0,0,0.55); color: var(--gold-bright); border: 1px solid var(--line);
+    border-radius: 999px; width: 38px; height: 38px; font-size: 1.1rem; cursor: pointer; font-family: inherit;
+  }
+  .modal-close:hover { background: var(--crimson); }
+  .modal-body { padding: 20px 28px 26px; }
+  .modal-body h3 { margin: 6px 0 2px; font-family: "Cinzel", Georgia, serif; font-size: 1.6rem; color: var(--gold-bright); font-weight: 700; }
+  .era-line { color: #9db3cf; font-style: italic; font-size: 0.92rem; margin-bottom: 12px; }
+  .detail-grid dt {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--myth-green); margin-top: 14px;
+  }
+  .detail-grid dd { margin: 3px 0 0; font-size: 1.03rem; }
+  .detail-tale { margin-top: 14px; font-size: 1.05rem; color: var(--ink); }
+  .modal-sources { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
+  .modal-sources h4 { font-family: "Cinzel", Georgia, serif; font-size: 0.85rem; letter-spacing: 2px; color: var(--gold); margin: 0 0 8px; }
+  .source-link {
+    display: block; margin-bottom: 8px; color: #9db3cf; font-size: 0.95rem;
+    text-decoration: none; border-left: 3px solid var(--teal); padding: 6px 12px;
+    background: rgba(95,143,139,0.08); border-radius: 0 8px 8px 0;
+  }
+  .source-link:hover { color: var(--gold-bright); border-left-color: var(--gold); background: rgba(95,143,139,0.16); }
+  .source-link .src-note { color: var(--ink-soft); font-style: italic; }
+  .modal-actions { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    font-family: "Cinzel", Georgia, serif; font-weight: 600; letter-spacing: 1.5px; font-size: 0.85rem;
+    padding: 10px 22px; border-radius: 999px; border: 1.5px solid var(--gold);
+    background: linear-gradient(180deg, var(--gold) 0%, #a9762f 100%); color: #1c1410; cursor: pointer;
+  }
+  .btn.secondary { background: transparent; color: var(--gold-bright); }
+  .btn.secondary:hover { background: rgba(212,162,78,0.15); }
+
+  /* Compare view */
+  .compare-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  @media (max-width: 900px) { .compare-slots { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .compare-slots { grid-template-columns: 1fr; } }
+  .compare-slot {
+    border: 1.5px dashed var(--line); border-radius: 14px; min-height: 120px;
+    background: rgba(0,0,0,0.2); padding: 12px; position: relative; text-align: center;
+    color: var(--ink-soft); font-style: italic; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  }
+  .compare-slot.filled { border-style: solid; background: linear-gradient(165deg,#241b13,#1c150e); color: var(--ink); }
+  .compare-slot.filled .emblem-box { height: 90px; border-radius: 10px; overflow: hidden; }
+  .compare-slot h4 { margin: 6px 0 0; font-family: "Cinzel", Georgia, serif; font-size: 0.95rem; color: var(--gold-bright); }
+  .compare-slot .slot-region { font-size: 0.78rem; color: var(--ink-soft); }
+  .slot-remove {
+    position: absolute; top: 6px; right: 8px; background: rgba(0,0,0,0.5); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; width: 26px; height: 26px; cursor: pointer; font-size: 0.8rem;
+  }
+  .slot-remove:hover { color: var(--crimson); border-color: var(--crimson); }
+  .slot-label { font-family: "Cinzel", Georgia, serif; font-size: 0.7rem; letter-spacing: 2px; color: var(--ink-soft); }
+  .compare-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .compare-table th, .compare-table td {
+    border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; font-size: 0.95rem;
+  }
+  .compare-table th {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold-bright); background: rgba(212,162,78,0.08); width: 130px;
+  }
+  .compare-table td .cell-region { color: var(--ink-soft); font-style: italic; font-size: 0.85rem; display: block; margin-bottom: 4px; }
+  #patterns-list { display: grid; gap: 14px; margin-top: 20px; }
+  .pattern-note {
+    border-left: 4px solid var(--teal); background: rgba(95,143,139,0.10);
+    border-radius: 0 12px 12px 0; padding: 14px 18px;
+  }
+  .pattern-note h4 { margin: 0 0 4px; font-family: "Cinzel", Georgia, serif; font-size: 1.02rem; font-weight: 600; letter-spacing: 1px; color: var(--teal); }
+  .pattern-note p { margin: 0; font-size: 1rem; }
+  .pattern-note p em { color: var(--ink-soft); }
+  .patterns-empty, .reco-empty { text-align: center; color: var(--ink-soft); font-style: italic; padding: 16px; }
+  /* Recommendation */
+  .reco-card {
+    display: flex; gap: 18px; align-items: stretch; border: 1.5px solid var(--purple);
+    background: linear-gradient(165deg, #2a2130 0%, #1f1a26 100%);
+    border-radius: 14px; overflow: hidden; margin-top: 14px;
+  }
+  .reco-card .emblem-box { width: 220px; min-width: 220px; height: auto; border-bottom: none; border-right: 1px solid var(--line); }
+  .reco-body { padding: 16px 20px; }
+  .reco-body h4 { margin: 4px 0 4px; font-family: "Cinzel", Georgia, serif; font-size: 1.15rem; color: var(--gold-bright); }
+  .reco-body p { margin: 6px 0; font-size: 0.97rem; color: var(--ink-soft); }
+  .reco-reason { color: var(--purple); font-style: italic; font-size: 0.92rem; }
+  footer { text-align: center; color: #8f7d63; font-size: 0.88rem; font-style: italic; padding-bottom: 34px; }
+  footer::before { content: "❦ ✦ ❦"; display: block; color: var(--gold); letter-spacing: 12px; margin-bottom: 8px; font-style: normal; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MythBridge</h1>
+  <p>A storybook bridge between Malaysian mythology and the myths of the world — open a card to enter a legend, or pick up to four and compare their patterns.</p>
+</header>
+
+<nav>
+  <button class="nav-tab active" id="tab-list">Myth List</button>
+  <button class="nav-tab" id="tab-compare">Compare Patterns<span class="pick-counter" id="pick-count">0</span></button>
+</nav>
+
+<main>
+  <!-- ============ VIEW 1: MYTH LIST ============ -->
+  <div class="view active" id="view-list">
+    <section id="myth-list-section">
+      <h2>Myth List</h2>
+      <p class="section-sub">Click any card to open the legend in full — each card carries citable sources to explore further. Use the small green button on a card (or inside the card) to add it to the Compare shelf.</p>
+      <div class="search-wrap">
+        <input type="search" id="search" placeholder="Search by keyword — try “dragon”, “moon”, “trickster”…" aria-label="Search myths by keyword">
+      </div>
+      <div class="type-filter" id="type-filter">
+        <button class="chip active" data-type="all">All Realms</button>
+        <button class="chip" data-type="malaysia">Malaysia</button>
+        <button class="chip" data-type="southeast-asia">Southeast Asia</button>
+        <button class="chip" data-type="asia">Asia</button>
+        <button class="chip" data-type="europe">Europe</button>
+        <button class="chip" data-type="africa">Africa</button>
+        <button class="chip" data-type="oceania">Oceania</button>
+        <button class="chip" data-type="americas">The Americas</button>
+      </div>
+      <div id="region-note">Malaysia keeps its own shelf; the world beyond is grouped by continent, with at least ten legends each — and at least two rare, obscure tales per realm.</div>
+      <div id="myth-grid"></div>
+    </section>
+  </div>
+
+  <!-- ============ VIEW 2: COMPARE ============ -->
+  <div class="view" id="view-compare">
+    <section id="compare-section">
+      <h2>Compare View</h2>
+      <p class="section-sub">Up to four legends on the shelf. Their key details sit side by side for pattern recognition.</p>
+      <div class="compare-slots" id="compare-slots"></div>
+      <div id="compare-table-wrap"></div>
+    </section>
+
+    <section id="patterns-section">
+      <h2>Pattern Notes</h2>
+      <p class="section-sub">Shared themes and connections across every legend on the shelf.</p>
+      <div id="patterns-list"></div>
+    </section>
+
+    <section id="reco-section">
+      <h2>You May Also Wish to Compare</h2>
+      <p class="section-sub">A further legend whose pattern matches the ones on your shelf.</p>
+      <div id="reco-box"><div class="reco-empty">Add two or more legends to the shelf above and a kindred tale will be recommended here.</div></div>
+    </section>
+  </div>
+</main>
+
+<!-- ============ DETAIL CARD MODAL ============ -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Legend detail">
+    <button class="modal-close" id="modal-close" aria-label="Close legend detail">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<footer>MythBridge · A sample storybook for comparing mythologies · All retellings are the app's own words · Nothing is saved between visits.</footer>
+
+<script>
+// ============================================================
+// Emblem illustrations — inline SVG scenes. Each legend's art
+// uses a border style and palette drawn from its era & place.
+// ============================================================
+function stars(op) {
+  op = op || 0.7;
+  let s = "";
+  const pts = [[12,14],[30,8],[52,18],[74,10],[96,16],[118,8],[140,14],[22,40],[148,38],[100,36],[60,34],[136,60],[16,62]];
+  pts.forEach((p, i) => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (i % 3 === 0 ? 1.6 : 1) + '" fill="#f0c674" opacity="' + op + '"/>'; });
+  return s;
+}
+// Decorative border strips, each style native to an era/place.
+function frame(style, c1, c2) {
+  const b = [];
+  if (style === "batik") { // songket/batik dots — Malay world
+    for (let x = 6; x < 160; x += 14) { b.push('<circle cx="' + x + '" cy="5" r="3" fill="' + c2 + '"/><circle cx="' + (x + 7) + '" cy="10" r="2" fill="' + c1 + '"/>'); }
+    for (let x = 6; x < 160; x += 14) { b.push('<circle cx="' + x + '" cy="125" r="3" fill="' + c2 + '"/><circle cx="' + (x + 7) + '" cy="120" r="2" fill="' + c1 + '"/>'); }
+  } else if (style === "meander") { // greek key
+    for (let x = 4; x < 160; x += 20) { b.push('<path d="M' + x + ' 3 h12 v8 h-8 v-4 h4" stroke="' + c2 + '" stroke-width="1.6" fill="none"/><path d="M' + x + ' 127 h12 v-8 h-8 v4 h4" stroke="' + c2 + '" stroke-width="1.6" fill="none"/>'); }
+  } else if (style === "knot") { // celtic/norse interlace hint
+    for (let x = 6; x < 160; x += 26) { b.push('<path d="M' + x + ' 10 q6 -8 12 0 q-6 8 -12 0 M' + x + ' 120 q6 8 12 0 q-6 -8 -12 0" stroke="' + c2 + '" stroke-width="1.8" fill="none"/>'); }
+  } else if (style === "greca") { // mesoamerican step-fret
+    for (let x = 4; x < 160; x += 22) { b.push('<path d="M' + x + ' 10 v-6 h8 v6 h-4 v-3" stroke="' + c2 + '" stroke-width="2" fill="none"/><path d="M' + x + ' 120 v6 h8 v-6 h-4 v3" stroke="' + c2 + '" stroke-width="2" fill="none"/>'); }
+  } else if (style === "hiero") { // egyptian glyph strip
+    for (let x = 8; x < 160; x += 18) { b.push('<rect x="' + x + '" y="3" width="4" height="9" fill="' + c2 + '" opacity="0.85"/><circle cx="' + (x + 10) + '" cy="8" r="3.4" fill="' + c1 + '"/><rect x="' + x + '" y="118" width="4" height="9" fill="' + c2 + '" opacity="0.85"/><circle cx="' + (x + 10) + '" cy="122" r="3.4" fill="' + c1 + '"/>'); }
+  } else if (style === "lotus") { // buddhist lotus petal strip
+    for (let x = 6; x < 160; x += 16) { b.push('<path d="M' + x + ' 12 q4 -9 8 0 q-4 -4 -8 0" fill="' + c2 + '"/><path d="M' + x + ' 118 q4 9 8 0 q-4 4 -8 0" fill="' + c2 + '"/>'); }
+  } else if (style === "wave") { // east asian seigaiha waves
+    for (let x = 4; x < 160; x += 20) { b.push('<path d="M' + x + ' 10 a8 8 0 0 1 16 0 M' + (x + 4) + ' 10 a4 4 0 0 1 8 0" stroke="' + c2 + '" stroke-width="1.5" fill="none"/><path d="M' + x + ' 120 a8 8 0 0 0 16 0 M' + (x + 4) + ' 120 a4 4 0 0 0 8 0" stroke="' + c2 + '" stroke-width="1.5" fill="none"/>'); }
+  } else if (style === "tapa") { // polynesian tapa zigzag
+    for (let x = 4; x < 160; x += 16) { b.push('<path d="M' + x + ' 4 l6 8 l6 -8" stroke="' + c2 + '" stroke-width="2" fill="none"/><path d="M' + x + ' 126 l6 -8 l6 8" stroke="' + c2 + '" stroke-width="2" fill="none"/>'); }
+  } else if (style === "kawung") { // javanese kawung
+    for (let x = 8; x < 160; x += 24) { b.push('<ellipse cx="' + x + '" cy="7" rx="6" ry="4" fill="none" stroke="' + c2 + '" stroke-width="1.6"/><ellipse cx="' + (x + 12) + '" cy="7" rx="6" ry="4" fill="none" stroke="' + c1 + '" stroke-width="1.2"/><ellipse cx="' + x + '" cy="123" rx="6" ry="4" fill="none" stroke="' + c2 + '" stroke-width="1.6"/><ellipse cx="' + (x + 12) + '" cy="123" rx="6" ry="4" fill="none" stroke="' + c1 + '" stroke-width="1.2"/>'); }
+  } else if (style === "temple") { // khmer colonnade
+    for (let x = 6; x < 160; x += 18) { b.push('<rect x="' + x + '" y="3" width="6" height="10" fill="' + c2 + '" opacity="0.8"/><rect x="' + x + '" y="117" width="6" height="10" fill="' + c2 + '" opacity="0.8"/>'); }
+  } else { // "engraving": classic double-rule vignette frame
+    b.push('<rect x="2" y="2" width="156" height="126" fill="none" stroke="' + c2 + '" stroke-width="1.4"/>');
+    b.push('<rect x="6" y="6" width="148" height="118" fill="none" stroke="' + c1 + '" stroke-width="0.8" opacity="0.7"/>');
+  }
+  return b.join("");
+}
+function emblemSVG(m) {
+  const uid = "g" + Math.random().toString(36).slice(2, 8);
+  const tint = m.tint;
+  const sky = '<defs><radialGradient id="' + uid + '" cx="50%" cy="18%" r="95%">'
+    + '<stop offset="0%" stop-color="' + tint[0] + '" stop-opacity="0.6"/>'
+    + '<stop offset="100%" stop-color="#12100b"/></radialGradient></defs>'
+    + '<rect width="160" height="130" fill="url(#' + uid + ')"/>'
+    + stars(m.type === "malaysia" ? 0.75 : 0.55)
+    + frame(m.frame, tint[1], tint[2] || "#d4a24e");
+  const ink = "#171008", gold = "#f0c674";
+  const art = {
+    ogress:
+      '<ellipse cx="80" cy="118" rx="62" ry="26" fill="' + tint[1] + '" opacity="0.35"/>' +
+      '<circle cx="80" cy="62" r="30" fill="' + ink + '"/>' +
+      '<path d="M56 40 L48 20 L64 34 Z M104 40 L112 20 L96 34 Z" fill="' + ink + '"/>' +
+      '<path d="M66 60 L74 68 L82 60 L90 68 L98 60" stroke="' + gold + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="70" cy="56" r="4" fill="' + gold + '"/><circle cx="90" cy="56" r="4" fill="' + gold + '"/>',
+    harvest:
+      '<path d="M40 120 Q60 70 55 35 M55 35 L48 48 M55 35 L62 48 M60 120 Q80 80 84 40 M84 40 L78 52 M84 40 L90 52" stroke="' + tint[1] + '" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="110" cy="45" r="16" fill="' + gold + '" opacity="0.85"/>' +
+      '<circle cx="105" cy="42" r="5" fill="#14100a"/><circle cx="115" cy="42" r="5" fill="#14100a"/>' +
+      '<path d="M104 52 Q110 58 116 52" stroke="#14100a" stroke-width="2.5" fill="none"/>',
+    serpent:
+      '<path d="M14 108 Q40 60 62 92 Q84 124 106 82 Q122 52 142 66" stroke="' + ink + '" stroke-width="13" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="144" cy="64" r="11" fill="' + ink + '"/>' +
+      '<path d="M152 58 L164 50 M152 66 L164 70" stroke="' + gold + '" stroke-width="2.5"/>' +
+      '<circle cx="146" cy="60" r="3" fill="' + gold + '"/>' +
+      '<circle cx="30" cy="26" r="10" fill="' + gold + '" opacity="0.35"/>',
+    crocodile:
+      '<path d="M18 96 Q60 74 100 88 Q128 96 146 90 L146 104 Q100 116 56 108 Q30 104 18 96 Z" fill="' + ink + '"/>' +
+      '<path d="M112 88 L146 78 L144 88 L120 92 Z" fill="' + ink + '"/>' +
+      '<path d="M118 92 L152 92 L146 100 L118 98 Z" fill="' + ink + '"/>' +
+      '<path d="M122 88 L126 84 M130 88 L134 84 M138 87 L142 83" stroke="' + tint[1] + '" stroke-width="2"/>' +
+      '<circle cx="118" cy="86" r="2.5" fill="' + gold + '"/>' +
+      '<path d="M0 118 Q40 108 80 118 Q120 128 160 118 L160 130 L0 130 Z" fill="' + tint[1] + '" opacity="0.4"/>',
+    princess:
+      '<path d="M20 118 L70 40 L120 118 Z" fill="' + ink + '"/>' +
+      '<path d="M90 118 L125 62 L160 118 Z" fill="' + ink + '" opacity="0.8"/>' +
+      '<circle cx="52" cy="30" r="14" fill="' + gold + '"/>' +
+      '<path d="M46 22 L52 12 L58 22 L52 18 Z" fill="' + gold + '"/>' +
+      '<path d="M26 118 Q45 96 62 118" stroke="' + tint[1] + '" stroke-width="3" fill="none" opacity="0.8"/>',
+    fangs:
+      '<circle cx="80" cy="66" r="34" fill="' + ink + '"/>' +
+      '<path d="M52 52 Q80 36 108 52 L104 42 Q80 30 56 42 Z" fill="' + ink + '"/>' +
+      '<path d="M64 80 L70 104 L76 80 M84 80 L90 104 L96 80" stroke="' + gold + '" stroke-width="4" fill="' + gold + '" stroke-linejoin="round"/>' +
+      '<circle cx="68" cy="60" r="4" fill="' + tint[1] + '"/><circle cx="92" cy="60" r="4" fill="' + tint[1] + '"/>' +
+      '<path d="M120 30 L128 44 M140 26 L142 42 M150 34 L146 48" stroke="' + gold + '" stroke-width="2" opacity="0.7"/>',
+    hiddenfolk:
+      '<path d="M10 118 Q50 88 90 118 Q125 138 160 112 L160 130 L0 130 Z" fill="' + tint[1] + '" opacity="0.4"/>' +
+      '<path d="M30 118 L44 78 L58 118 Z M96 118 L110 70 L124 118 Z" fill="' + ink + '"/>' +
+      '<circle cx="44" cy="70" r="9" fill="' + ink + '"/><circle cx="110" cy="62" r="9" fill="' + ink + '"/>' +
+      '<circle cx="41" cy="68" r="2.5" fill="' + gold + '"/><circle cx="107" cy="60" r="2.5" fill="' + gold + '"/>' +
+      '<circle cx="80" cy="28" r="12" fill="' + gold + '" opacity="0.35"/>',
+    hero:
+      '<path d="M80 20 L86 92 L80 104 L74 92 Z" fill="' + gold + '"/>' +
+      '<path d="M62 92 L98 92 L84 104 L76 104 Z" fill="' + ink + '"/>' +
+      '<rect x="76" y="104" width="8" height="22" rx="3" fill="' + ink + '"/>' +
+      '<path d="M40 110 Q60 96 80 112 Q100 126 122 112" stroke="' + tint[1] + '" stroke-width="4" fill="none" opacity="0.7"/>' +
+      '<path d="M118 34 Q132 30 138 42 Q126 44 118 34" fill="' + ink + '"/>' +
+      '<circle cx="36" cy="30" r="3" fill="' + gold + '"/><circle cx="128" cy="88" r="3" fill="' + gold + '"/>',
+    horse:
+      '<ellipse cx="80" cy="92" rx="40" ry="22" fill="' + ink + '"/>' +
+      '<path d="M112 84 Q126 62 122 40 L132 48 Q138 66 126 88 Z" fill="' + ink + '"/>' +
+      '<path d="M118 40 Q120 26 134 28 Q140 34 132 44 Z" fill="' + ink + '"/>' +
+      '<path d="M116 46 Q106 40 100 48" stroke="' + tint[1] + '" stroke-width="4" fill="none"/>' +
+      '<path d="M50 112 L50 122 M70 114 L70 124 M96 114 L96 124 M112 110 L112 122" stroke="' + ink + '" stroke-width="6" stroke-linecap="round"/>' +
+      '<path d="M120 34 L128 20 M126 36 L136 26" stroke="' + tint[1] + '" stroke-width="2.5"/>' +
+      '<circle cx="128" cy="30" r="2.5" fill="' + gold + '"/>' +
+      '<path d="M0 122 L160 122 L160 130 L0 130 Z" fill="' + tint[1] + '" opacity="0.35"/>',
+    spider:
+      '<circle cx="80" cy="70" r="16" fill="' + ink + '"/>' +
+      '<circle cx="80" cy="46" r="9" fill="' + ink + '"/>' +
+      '<path d="M66 62 Q40 50 30 30 M66 70 Q36 66 20 56 M66 78 Q38 84 24 98 M72 84 Q62 104 48 114' +
+      ' M94 62 Q120 50 130 30 M94 70 Q124 66 140 56 M94 78 Q122 84 136 98 M88 84 Q98 104 112 114"' +
+      ' stroke="' + ink + '" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="80" cy="42" r="2.5" fill="' + gold + '"/><circle cx="86" cy="42" r="2.5" fill="' + gold + '"/>' +
+      '<path d="M14 22 Q24 12 34 22 M126 22 Q136 12 146 22" stroke="' + tint[1] + '" stroke-width="2.5" fill="none"/>',
+    rainbow:
+      '<path d="M14 118 A66 66 0 0 1 146 118" stroke="' + tint[1] + '" stroke-width="8" fill="none" opacity="0.85"/>' +
+      '<path d="M26 118 A54 54 0 0 1 134 118" stroke="' + gold + '" stroke-width="7" fill="none" opacity="0.8"/>' +
+      '<path d="M38 118 A42 42 0 0 1 122 118" stroke="' + (tint[2] || "#b3492f") + '" stroke-width="6" fill="none" opacity="0.8"/>' +
+      '<path d="M14 118 Q80 96 146 118 L160 130 L0 130 Z" fill="' + ink + '"/>' +
+      '<circle cx="80" cy="26" r="9" fill="' + gold + '" opacity="0.9"/>',
+    feather:
+      '<path d="M14 96 Q44 44 80 72 Q118 100 144 52" stroke="' + ink + '" stroke-width="12" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="146" cy="50" r="10" fill="' + ink + '"/><circle cx="148" cy="46" r="2.5" fill="' + gold + '"/>' +
+      '<path d="M40 52 L34 34 M58 44 L54 26 M96 46 L102 30 M116 60 L126 48" stroke="' + tint[1] + '" stroke-width="3.5" stroke-linecap="round"/>' +
+      '<path d="M20 118 L140 118 L120 130 L40 130 Z" fill="' + (tint[2] || "#5f8f8b") + '" opacity="0.5"/>',
+    sphinx:
+      '<path d="M50 118 L86 42 L122 118 Z" fill="' + ink + '"/>' +
+      '<path d="M70 66 L86 30 L102 66" fill="' + tint[1] + '" opacity="0.85"/>' +
+      '<rect x="16" y="98" width="34" height="20" rx="4" fill="' + ink + '"/>' +
+      '<circle cx="24" cy="94" r="8" fill="' + ink + '"/>' +
+      '<circle cx="30" cy="30" r="10" fill="' + gold + '" opacity="0.5"/>' +
+      '<path d="M130 26 L134 14 M138 30 L146 22" stroke="' + gold + '" stroke-width="2" opacity="0.6"/>',
+    thunderbird:
+      '<path d="M80 60 Q60 30 20 36 Q50 52 64 70 Z" fill="' + ink + '"/>' +
+      '<path d="M80 60 Q100 30 140 36 Q110 52 96 70 Z" fill="' + ink + '"/>' +
+      '<ellipse cx="80" cy="74" rx="14" ry="20" fill="' + ink + '"/>' +
+      '<path d="M72 44 Q80 34 88 44 L80 50 Z" fill="' + ink + '"/>' +
+      '<path d="M84 46 L94 48 L84 52 Z" fill="' + gold + '"/>' +
+      '<path d="M40 96 L52 108 M60 92 L66 108 M100 92 L94 108 M120 96 L108 108" stroke="' + tint[1] + '" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M10 20 L18 34 M26 14 L32 30" stroke="' + (tint[2] || "#8fa6c4") + '" stroke-width="3" stroke-linecap="round"/>',
+    yeti:
+      '<ellipse cx="80" cy="82" rx="34" ry="40" fill="' + ink + '"/>' +
+      '<circle cx="80" cy="42" r="20" fill="' + ink + '"/>' +
+      '<circle cx="73" cy="40" r="3" fill="' + tint[1] + '"/><circle cx="87" cy="40" r="3" fill="' + tint[1] + '"/>' +
+      '<path d="M46 122 Q60 108 80 118 Q100 128 114 122 L160 130 L0 130 Z" fill="' + tint[1] + '" opacity="0.5"/>' +
+      '<path d="M28 60 L38 74 M132 60 L122 74" stroke="' + ink + '" stroke-width="10" stroke-linecap="round"/>' +
+      '<path d="M18 26 Q30 14 42 26 M118 26 Q130 14 142 26" stroke="' + gold + '" stroke-width="2" opacity="0.5" fill="none"/>',
+    spirits:
+      '<path d="M46 100 Q38 76 50 58 Q60 44 54 28" stroke="' + tint[1] + '" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.85"/>' +
+      '<path d="M78 104 Q72 74 84 50 Q94 34 88 18" stroke="' + tint[1] + '" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>' +
+      '<path d="M110 100 Q106 80 116 62" stroke="' + tint[1] + '" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.6"/>' +
+      '<circle cx="50" cy="24" r="7" fill="' + gold + '" opacity="0.9"/><circle cx="86" cy="14" r="6" fill="' + gold + '" opacity="0.8"/><circle cx="117" cy="58" r="5" fill="' + gold + '" opacity="0.7"/>' +
+      '<path d="M20 122 Q80 108 140 122" stroke="' + ink + '" stroke-width="8" fill="none" opacity="0.6"/>',
+    monkey:
+      '<circle cx="80" cy="52" r="20" fill="' + ink + '"/>' +
+      '<circle cx="64" cy="44" r="7" fill="' + tint[1] + '" opacity="0.9"/><circle cx="96" cy="44" r="7" fill="' + tint[1] + '" opacity="0.9"/>' +
+      '<circle cx="74" cy="50" r="3" fill="' + gold + '"/><circle cx="86" cy="50" r="3" fill="' + gold + '"/>' +
+      '<path d="M74 60 Q80 66 86 60" stroke="' + gold + '" stroke-width="2.5" fill="none"/>' +
+      '<ellipse cx="80" cy="94" rx="26" ry="22" fill="' + ink + '"/>' +
+      '<path d="M56 88 Q34 76 28 54 M104 88 Q126 76 132 54" stroke="' + ink + '" stroke-width="8" fill="none" stroke-linecap="round"/>' +
+      '<path d="M62 114 Q48 120 40 112 M98 114 Q112 120 120 112" stroke="' + ink + '" stroke-width="8" fill="none" stroke-linecap="round"/>' +
+      '<path d="M112 24 Q128 34 118 48" stroke="' + tint[1] + '" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="40" cy="26" r="3" fill="' + gold + '"/><circle cx="128" cy="86" r="3" fill="' + gold + '"/>',
+    moon:
+      '<circle cx="80" cy="58" r="34" fill="' + gold + '" opacity="0.9"/>' +
+      '<circle cx="96" cy="50" r="30" fill="url(#' + uid + ')"/>' +
+      '<path d="M30 100 Q60 88 90 100 Q120 112 150 100" stroke="' + tint[1] + '" stroke-width="6" fill="none" opacity="0.7"/>' +
+      '<path d="M20 74 L30 66 M36 84 L44 78" stroke="' + tint[1] + '" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M52 40 L58 32 M64 44 L70 36" stroke="' + ink + '" stroke-width="3" stroke-linecap="round"/>',
+    pumpkin:
+      '<ellipse cx="80" cy="86" rx="34" ry="26" fill="' + tint[1] + '"/>' +
+      '<path d="M62 62 Q60 86 62 110 M80 58 L80 112 M98 62 Q100 86 98 110" stroke="' + ink + '" stroke-width="3" fill="none"/>' +
+      '<rect x="76" y="46" width="8" height="14" rx="3" fill="' + ink + '"/>' +
+      '<path d="M50 30 L60 44 M110 30 L100 44" stroke="' + gold + '" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<path d="M14 116 L146 116" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>',
+    drums:
+      '<rect x="52" y="70" width="56" height="34" rx="8" fill="' + ink + '"/>' +
+      '<ellipse cx="80" cy="70" rx="28" ry="9" fill="' + tint[1] + '"/>' +
+      '<path d="M60 104 L60 118 M100 104 L100 118" stroke="' + ink + '" stroke-width="6" stroke-linecap="round"/>' +
+      '<path d="M30 40 Q40 30 50 40 M110 40 Q120 30 130 40" stroke="' + gold + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="80" cy="34" r="10" fill="' + gold + '" opacity="0.8"/>' +
+      '<path d="M20 116 L140 116" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>',
+    egg:
+      '<ellipse cx="80" cy="80" rx="26" ry="34" fill="' + tint[1] + '"/>' +
+      '<path d="M60 66 Q80 56 100 66 M58 84 Q80 74 102 84 M60 100 Q80 92 100 100" stroke="' + ink + '" stroke-width="2.5" fill="none"/>' +
+      '<path d="M50 34 Q60 22 70 34 M92 30 Q100 20 108 32" stroke="' + gold + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="80" cy="26" r="8" fill="' + gold + '" opacity="0.85"/>' +
+      '<path d="M20 120 Q80 110 140 120" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>'
+  };
+  return '<svg viewBox="0 0 160 130" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of ' + m.name + '">' + sky + (art[m.scene] || art.serpent) + '</svg>';
+}
+
+// ============================================================
+// Sample data — 10 legends per realm, at least 2 obscure gems
+// each. All retellings are the app's own words; links point to
+// public reference pages for further reading.
+// ============================================================
+const MYTHS = [
+  // ---------------- MALAYSIA (10) ----------------
+  {
+    id: "naga", scene: "serpent", frame: "batik", era: "Pahang lake legend · oral tradition",
+    tint: ["#1e3a46", "#5f8f8b", "#d4a24e"],
+    name: "The Naga of Tasik Chini", nation: "Malaysia", region: "Pahang · Tasik Chini", type: "malaysia",
+    kind: "Serpent & Sacred Water",
+    creature: "A great naga — a horned water dragon said to coil beneath the lake",
+    place: "Tasik Chini, the lake of seven lily-covered pools",
+    theme: "A hidden serpent guardian beneath sacred waters, protecting a sunken city",
+    summary: "Fishers say a naga lives beneath Tasik Chini, guarding the ruins of an ancient city that lies sunken below the lotus pools. Storms rise when the lake is disturbed.",
+    long: "Tasik Chini spreads across seven pools joined by channels, and when the lotus blooms white across the whole lake, boatmen still lower their voices. The naga beneath the water is spoken of as the lake's true owner — an immense horned serpent coiled in the deep channel where anchors never reach. Older retellings describe a grand city drowned in a single night, its rooftops visible on cloudless days to those with clear hearts; fishers who netted too greedily met sudden squalls out of a windless sky.",
+    source: "Source: Pahang lake legends around Tasik Chini, retold here as a sample adaptation.",
+    refs: [
+      { title: "Tasik Chini — the lake and its legends", note: "Wikipedia · the real lake at the heart of the tale", url: "https://en.wikipedia.org/wiki/Tasik_Chini" },
+      { title: "Nāga — serpent beings across Asian myth", note: "Wikipedia · naga traditions from India to the Malay world", url: "https://en.wikipedia.org/wiki/N%C4%81ga" }
+    ],
+    keywords: "dragon serpent naga lake tasik chini water sunken city guardian pahang storm sacred lotus"
+  },
+  {
+    id: "titi", scene: "ogress", frame: "batik", era: "Pahang highland folk tale · oral tradition",
+    tint: ["#5a4a3a", "#b3492f", "#d4a24e"],
+    name: "Sang Kelembai of Gunung Titi", nation: "Malaysia", region: "Pahang · Malay Peninsula", type: "malaysia",
+    kind: "Giant & Guardian",
+    creature: "Sang Kelembai, a towering ogress whose single bellow could turn whole villages to stone",
+    place: "Gunung Titi, a mountain in Pahang where stone formations are pointed out as her petrified victims",
+    theme: "A fearsome guardian of the highlands who punishes the noisy and the disrespectful",
+    summary: "A giant ogress roams the Pahang highlands, freezing whole settlements into stone with one bellow. She is both terror and boundary-keeper of the mountain paths.",
+    long: "Villagers on the old highland trails of Pahang spoke of Sang Kelembai with hushed voices — enormous, tall as an old durian tree, with a voice that carried the power of a monsoon. When travellers boasted loudly on the slopes or camped where they should not, she let out a single thunderous scream, and by morning the offending village stood silent and grey, frozen mid-task. Oddly shaped rocks along the Gunung Titi trail are still pointed out as her victims' remains.",
+    source: "Source: Pahang oral folk tradition, retold in kampung storytelling — reworded here as a sample retelling.",
+    refs: [
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition this tale belongs to", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" },
+      { title: "Ogre — giant beings in world folklore", note: "Wikipedia · the worldwide family of ogres and ogresses", url: "https://en.wikipedia.org/wiki/Ogre" }
+    ],
+    keywords: "giant ogress guardian mountain gunung titi roar stone pahang petrify scream highland"
+  },
+  {
+    id: "lembayang", scene: "princess", frame: "batik", era: "Melaka sultanate era · 15th-century setting",
+    tint: ["#3a2a44", "#8a6fa8", "#d4a24e"],
+    name: "Puteri Gunung Ledang", nation: "Malaysia", region: "Johor–Melaka border · Gunung Ledang", type: "malaysia",
+    kind: "Princess & Impossible Toll",
+    creature: "A mountain princess of the spirit realm, beautiful and unbribable, attended by silent guardians",
+    place: "Gunung Ledang (Mount Ophir), the mist-covered peak above the old Melaka sultanate",
+    theme: "An impossible bride-price teaches a proud ruler the limit of his power",
+    summary: "A sultan demands the hand of the mountain princess; she names a bride-price of seven trays of mosquito hearts and seven vats of royal blood, and the proud kingdom goes quiet.",
+    long: "Gunung Ledang rises above the old Melaka heartland wrapped in cloud, and its princess was said to be of the spirit realm — ageless, gold-haired, unapproachable. When a sultan of Melaka demanded her hand, she sent a toll of impossibilities: trays of mosquito hearts, vats of areca juice and betel, and finally royal blood from the royal line itself — in some retellings requiring the blood of the sultan's own son. The proud king turned back down the mountain, and the mountain keeps its princess still.",
+    source: "Source: the Puteri Gunung Ledang legend of Johor and Melaka, retold here in the app's own words.",
+    refs: [
+      { title: "Puteri Gunung Ledang — the legend", note: "Wikipedia · the full legend and its history", url: "https://en.wikipedia.org/wiki/Puteri_Gunung_Ledang" },
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" }
+    ],
+    keywords: "princess mountain gunung ledang melaka sultan bride impossible toll spirit gold ophir"
+  },
+  {
+    id: "bersiong", scene: "fangs", frame: "batik", era: "Old Kedah kingdom · early historical setting",
+    tint: ["#4a2018", "#b3492f", "#d4a24e"],
+    name: "Raja Bersiong, the Fanged King", nation: "Malaysia", region: "Kedah · old Kedah kingdom", type: "malaysia",
+    kind: "Cursed Ruler",
+    creature: "A king whose fangs grew after tasting blood, dooming his kingdom's rice fields",
+    place: "The old capital of Kedah and its terraced hillsides",
+    theme: "A ruler's hidden appetite brings drought and ruin until the land itself is cleansed",
+    summary: "A king secretly develops a taste for blood; his fangs betray him, his fields wither, and the kingdom must be ritually cleansed of him before the rains return.",
+    long: "In the old tales of Kedah, a king once cut himself during a hunt and, tasting his own blood, found he could not stop. Fangs sprouted and he hid them behind a silk scarf while his appetite turned from beast to man. The land protested — rice terraces yellowed and the rains refused to fall while the fanged king sat on the throne — until the court rose against him and his body was carried away and ritually washed, the washing itself becoming the act that brought the rains back.",
+    source: "Source: the Raja Bersiong legend of Kedah, retold here as a sample adaptation.",
+    refs: [
+      { title: "Raja Bersiong — the fanged king", note: "Wikipedia · the Kedah legend in full", url: "https://en.wikipedia.org/wiki/Raja_Bersiong" },
+      { title: "Kedah — the old kingdom", note: "Wikipedia · one of the oldest kingdoms on the peninsula", url: "https://en.wikipedia.org/wiki/Kedah" }
+    ],
+    keywords: "fangs king blood curse kedah ruler rice drought rains crown bersiong"
+  },
+  {
+    id: "buaya", scene: "crocodile", frame: "batik", era: "Johor river country · oral tradition",
+    tint: ["#25401e", "#9ab06a", "#d4a24e"],
+    name: "Sang Buaya & the Crocodile Bridge", nation: "Malaysia", region: "Johor · river country", type: "malaysia",
+    kind: "Trickster & Test",
+    creature: "A horde of crocodiles led by Sang Buaya, with one wise old crocodile among the greedy young ones",
+    place: "A wide Johor river between the village and the market town",
+    theme: "A clever pledge turns dangerous beasts into a living bridge — until greed breaks it",
+    summary: "A youth promises the crocodiles a feast if they lie across the river as his bridge. The greedy young crocodiles snatch, the wise elder keeps the bargain, and the crossing is remembered in the river's name.",
+    long: "The rivers of Johor were once so thick with crocodiles that no boatman dared the crossing. A quick-witted youth promised the crocodiles a wedding feast of goat and rice if they would lie side by side across the water for one day. Halfway across, the smell of meat proved too much for the hungry young crocodiles — the line broke and swimmers scattered. Only Sang Buaya, the eldest, had kept the bargain perfectly, and he alone was honoured; the tale is told as a lesson that one wise keeper of a promise outshines a hundred breakers.",
+    source: "Source: Johor river folk tales about crocodile bargains, retold as a sample version.",
+    refs: [
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" },
+      { title: "Crocodile — the river elder himself", note: "Wikipedia · the animal at the centre of the tale", url: "https://en.wikipedia.org/wiki/Crocodile" }
+    ],
+    keywords: "crocodile river bridge trickster test promise johor sang buaya bargain greed feast elder"
+  },
+  {
+    id: "bunian", scene: "hiddenfolk", frame: "batik", era: "Peninsular forest belief · living tradition",
+    tint: ["#1e3a2c", "#5f8f8b", "#d4a24e"],
+    name: "The Orang Bunian, Hidden People", nation: "Malaysia", region: "Perak & Pahang · deep rainforest", type: "malaysia",
+    kind: "Hidden Realm",
+    creature: "The Orang Bunian — a mirror civilisation of forest people, invisible to ordinary eyes",
+    place: "The dim interior of the old-growth rainforest, where paths bend back on themselves",
+    theme: "A parallel world folded beside our own, entered by respect and lost by rudeness",
+    summary: "Deep-forest travellers tell of meeting beautifully dressed strangers who vanish; they are the Orang Bunian, whose villages overlap ours invisibly.",
+    long: "Hunters and honey-gatherers of the interior speak of a people who live in the same valleys we do, but folded one step aside. The Orang Bunian appear as travellers in fine, old-fashioned clothing — a greeting given, a request for the way offered — then gone between one blink and the next. Their longhouses stand in clearings our eyes walk straight past; take rattan or honey with leave-giving words and you may be guided out when lost, take greedily and the paths turn back on themselves for a whole day.",
+    source: "Source: Orang Bunian beliefs of Peninsular Malaysia's forest communities, retold as a sample version.",
+    refs: [
+      { title: "Orang Bunian — the hidden people", note: "Wikipedia · the belief in full", url: "https://en.wikipedia.org/wiki/Orang_Bunian" },
+      { title: "Hidden people — the worldwide family", note: "Wikipedia · hidden-folk beliefs from Iceland to Malaysia", url: "https://en.wikipedia.org/wiki/Hidden_people" }
+    ],
+    keywords: "hidden people orang bunian forest rainforest invisible realm perak pahang travellers vanish mirror"
+  },
+  {
+    id: "kumkum", scene: "harvest", frame: "batik", era: "East-coast kampung customs · oral tradition",
+    tint: ["#4a4a26", "#9ab06a", "#d4a24e"],
+    name: "Berteh & Hantu Kum-Kum", nation: "Malaysia", region: "Kelantan · Malay kampung", type: "malaysia",
+    kind: "Spirit & Harvest",
+    creature: "Berteh, a gentle rice-field spirit, alongside Hantu Kum-Kum, a night pest and thief-frightener",
+    place: "The padi terraces and riverbanks of a kampung at dusk",
+    theme: "Spirits who reward respectful farmers and frighten the greedy",
+    summary: "Kampung children are warned to ask permission before harvesting rice. The gentle Berteh ripens the fields for those who bow, while Hantu Kum-Kum haunts those who take without asking.",
+    long: "In the old rice-growing customs of the east coast, the padi field was never empty of company. Berteh was a small, quick presence living among the stalks — farmers spoke to the field before cutting and set aside the first sheaves as thanks, and found their grain full. But the fields had a second tenant: Hantu Kum-Kum, a lank, ill-tempered night spirit blamed for every missing chicken and every child who played out too late. Respect was the only fence that held both at bay.",
+    source: "Source: Malay kampung harvest customs of the east coast, retold as a sample adaptation.",
+    refs: [
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" },
+      { title: "Rice — the crop at the heart of the tale", note: "Wikipedia · the grain the spirits guard", url: "https://en.wikipedia.org/wiki/Rice" }
+    ],
+    keywords: "spirit rice harvest kampung padi field river dusk berteh hantu kum-kum farmer reward kelantan"
+  },
+  {
+    id: "hantuair", scene: "spirits", frame: "batik", era: "Riverine Malay belief · oral tradition",
+    tint: ["#16323c", "#5f8f8b", "#d4a24e"],
+    name: "Hantu Air, the Water Ghost", nation: "Malaysia", region: "Malay Peninsula · rivers & estuaries", type: "malaysia",
+    kind: "Water Spirit",
+    creature: "A shapeless river-dweller that drags swimmers under and capsizes the careless boatman",
+    place: "The deep pools, river bends, and moonlit estuaries of the peninsula",
+    theme: "Dark water hides a claim on the living — every deep pool has its owner",
+    summary: "Children are warned never to swim at dusk: Hantu Air haunts the deep pools, and those it takes are said to surface days later, far downstream.",
+    long: "Every kampung along a river knew which bend not to swim in. Hantu Air — the water ghost — was said to live in the deepest pools, where the current slows and the surface goes dark; bathers who lingered past dusk felt a hand at the ankle, and boats that mocked the warning capsized in water that had been calm a moment before. Fishers made quiet offerings before casting at such places, for the river gives — but it keeps a share.",
+    source: "Source: Malay water-spirit beliefs of the peninsula's rivers, retold as a sample adaptation.",
+    refs: [
+      { title: "Hantu Air — the water ghost", note: "Wikipedia · the belief in full", url: "https://en.wikipedia.org/wiki/Hantu_Air" },
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" }
+    ],
+    keywords: "water ghost hantu air river pool estuary swim dusk drowning kampung fisher spirit"
+  },
+  {
+    id: "jentayu", scene: "thunderbird", frame: "batik", era: "Hikayat tradition · classical Malay literature",
+    obscure: true,
+    tint: ["#2a2a44", "#8a6fa8", "#d4a24e"],
+    name: "Jentayu, the Faithful Bird", nation: "Malaysia", region: "Classical Malay hikayat tradition", type: "malaysia",
+    kind: "Faithful Beast",
+    creature: "Jentayu, an ancient divine bird who fights a serpent-king to protect a stolen princess",
+    place: "The forest kingdom of the epic Hikayat Seri Rama, the Malay telling of the Ramayana",
+    theme: "An old bird gives its life fighting a wrong it did not have to face",
+    summary: "In the Malay Ramayana, the old bird Jentayu intercepts the serpent-king who carries off the princess, and fights until his wings fail rather than let the wrong pass.",
+    long: "In the Malay telling of the great epic, when the princess was carried off through the sky, it was not a warrior who rose to stop the abductor but Jentayu — a bird old as the mountains, owed nothing by anyone. He met the serpent-king in the air and fought him wing to scale until his strength failed and he fell, dying, but having marked the way the princess had gone. Malay audiences knew his name as the very shape of loyalty; to call someone a Jentayu is to call them faithful past all sense of survival.",
+    source: "Source: the Hikayat Seri Rama, the classical Malay epic, retold here in the app's own words.",
+    refs: [
+      { title: "Hikayat Seri Rama — the Malay Ramayana", note: "Wikipedia · the epic this tale comes from", url: "https://en.wikipedia.org/wiki/Hikayat_Seri_Rama" },
+      { title: "Jatayu — the Indian counterpart", note: "Wikipedia · the Indian bird Jentayu mirrors", url: "https://en.wikipedia.org/wiki/Jatayu" }
+    ],
+    keywords: "bird jentayu jatayu ramayana hikayat seri rama faithful loyalty princess serpent king epic"
+  },
+  {
+    id: "mambang", scene: "moon", frame: "batik", era: "Kampung omen belief · oral tradition",
+    obscure: true,
+    tint: ["#3a2436", "#8a6fa8", "#d4a24e"],
+    name: "The Mambang of Dawn & Dusk", nation: "Malaysia", region: "Malay Peninsula · village omen lore", type: "malaysia",
+    kind: "Omen Spirit",
+    creature: "The Mambang — colour-spirits who gather in the sky's thresholds at sunrise and sunset",
+    place: "The edge of the village at first light and last light, where the sky meets the trees",
+    theme: "The in-between hours belong to the spirits, and what they show is a message",
+    summary: "At dawn and dusk, villagers watched for the Mambang — spirits of colour whose appearance in the sky was read as an omen for the days to come.",
+    long: "The old villagers kept a quiet rule: do not linger at the boundary of the fields at first light or last. Those two edges of the day were the Mambang's hours — spirits of colour who gathered where the sky changed, red ones and pale ones and dark ones, each with a meaning. A farmer who saw the wrong colour in the wrong place would postpone a wedding or delay a harvest; a healer read them like a letter. Little is written of the Mambang compared to the famous ghosts — which is exactly why finding them is a delight: a whole quiet system of sky-reading, still alive in scattered kampung memories.",
+    source: "Source: Malay omen-spirit beliefs recorded in scattered kampung tradition, retold as a sample version.",
+    refs: [
+      { title: "Malaysian folklore — an overview", note: "Wikipedia · the wider tradition", url: "https://en.wikipedia.org/wiki/Malaysian_folklore" },
+      { title: "Omen — how signs were read", note: "Wikipedia · the worldwide practice of reading omens", url: "https://en.wikipedia.org/wiki/Omen" }
+    ],
+    keywords: "omen spirit mambang dawn dusk sky colour village kampung reading sign obscure"
+  },
+
+  // ---------------- WORLD REALMS BY CONTINENT: ASIA, EUROPE, AFRICA, OCEANIA, AMERICAS ----------------
+  {
+    id: "yamata", scene: "serpent", frame: "wave", era: "Recorded 8th century · Kojiki, Japan's oldest book",
+    tint: ["#3c1e2e", "#b3492f", "#d4a24e"],
+    name: "Yamata-no-Orochi", nation: "Japan", region: "Izumo · Sea of Japan coast", type: "world", continent: "asia",
+    kind: "Serpent & Sacrifice",
+    creature: "An eight-headed, eight-tailed dragon-serpent that demands a yearly maiden",
+    place: "The Hi River, where an elderly couple weeps by the banks",
+    theme: "A cunning hero tricks and slays a river-dwelling serpent",
+    summary: "Susanoo gets the weeping couple's daughter to safety, then lays out eight barrels of sake so the eight-headed river dragon drinks itself to sleep and falls to his blade.",
+    long: "The god Susanoo, exiled from the heavens, came down to Izumo and found an elderly couple weeping by the Hi River: year after year the eight-headed serpent Yamata-no-Orochi had taken one of their daughters, and only the youngest remained. Susanoo bargained — the girl for his hand in marriage — and set a plan as clever as any sword-work: a fence with eight gates, eight great tubs of strong sake behind them. Each head drank deep and slept where it fell, and Susanoo cut the monster apart, finding in its middle tail a sword so fine he presented it to the heavens.",
+    source: "Source: Yamata-no-Orochi as told in Japanese myth (Kojiki and related traditions), retold here in brief.",
+    refs: [
+      { title: "Yamata-no-Orochi — the eight-headed serpent", note: "Wikipedia · the myth in full", url: "https://en.wikipedia.org/wiki/Yamata_no_Orochi" },
+      { title: "Kojiki — Japan's oldest chronicle", note: "Wikipedia · the book that preserves the tale", url: "https://en.wikipedia.org/wiki/Kojiki" }
+    ],
+    keywords: "dragon serpent eight heads river japan susanoo sake sacrifice sword trickster hero izumo"
+  },
+  {
+    id: "beowulf", scene: "hero", frame: "knot", era: "Old English epic · earliest English poem, ~8th–11th c. manuscript",
+    tint: ["#2a3444", "#8fa6c4", "#d4a24e"],
+    name: "Beowulf and Grendel", nation: "Denmark & Sweden", region: "Scandinavia · as recorded in England", type: "world", continent: "europe",
+    kind: "Hero & Monster",
+    creature: "Grendel, a marsh-dwelling giant whom Beowulf battles bare-handed",
+    place: "Heorot hall and the misty mere where Grendel's mother dwells",
+    theme: "A hero crosses the water to face a monstrous guardian of the dark",
+    summary: "A warrior sails from across the sea to cleanse a mead-hall of a night-stalking giant, then dives into a haunted lake to finish the fight.",
+    long: "For twelve winters the great hall of Heorot stood empty each nightfall, for Grendel came in the dark and carried off the king's men as they slept. Beowulf, a young warrior from across the water, sailed over and boasted — as custom required — that he would meet the monster with bare hands alone. He did: he gripped Grendel in a hold no giant could break and tore the creature's arm from its shoulder. But the victory had a second act: Grendel's mother rose from the haunted mere, and Beowulf followed her down into the black water, where an old giant-forged blade hung on the wall of her lair.",
+    source: "Source: the Old English epic Beowulf, retold here in brief.",
+    refs: [
+      { title: "Beowulf — the epic", note: "Wikipedia · the poem and its world", url: "https://en.wikipedia.org/wiki/Beowulf" },
+      { title: "Grendel — the night-stalker", note: "Wikipedia · the monster himself", url: "https://en.wikipedia.org/wiki/Grendel" }
+    ],
+    keywords: "hero monster giant beowulf grendel hall mere lake battle sword sea denmark scandinavia england"
+  },
+  {
+    id: "kelpie", scene: "horse", frame: "knot", era: "Scottish Highland oral tradition · centuries old",
+    tint: ["#16323c", "#5f8f8b", "#d4a24e"],
+    name: "The Kelpie of the Loch", nation: "Scotland", region: "Scottish Highlands · the lochs", type: "world", continent: "europe",
+    kind: "Water Spirit",
+    creature: "A shape-shifting water horse that lures travellers to the deep",
+    place: "The cold, dark waters of a Highland loch",
+    theme: "A treacherous water spirit guards the loch and tests the careless",
+    summary: "By the shore stands a beautiful horse; mount it, and it plunges into the loch with its rider. Highland folk learn to read the water before they trust it.",
+    long: "The Highland lochs are beautiful and very cold, and the kelpie is their most famous tenant. It comes ashore as a fine grey horse — sometimes saddled, sometimes wearing a mane of water-weed — and waits by the crossing point. Touch its neck and the hand sticks fast; the kelpie turns and dives. Yet the same spirit could be bridled and set to work hauling stones, and kelpies were said to fall in love and keep human households. Every loch-side story carries the same heart: the water is older than you.",
+    source: "Source: Scottish Highland water-horse folklore, retold here as a sample adaptation.",
+    refs: [
+      { title: "Kelpie — the water horse", note: "Wikipedia · the shape-shifting spirit", url: "https://en.wikipedia.org/wiki/Kelpie" },
+      { title: "Scottish folklore — an overview", note: "Wikipedia · the wider Highland tradition", url: "https://en.wikipedia.org/wiki/Scottish_folklore" }
+    ],
+    keywords: "water horse spirit kelpie loch ness scotland lake river lure drowning highlands shape shifting"
+  },
+  {
+    id: "sigurd", scene: "hero", frame: "knot", era: "Medieval Norse saga · 13th-century Völsunga saga",
+    tint: ["#2e2a3c", "#8a6fa8", "#d4a24e"],
+    name: "Sigurd and the Dragon Fafnir", nation: "Norway & Iceland", region: "Norse world · the sagas", type: "world", continent: "europe",
+    kind: "Dragon-Slayer",
+    creature: "Fafnir, a dwarf turned greedy dragon, hoarding gold in a mountain pass",
+    place: "A hidden mountain lair along the path the hero digs beneath",
+    theme: "A slayer waits in a pit, strikes from below, and gains wisdom from the dragon's blood",
+    summary: "Sigurd hides in a trench beneath the dragon's trail, drives his sword upward, and tasting the dragon's blood comes to understand the speech of birds.",
+    long: "Fafnir had once been a dwarf — but a cursed hoard of gold had turned him, as greed does in the sagas, into a coiling dragon that breathed poison and slept on its treasure. Sigurd dug a trench in the path the dragon walked each morning to drink, and lay in it with his sword pointed up through the turf. When the belly passed over the pit, he drove the blade up into the soft heart. Dying, the dragon warned of the curse on the gold — and blood on Sigurd's tongue let him understand the birds, who told him of the betrayal to come.",
+    source: "Source: the Völsunga saga and the Poetic Edda of the Norse tradition, retold here in brief.",
+    refs: [
+      { title: "Sigurd — the dragon-slayer", note: "Wikipedia · the hero and his legend", url: "https://en.wikipedia.org/wiki/Sigurd" },
+      { title: "Fafnir — the dragon", note: "Wikipedia · the dwarf who became a dragon", url: "https://en.wikipedia.org/wiki/Fafnir" }
+    ],
+    keywords: "dragon slayer fafnir sigurd norse gold hoard sword pit wisdom birds greed iceland saga"
+  },
+  {
+    id: "sphinx", scene: "sphinx", frame: "meander", era: "Classical Greece · Theban cycle of tragedy",
+    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    name: "The Riddle of the Sphinx", nation: "Greece", region: "Greek mainland · near Thebes", type: "world", continent: "europe",
+    kind: "Guardian & Riddle",
+    creature: "A lion-bodied, winged guardian with a human head who asks one fatal question",
+    place: "The cliff-pass above the city of Thebes",
+    theme: "A road-blocking guardian defeated not by strength but by an answer",
+    summary: "A winged lion blocks the pass to Thebes and devours all who fail her riddle; a traveller answers it, and the guardian destroys herself.",
+    long: "On the high road to Thebes sat a creature with a lion's body, a woman's face, and the wings of a bird of prey. Her toll was simple: every traveller must answer her riddle, and those who failed were eaten. Her question — what walks on four legs in the morning, two at noon, and three in the evening — had emptied the road for years until Oedipus gave the answer: a human being, who crawls as a baby, walks upright in life, and leans on a staff in old age. The Sphinx cast herself from the cliff, and the road opened — which, as the wider tragedy makes clear, was the true trap of the story.",
+    source: "Source: the Theban Sphinx of Greek myth (Sophocles' Oedipus tradition), retold here in brief.",
+    refs: [
+      { title: "Sphinx — the riddler of Thebes", note: "Wikipedia · the guardian in full", url: "https://en.wikipedia.org/wiki/Sphinx" },
+      { title: "Oedipus — the answerer", note: "Wikipedia · the tragedy the riddle opens", url: "https://en.wikipedia.org/wiki/Oedipus" }
+    ],
+    keywords: "sphinx riddle guardian greece thebes lion wings oedipus road question"
+  },
+  {
+    id: "anansi", scene: "spider", frame: "engraving", era: "West African tale cycle · carried across the Atlantic",
+    tint: ["#3c2e14", "#d4a24e", "#b3492f"],
+    name: "Anansi the Spider", nation: "Ghana & the Caribbean", region: "West Africa · Ashanti country", type: "world", continent: "africa",
+    kind: "Trickster",
+    creature: "Anansi, a spider who outwits gods, tigers, and princes alike",
+    place: "Village courtyards, forests, and the sky god's storehouse of stories",
+    theme: "A small, clever trickster wins great prizes by wit rather than strength",
+    summary: "The spider trades, tricks, and bargains his way into owning all the stories in the world — proof that the small and clever can outface the large and strong.",
+    long: "In the beginning of the tale, all stories belonged to the sky god, and he set a price: Anansi must bring him Onini the python, the Mmoboro hornets, the leopard Osebo, and more besides. A spider weighs nothing; the leopard outweighs him a hundredfold. And yet Anansi, by flattery and by asking exactly the right foolish question at the right time, delivered every one — the python into a measuring contest, the hornets into a calabash, the leopard into a self-dug pit. The sky god paid up, and from then on all stories are called spider stories. Anansi sailed with them to the Caribbean too.",
+    source: "Source: Ashanti spider tales of West Africa, carried to the Caribbean; retold here in the app's own words.",
+    refs: [
+      { title: "Anansi — the spider", note: "Wikipedia · the trickster in full", url: "https://en.wikipedia.org/wiki/Anansi" },
+      { title: "Akan oral tradition — where the tales live", note: "Wikipedia · the Ashanti storytelling world", url: "https://en.wikipedia.org/wiki/Akan_people" }
+    ],
+    keywords: "trickster spider anansi stories wit clever west africa caribbean sky god ghana ashanti"
+  },
+  {
+    id: "mamiwata", scene: "spirits", frame: "engraving", era: "West & Central African water-spirit cult · living tradition",
+    tint: ["#123a44", "#5f8f8b", "#d4a24e"],
+    name: "Mami Wata, Mother of Water", nation: "West & Central Africa", region: "Coastal West Africa · Congo river systems", type: "world", continent: "africa",
+    kind: "Water Mother",
+    creature: "A beautiful water mother with a serpent's coils, who gives wealth and takes the absent-minded",
+    place: "The ocean shore and the great rivers — and the mirrors of her devotees",
+    theme: "Water's power dressed as beauty: devotion brings fortune, forgetfulness brings loss",
+    summary: "Mami Wata, the water mother, appears with a great serpent and gives wealth, healing, and beauty to those who honour her — and heartbreak to those who forget their vows.",
+    long: "Mami Wata — 'Mother of Water' — is one of the most widespread and living spiritual figures of Africa and its diaspora: a woman of extraordinary beauty, often shown with the coils of a great serpent, half goddess, half merchant's dream. Her devotees tell of being taken beneath the water and returned with gifts — wealth, healing power, charisma — on condition of devotion; the gifts can be withdrawn when vows are broken. She absorbed Hindu chromolithographs, Christian imagery, and ocean-going trade as she travelled, yet remains unmistakably herself: water's power dressed as beauty, both generous and exacting.",
+    source: "Source: Mami Wata traditions of West and Central Africa, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Mami Wata — the water mother", note: "Wikipedia · the living tradition in full", url: "https://en.wikipedia.org/wiki/Mami_Wata" },
+      { title: "Water spirits — the worldwide family", note: "Wikipedia · water beings across cultures", url: "https://en.wikipedia.org/wiki/Water_spirit" }
+    ],
+    keywords: "water mother mami wata africa serpent beauty wealth healing devotion mirror ocean"
+  },
+  {
+    id: "adze", scene: "spirits", frame: "engraving", era: "Ewe vampire-lore · oral tradition",
+    obscure: true,
+    tint: ["#2c2438", "#8a6fa8", "#d4a24e"],
+    name: "The Adze, Fireball Vampire", nation: "Ghana & Togo", region: "Ewe country · Volta region", type: "world", continent: "africa",
+    kind: "Firefly Vampire",
+    creature: "The adze — a vampiric spirit that flies as a firefly or ball of light and drinks the living",
+    place: "The dark bush paths and doorways of Ewe villages",
+    theme: "A vampire too small to fight, that must instead be bargained with or warded",
+    summary: "In Ewe lore, a vampire flies as a coconut-sized ball of fire; it drinks blood, brings sickness, and cannot be caught — only guarded against.",
+    long: "The adze is one of West Africa's most quietly chilling beliefs: a vampiric spirit that flies at night as a firefly or a drifting ball of firelight, slips through thatch and keyhole, and drinks the blood of the sleeping. Its favourite quarry are children and the vulnerable; sickness that wasted a household was often laid at its work, and blame frequently fell on the old and the marginal, whom the community suspected of carrying the adze's human form. It cannot be swatted or fought — which is the point of the belief: the danger is small, mobile, and invisible, and the only defence is protective ritual. Few outside the Ewe country have ever heard of it — which makes finding it here a rare treat.",
+    source: "Source: adze beliefs of the Ewe people of Ghana and Togo, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Adze — the firefly vampire", note: "Wikipedia · the Ewe vampire belief", url: "https://en.wikipedia.org/wiki/Adze" },
+      { title: "Vampire — the worldwide family", note: "Wikipedia · blood-drinkers across world folklore", url: "https://en.wikipedia.org/wiki/Vampire" }
+    ],
+    keywords: "adze vampire firefly fireball ewe ghana togo blood sickness night bush obscure"
+  },
+  {
+    id: "rainbow", scene: "rainbow", frame: "tapa", era: "Australian Aboriginal Dreaming · tens of thousands of years old",
+    tint: ["#1e3448", "#5f8f8b", "#b3492f"],
+    name: "The Rainbow Serpent", nation: "Australia", region: "Arnhem Land · Northern Australia", type: "world", continent: "oceania",
+    kind: "Creator & Water Giver",
+    creature: "A vast rainbow-coloured serpent that shaped the land and dwells in every waterhole",
+    place: "The billabongs, gorges, and painted rock galleries of the Australian north",
+    theme: "A creator-serpent who gives the water of life — and takes it back from law-breakers",
+    summary: "In the Dreaming, a great rainbow serpent rose from beneath the earth, carved valleys with its body, filled the waterholes, and made laws; droughts are its withdrawn gift.",
+    long: "In the creation-time of the Dreaming, the land lay flat, silent, and dry, with nothing upon it but a sleeping serpent beneath the ground. One day the Rainbow Serpent rose — its body shimmering with every colour — and pushed and coiled across the country, carving creeks and gorges with its passage and piling the mountains where it rested. It called the frogs up from below, wrung the water out of them to fill the billabongs, and gave the people their laws. Rains follow the law, and droughts are the serpent's long silence. Its painted image appears in rock galleries thousands of years old.",
+    source: "Source: Rainbow Serpent traditions of Aboriginal Australia, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Rainbow Serpent — the creator", note: "Wikipedia · the Dreaming creator in full", url: "https://en.wikipedia.org/wiki/Rainbow_Serpent" },
+      { title: "Dreamtime — the creation epoch", note: "Wikipedia · the framework of Aboriginal cosmology", url: "https://en.wikipedia.org/wiki/Dreamtime" }
+    ],
+    keywords: "rainbow serpent creation dreaming australia waterhole drought creator frog law arnhem land water"
+  },
+  {
+    id: "maui", scene: "hero", frame: "tapa", era: "Polynesian voyaging tradition · carried across the Pacific",
+    tint: ["#1c3450", "#5f8f8b", "#d4a24e"],
+    name: "Māui the Fish-Puller", nation: "Aotearoa & Polynesia", region: "New Zealand · the wider Polynesian world", type: "world", continent: "oceania",
+    kind: "Culture Hero & Trickster",
+    creature: "Māui — the youngest brother, a trickster hero who fished up islands and lassoed the sun",
+    place: "The vast Pacific, and the North Island of New Zealand — his great fish",
+    theme: "A cheeky youngest sibling gifts humanity its world: land, fire, and the lengthened day",
+    summary: "The trickster Māui fished up New Zealand's North Island from the deep, slowed the sun with a rope of flax, and sought fire and immortality for humankind.",
+    long: "Māui is the great trickster-culture-hero of Polynesia, told from Hawai'i to Aotearoa with local flourishes. He fished up islands from the sea with a magical hook made from an ancestor's jawbone; he snared the sun with ropes of flax so his mother's work could dry and the days grew longer; he stole fire from the fire-goddess's fingernails; and, most daring of all, he tried to reverse death itself by passing through the body of the night goddess Hine-nui-te-pō — and was crushed when a bird's laugh woke her. His greatest catch is Aotearoa's North Island, still called Te Ika-a-Māui — the fish of Māui.",
+    source: "Source: Māui traditions of Polynesia and Aotearoa New Zealand, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Māui — the trickster hero", note: "Wikipedia · the hero and his feats", url: "https://en.wikipedia.org/wiki/M%C4%81ui_(M%C4%81ori_mythology)" },
+      { title: "Māori mythology — an overview", note: "Wikipedia · the tradition his tales live in", url: "https://en.wikipedia.org/wiki/M%C4%81ori_mythology" }
+    ],
+    keywords: "maui trickster hero polynesia new zealand island fish hook sun fire youngest brother pacific"
+  },
+  {
+    id: "quetzal", scene: "feather", frame: "greca", era: "Mesoamerican antiquity · Teotihuacan to the Aztecs",
+    tint: ["#1e3a2e", "#5f8f8b", "#d4a24e"],
+    name: "Quetzalcoatl, the Feathered Serpent", nation: "Mexico", region: "Central Mexico · the old Mesoamerican cities", type: "world", continent: "americas",
+    kind: "Serpent & Wisdom",
+    creature: "A serpent clothed in the green feathers of the quetzal bird — god of wind and learning",
+    place: "The great temple-pyramids of Teotihuacan and Cholula, built to its image",
+    theme: "A serpent of wisdom who gives knowledge to people and departs on a promise to return",
+    summary: "The feathered serpent taught people to plant maize and read the stars, ruled as a priest-king of a golden age, and sailed away on a raft of serpents, vowing to return.",
+    long: "The feathered serpent joins the two oldest powers in Mesoamerican thought: the snake of the earth and the feathers of the sky. As Quetzalcoatl, it discovered maize in the mountain of sustenance and carried it out for people to plant; as the wind god, it swept the roads clean before the rains; as a legendary priest-king of Tollan, it ruled an age of plenty. The old songs say he was tricked into disgrace, burned himself on a shore-side pyre, and rose as the morning star — sailing away on a raft of woven serpents with a promise to return one day.",
+    source: "Source: Quetzalcoatl traditions of the Aztec and earlier Mesoamerican peoples, retold here in the app's own words.",
+    refs: [
+      { title: "Quetzalcoatl — the feathered serpent", note: "Wikipedia · the god in full", url: "https://en.wikipedia.org/wiki/Quetzalcoatl" },
+      { title: "Mesoamerica — the world he ruled", note: "Wikipedia · the civilisations that honoured him", url: "https://en.wikipedia.org/wiki/Mesoamerica" }
+    ],
+    keywords: "feathered serpent quetzalcoatl mexico maize wind wisdom star temple pyramid aztec return"
+  },
+  {
+    id: "thunderbird", scene: "thunderbird", frame: "engraving", era: "Pacific Northwest · winter ceremonial tradition",
+    tint: ["#22303e", "#8fa6c4", "#d4a24e"],
+    name: "Thunderbird of the Pacific Coast", nation: "Canada & USA", region: "Pacific Northwest coast", type: "world", continent: "americas",
+    kind: "Storm Spirit",
+    creature: "A vast bird whose wingbeats are thunder and whose glance is lightning",
+    place: "The mountain peaks and whale-hunting waters of the Pacific Northwest",
+    theme: "A storm-bird who fights the forces beneath the sea and lends power to those who honour it",
+    summary: "The Thunderbird rides the storm-winds, hunts the great whale, and is painted on house-fronts and danced in winter ceremonies along the Northwest coast.",
+    long: "Along the forested coast of the Pacific Northwest, winter was the season of stories, and the greatest belonged to the Thunderbird. It lived on the high snowy peaks; when it opened its wings, thunder rolled, and when its eyes flashed, lightning struck. Its food was the whale — the old tellings describe it diving from the storm-clouds to carry the great animal up from the sea in its talons. Chiefs sought its favour, artists painted its wide wings and curled crests on house-fronts, and dancers carried its power in masked ceremonies.",
+    source: "Source: Thunderbird traditions of the Indigenous peoples of the Pacific Northwest coast, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Thunderbird — the storm spirit", note: "Wikipedia · the being in full", url: "https://en.wikipedia.org/wiki/Thunderbird" },
+      { title: "Pacific Northwest — the coast that tells the tale", note: "Wikipedia · the culture area", url: "https://en.wikipedia.org/wiki/Pacific_Northwest" }
+    ],
+    keywords: "thunderbird storm bird lightning whale pacific northwest canada usa thunder ceremony mountain"
+  },
+  {
+    id: "yeti", scene: "yeti", frame: "hiero", era: "Himalayan mountain lore · living tradition",
+    tint: ["#2a3644", "#c9d6e4", "#d4a24e"],
+    name: "The Yeti of the High Snows", nation: "Nepal & Tibet", region: "Himalayas · the high passes", type: "world", continent: "asia",
+    kind: "Mountain Wild-Man",
+    creature: "A huge, shaggy man of the snows whose footprints cross the high passes",
+    place: "The glacial valleys and screes above the tree line in the Himalaya",
+    theme: "A shy giant of the roof of the world — feared, honoured, and rarely seen",
+    summary: "Herders and monks of the Himalaya tell of a tall shaggy being that leaves tracks in the snow; it is spoken of with respect, as guardian of the mountain's upper world.",
+    long: "Above the last village and the last juniper bush, where the snow never fully melts, the people of the Himalaya say the mountain belongs to someone else. The yeti — the 'man-bear of the snows' in one common rendering — walks the high passes at dusk, a towering shaggy figure whose tracks have been found, photographed, and argued over for generations. Monasteries in the region kept what were said to be yeti relics; climbers came away with stories of distant silhouettes and unnervingly human footprints. It belongs to the same worldwide family as the Malaysian giant and the Norse troll: the great wild person of the high places.",
+    source: "Source: Himalayan yeti traditions of Nepal and Tibet, retold here in the app's own words.",
+    refs: [
+      { title: "Yeti — the man of the snows", note: "Wikipedia · the tradition and the searches", url: "https://en.wikipedia.org/wiki/Yeti" },
+      { title: "Himalayas — the roof of the world", note: "Wikipedia · the mountains that keep him", url: "https://en.wikipedia.org/wiki/Himalayas" }
+    ],
+    keywords: "yeti snow mountain himalaya nepal tibet wildman footprints monk high passes giant shaggy"
+  },
+  {
+    id: "amaterasu", scene: "moon", frame: "wave", era: "Shinto myth · recorded in the Kojiki, 8th century",
+    tint: ["#3a2c1c", "#d4a24e", "#b3492f"],
+    name: "Amaterasu & the Hidden Sun", nation: "Japan", region: "Takamagahara · the high plain of heaven", type: "world", continent: "asia",
+    kind: "Sun Goddess",
+    creature: "Amaterasu, the sun goddess, and her wild brother Susanoo of the storm",
+    place: "The heavenly rock cave where the sun hid herself away",
+    theme: "Light withdrawn by grief and returned by laughter",
+    summary: "When her brother's rampage drove the sun goddess to hide in a cave, the world went dark — until a bawdy dance and a mirror drew her out again.",
+    long: "The sun goddess Amaterasu quarrelled with her storm brother Susanoo, and when his rampages became too much she withdrew into a heavenly cave and rolled the stone across the door — and the world went dark, with no dawn and no harvest. The eight hundred gods gathered to plot her return: they set a fire, hung a mirror and jewels on a tree outside the cave, and the dawn goddess Uzume performed a dance so bawdy that the assembly roared with laughter. Curious, Amaterasu peered out — saw her own brilliant reflection in the mirror, and stepped into the light again. The myth, central to Shinto, gives the imperial line its descent from the sun herself.",
+    source: "Source: the cave myth of the Kojiki and Shinto tradition, retold here in brief.",
+    refs: [
+      { title: "Amaterasu — the sun goddess", note: "Wikipedia · the goddess in full", url: "https://en.wikipedia.org/wiki/Amaterasu" },
+      { title: "Amano-Iwato — the heavenly rock cave", note: "Wikipedia · the cave where the sun hid", url: "https://en.wikipedia.org/wiki/Amano-Iwato" }
+    ],
+    keywords: "sun goddess amaterasu cave susanoo mirror dance uzume darkness shinto japan kojiki"
+  },
+  {
+    id: "garuda", scene: "thunderbird", frame: "lotus", era: "Hindu & Buddhist tradition · shared across Asia",
+    tint: ["#2a3c50", "#d4a24e", "#b3492f"],
+    name: "Garuda & the Naga Mothers", nation: "India & the Buddhist world", region: "Indian subcontinent · spread across Asia", type: "world", continent: "asia",
+    kind: "Great Bird & Ancient Feud",
+    creature: "Garuda, the eagle-mounted king of birds, born to devour the serpent nagas",
+    place: "The milk ocean where the elixir of immortality was churned",
+    theme: "An ancient feud between bird and serpent, settled by a trick and a vow",
+    summary: "Garuda, the great eagle, steals the elixir of immortality from heaven to ransom his mother from the nagas — then lets the gods take it back before the serpents can drink.",
+    long: "Garuda was born blazing like fire, and the feud between him and the serpent nagas began before his birth: his mother and the naga mothers had made a careless wager, and the wager made her the serpents' slave. To ransom her, Garuda flew to heaven and seized the pot of amrita, the elixir of immortality, fighting off the gods — and then, in a trick worthy of his wit, set the pot before the nagas while his mother went free, arranging matters so that the elixir was reclaimed before a single serpent could drink. Bird and serpent, sky and water, sworn enemies forever: the image of Garuda devouring serpents guards temple gateways across Buddhist Asia, including Southeast Asia's own.",
+    source: "Source: Garuda tales of the Hindu epics, retold here in brief.",
+    refs: [
+      { title: "Garuda — the king of birds", note: "Wikipedia · the great bird in full", url: "https://en.wikipedia.org/wiki/Garuda" },
+      { title: "Nāga — the serpent people", note: "Wikipedia · the serpents he is sworn against", url: "https://en.wikipedia.org/wiki/N%C4%81ga" }
+    ],
+    keywords: "garuda eagle bird naga serpent feud elixir immortality india buddhist hindu asia"
+  },
+  {
+    id: "nezha", scene: "hero", frame: "wave", era: "Ming-era novel tradition · Investiture of the Gods",
+    tint: ["#3a1e28", "#b3492f", "#d4a24e"],
+    name: "Nezha, the Lotus-Born", nation: "China", region: "Chinese classical tradition", type: "world", continent: "asia",
+    kind: "Child God & Rebirth",
+    creature: "Nezha, a boy warrior born of a lotus after flesh-and-bone rebirth, with Fire-tipped Spear and Wind Fire Wheels",
+    place: "The Eastern Sea and the celestial court of the Investiture of the Gods",
+    theme: "A child's debt to his parents repaid by returning his own body — and rebirth by lotus",
+    summary: "The boy warrior Nezha slew a dragon prince, and to spare his parents the dragon king's wrath, returned his own flesh and bone to them — reborn from a lotus to fight on.",
+    long: "Nezha was born strangely — a ball of flesh that split open into a boy already walking and talking — and grew into a warrior child of terrifying talent. When he slew a dragon prince of the Eastern Sea, the dragon kings came for his parents, and Nezha made an unbearable choice: he took his own life, returning his flesh and bone to his mother and father so the debt would be paid. His master then rebuilt him from lotus flowers and green lotus roots, and he rose again as a god-child with fire wheels under his feet. The story is Chinese mythology's most piercing meditation on filial debt — and one of its most beloved heroes.",
+    source: "Source: Nezha tales of the Ming-era classic Investiture of the Gods, retold here in brief.",
+    refs: [
+      { title: "Nezha — the lotus-born child god", note: "Wikipedia · the hero in full", url: "https://en.wikipedia.org/wiki/Nezha" },
+      { title: "Investiture of the Gods — the classic novel", note: "Wikipedia · the book his tale comes from", url: "https://en.wikipedia.org/wiki/Investiture_of_the_Gods" }
+    ],
+    keywords: "nezha china child god lotus rebirth dragon prince east sea wheels spear"
+  },
+  {
+    id: "kaguya", scene: "moon", frame: "wave", era: "Heian-era tale · 10th century, oldest Japanese science fiction",
+    tint: ["#2a2c44", "#8a6fa8", "#d4a24e"],
+    name: "The Tale of the Bamboo Cutter", nation: "Japan", region: "Classical Kyoto literature", type: "world", continent: "asia",
+    kind: "Moon Princess",
+    creature: "Kaguya-hime, a thumb-sized girl found in bamboo who grows into a princess from the moon",
+    place: "A bamboo grove in the countryside, and the moon that calls its daughter home",
+    theme: "A borrowed life ends where it began — with the moon reclaiming its own",
+    summary: "A bamboo cutter finds a tiny girl in a glowing stalk; she grows into the lovely Kaguya-hime, refuses five noble suitors, and returns to the moon leaving only heartbreak.",
+    long: "An old bamboo cutter found a stalk glowing like a lantern, and inside it a girl the size of his thumb. She grew into a woman of unbearable beauty — Kaguya-hime, the shining princess — and five suitors of the highest rank begged for her hand. She set each an impossible task (a Buddha's stone bowl, a jewel from a dragon's neck, and so on), and all five failed or cheated. The Emperor himself was refused. Then, one moonlit night, a procession descended from the moon to bring her home, and though the Emperor set an army of archers to hold her, no earthly guard could stop it — the moon takes back its own.",
+    source: "Source: The Tale of the Bamboo Cutter, Japan's oldest extant narrative, retold here in brief.",
+    refs: [
+      { title: "The Tale of the Bamboo Cutter", note: "Wikipedia · the classic tale in full", url: "https://en.wikipedia.org/wiki/The_Tale_of_the_Bamboo_Cutter" },
+      { title: "Kaguya-hime — the princess", note: "Wikipedia · the moon maiden herself", url: "https://en.wikipedia.org/wiki/Kaguya-hime" }
+    ],
+    keywords: "japan kaguya bamboo cutter moon princess five suitors impossible task heian"
+  },
+  {
+    id: "ghouls", scene: "fangs", frame: "lotus", era: "Arabian Nights & earlier Persian lore",
+    tint: ["#3a2a1c", "#d4a24e", "#5f8f8b"],
+    name: "Scheherazade & the Thousand Nights", nation: "Persia, India & the Arab world", region: "The Silk Road · a shared story ocean", type: "world", continent: "asia",
+    kind: "Storyteller Against Doom",
+    creature: "Scheherazade, the vizier's daughter who married a mad king and cured him with cliffhangers",
+    place: "A palace bedchamber where each dawn should have brought an execution",
+    theme: "The power of the unfinished story to hold off death itself",
+    summary: "A betrayed king weds a new bride each dawn and has her killed each morning — until Scheherazade begins a tale each night and leaves it unfinished, night after night, for a thousand and one nights.",
+    long: "King Shahryar, betrayed by his first wife, swore to marry a new woman each night and have her put to death at dawn, so no woman could ever betray him again. After a thousand deaths, the vizier's daughter Scheherazade volunteered — and on her wedding night she began a story, and stopped at the crucial moment as dawn broke. The king spared her for one night to hear the ending — but the ending opened into another tale, and another, night after night, until after a thousand and one nights, with three sons and a cured heart, he let her live. She is the world's great emblem of storytelling itself: the unfinished tale as a hand on the executioner's arm.",
+    source: "Source: the frame story of One Thousand and One Nights, retold here in brief.",
+    refs: [
+      { title: "One Thousand and One Nights", note: "Wikipedia · the great story cycle", url: "https://en.wikipedia.org/wiki/One_Thousand_and_One_Nights" },
+      { title: "Scheherazade — the storyteller", note: "Wikipedia · the heroine of the frame", url: "https://en.wikipedia.org/wiki/Scheherazade" }
+    ],
+    keywords: "scheherazade arabian nights thousand king story cliffhanger persia arab frame tale storytelling"
+  },
+  {
+    id: "kuti", scene: "ogress", frame: "lotus", era: "Sri Lankan & South Indian oral lore",
+    obscure: true,
+    tint: ["#2c341e", "#9ab06a", "#d4a24e"],
+    name: "Goni Billa & the Sack Demon", nation: "Sri Lanka", region: "Sinhala village lore", type: "world", continent: "asia",
+    kind: "Night-Fright & Bogey",
+    creature: "Goni Billa — the sack-carrying demon who carries off children who stay out after dark",
+    place: "The dark lanes at the edge of the village, and the doorway every mother stands in",
+    theme: "The bogeyman as boundary: childhood ends at the edge of lamplight",
+    summary: "Sri Lankan children were long warned of Goni Billa, the demon with a sack who carries off those out after dark — a figure at once genuinely feared and affectionately remembered.",
+    long: "Every tradition has its night-fright, and Sri Lanka's is Goni Billa: a shaggy demon with a sack over his shoulder, who carries off children found outdoors after dark — so the sack, ominously, is for carrying. For generations the name alone ended games at dusk; one mention from a grandmother and every child was suddenly indoors. What makes him a delight to find is the double life he leads now — still a working threat in some villages, and at the same time a figure of nostalgic affection, appearing at festivals as a costumed memory of childhood fear itself.",
+    source: "Source: Sinhala bogeyman lore of Sri Lanka, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Bogeyman — the worldwide night-fright", note: "Wikipedia · the family Goni Billa belongs to", url: "https://en.wikipedia.org/wiki/Bogeyman" },
+      { title: "Folklore of Sri Lanka — an overview", note: "Wikipedia · the island's tale tradition", url: "https://en.wikipedia.org/wiki/Folklore_of_Sri_Lanka" }
+    ],
+    keywords: "sri lanka sinhala goni billa sack demon bogeyman child night dark village obscure"
+  },
+  {
+    id: "tarhunta", scene: "thunderbird", frame: "hiero", era: "Hittite empire · Bronze Age Anatolia, ~2nd millennium BCE",
+    obscure: true,
+    tint: ["#2e3444", "#8fa6c4", "#d4a24e"],
+    name: "Tarhunt & the Illuyanka", nation: "Türkiye (ancient Hatti)", region: "Hittite Anatolia · Bronze Age", type: "world", continent: "asia",
+    kind: "Storm God & Serpent",
+    creature: "Tarhunt, the Hittite storm god, and Illuyanka, the great serpent who defeated him",
+    place: "The holy city of Nerik and the Dark Earth beneath the world",
+    theme: "Storm and serpent locked in a battle fought twice — first lost, then won by trickery",
+    summary: "The Hittite storm god lost his first battle with the great serpent Illuyanka and his heart with it; he won the rematch only when his son and a wedding feast of drugged drink lulled the beast.",
+    long: "Long before the Greeks told of Zeus and Typhon, the Hittites of Bronze Age Anatolia told of Tarhunt, the storm god, and Illuyanka, the vast serpent who beat him in their first battle and took his eyes and heart. The god's revenge was a family affair: his daughter married the serpent's son, and at the wedding feast the household brought Illuyanka bowls of drink so rich that the serpent grew drunk and log-heavy — and Tarhunt, restored by his son-in-law's trickery, struck. The tale was performed each spring at the Puruli festival, a ritual re-enactment of storm defeating the dark. One of the oldest dragon-slaying myths ever written down.",
+    source: "Source: the Illuyanka myth of Hittite Anatolia, retold here in brief.",
+    refs: [
+      { title: "Illuyanka — the Hittite serpent", note: "Wikipedia · the Bronze Age dragon-fight", url: "https://en.wikipedia.org/wiki/Illuyanka" },
+      { title: "Hittite mythology — an overview", note: "Wikipedia · the lost tradition it comes from", url: "https://en.wikipedia.org/wiki/Hittite_mythology" }
+    ],
+    keywords: "hittite anatolia storm god serpent illuyanka tarhunt bronze age wedding feast dragon obscure"
+  },
+  {
+    id: "erlik", scene: "yeti", frame: "knot", era: "Turkic & Mongolian cosmology · steppe tradition",
+    obscure: true,
+    tint: ["#262c38", "#8fa6c4", "#d4a24e"],
+    name: "Erlik Khan & the First Death", nation: "Mongolia & Central Asia", region: "The steppe · Turkic-Mongol world", type: "world", continent: "asia",
+    kind: "Lord of the Underworld",
+    creature: "Erlik, the first being to sin, now king of the dark world below and father of death",
+    place: "The underworld of Turkic cosmology, reached through the world-tree's roots",
+    theme: "A rival creator who gave people death — and, in some tellings, drink and song",
+    long: "In the Turkic and Mongol cosmologies of the steppe, Erlik was present at the making of the world — a being of the first age who, in the old tellings, sinned against the creator and was cast down to rule the underworld beneath the roots of the world-tree. From there he is credited with the arrival of death among humankind, and with the temptations of the lower world. Yet steppe religion was never simple: Erlik's underworld has courts and peoples, and his daughters appear as helpful figures. He is a shadow-king of a kind Europe would recognise in Lucifer and Asia in the naga lords — a rival who lost the sky but kept the deep. Little known outside the steppe, which makes him a rare find.",
+    source: "Source: Erlik traditions of Turkic and Mongol cosmology, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Erlik — the lord below", note: "Wikipedia · the underworld king of the steppe", url: "https://en.wikipedia.org/wiki/Erlik" },
+      { title: "Tengrism — the steppe's sky religion", note: "Wikipedia · the cosmology he belongs to", url: "https://en.wikipedia.org/wiki/Tengrism" }
+    ],
+    keywords: "erlik mongolia turkic steppe underworld death world tree tengri rival creator obscure"
+  },
+  {
+    id: "banshee", scene: "spirits", frame: "knot", era: "Irish & Scottish Gaelic tradition · centuries old",
+    tint: ["#1c3230", "#5f8f8b", "#d4a24e"],
+    name: "The Banshee's Keen", nation: "Ireland & Scotland", region: "Gaelic world · the old families", type: "world", continent: "europe",
+    kind: "Death Messenger",
+    creature: "A woman of the otherworld whose unearthly wail announces a death in certain old families",
+    place: "The family's land at nightfall — heard from the water's edge or the hillside",
+    theme: "Grief given a voice that arrives before the news",
+    summary: "Certain old Irish families have long held that a banshee keens in the night when one of their own is dying — a woman of the otherworld, combing her hair and mourning in advance.",
+    long: "The banshee — bean sí, the woman of the fairy mounds — is not a killer but a mourner: she belongs to certain old Gaelic families, and when death is coming for one of their own, she keens in the night, a wail that those who have heard it never describe as anything but otherworldly. She appears as a young woman or an old crone, silver-haired, combing her hair with a silver comb (the folk warning against picking up stray combs exists for a reason). She is Ireland's most quietly devastating piece of folklore: grief so loyal to a family that it arrives before the news does.",
+    source: "Source: banshee traditions of Gaelic Ireland and Scotland, retold here in brief.",
+    refs: [
+      { title: "Banshee — the death messenger", note: "Wikipedia · the keening woman in full", url: "https://en.wikipedia.org/wiki/Banshee" },
+      { title: "Irish mythology — an overview", note: "Wikipedia · the tradition she belongs to", url: "https://en.wikipedia.org/wiki/Irish_mythology" }
+    ],
+    keywords: "banshee ireland scotland death keen wail family comb fairy woman gaelic"
+  },
+  {
+    id: "brownie", scene: "harvest", frame: "knot", era: "Scottish & English household lore · pre-industrial",
+    tint: ["#3c3424", "#9ab06a", "#d4a24e"],
+    name: "The Brownie's Wage", nation: "Scotland & England", region: "The Anglo-Scottish borderlands", type: "world", continent: "europe",
+    kind: "Household Spirit",
+    creature: "A small, shaggy, helpful spirit who does the farm chores at night in exchange for a bowl of cream",
+    place: "The byre, the threshing floor, and the hearth of an old farmhouse",
+    theme: "Help freely given wants only a freely given gift — name a price and it walks away",
+    summary: "Brownies did the chores at night for a bowl of cream; the moment a farmer tried to pay them in wages or clothes, they left forever.",
+    long: "The brownie is the domestic spirit of the old Anglo-Scottish countryside: a small, shaggy, brown figure who comes out at night to thresh the grain, tidy the byre, and finish the chores the household left undone. He asks nothing but a bowl of cream or a fresh-baked cake left by the hearth — and that nothing is a strict condition: the moment a farmer tried to reward him with wages, or worse, with a suit of clothes, the brownie took offence at being treated as a hired man and left the farm forever, sometimes ruining it on the way out. A quiet economics of gift-giving, told through a household sprite.",
+    source: "Source: brownie lore of Scotland and northern England, retold here in brief.",
+    refs: [
+      { title: "Brownie — the household spirit", note: "Wikipedia · the helpful sprite in full", url: "https://en.wikipedia.org/wiki/Brownie_(folklore)" },
+      { title: "Household deity — the worldwide family", note: "Wikipedia · home spirits across cultures", url: "https://en.wikipedia.org/wiki/Household_deity" }
+    ],
+    keywords: "brownie household spirit scotland england chores cream hearth farm clothes wages gift"
+  },
+  {
+    id: "midgard", scene: "serpent", frame: "knot", era: "Norse mythology · Poetic & Prose Edda, 13th century",
+    tint: ["#1c3040", "#5f8f8b", "#d4a24e"],
+    name: "Jörmungandr, the World Serpent", nation: "Iceland & Scandinavia", region: "The Norse cosmos · encircling Midgard", type: "world", continent: "europe",
+    kind: "World-Serpent",
+    creature: "Jörmungandr, a serpent so vast it encircles the whole world, tail in its own mouth",
+    place: "The outer ocean that rings Midgard, the world of humans",
+    theme: "The world held together by a monster — and the day it lets go is the last day",
+    summary: "The Norse gods threw the serpent-child Jörmungandr into the outer sea, where it grew until it encircled the earth; at the world's end, it and its old enemy Thor destroy each other.",
+    long: "When the gods took the monster-children of Loki, the serpent Jörmungandr was flung into the outer sea — where he grew until he circled the entire world and had to grasp his own tail in his mouth. He is the world's boundary and the world's hostage at once: so long as he holds on, the world holds together. Thor fished him up once with an ox-head hook and nearly ended the world early; the gods panicked and cut the line. At Ragnarök, the doom of the gods, the old enemies meet a final time — Thor kills the serpent, walks nine steps, and falls dead from its venom. The serpent that encircles the world appears in ocean-ringing form in myth after myth, but nowhere with such a final curtain.",
+    source: "Source: the Jörmungandr myth of the Norse Eddas, retold here in brief.",
+    refs: [
+      { title: "Jörmungandr — the world serpent", note: "Wikipedia · the encircler in full", url: "https://en.wikipedia.org/wiki/J%C3%B6rmungandr" },
+      { title: "Ragnarök — the world's end", note: "Wikipedia · the doom his release brings", url: "https://en.wikipedia.org/wiki/Ragnar%C3%B6k" }
+    ],
+    keywords: "norse world serpent jormungandr midgard ocean encircle ragnarok thor venom loki boundary"
+  },
+  {
+    id: "melusine", scene: "spirits", frame: "meander", era: "Medieval French romance · 14th century",
+    obscure: true,
+    tint: ["#2a2c3c", "#8a6fa8", "#d4a24e"],
+    name: "Mélusine & the Broken Promise", nation: "France", region: "Poitou · medieval romance tradition", type: "world", continent: "europe",
+    kind: "Serpent-Woman Bride",
+    creature: "Mélusine, a fairy wife who is half-serpent on Saturdays, and a husband who could not keep one promise",
+    place: "The castle of Lusignan, raised by her power in a single night",
+    theme: "A magical marriage held together by a single condition — and broken by one look",
+    summary: "The fairy Mélusine raised a castle overnight and bore her lord a dynasty, on one condition: he must never see her on a Saturday. He looked — and she turned serpent and flew from the window.",
+    long: "Raymond of Poitou met Mélusine by a forest spring and won her as his bride on one condition: that he never watch her on a Saturday. She raised the castle of Lusignan in a night and bore him ten sons, founding great houses of France — until rumor gnawed at him and he spied through the door on the forbidden day, and saw his wife bathing, a serpent from the waist down. When he later called her a serpent before the court, she took her wings, circled the castle three times as a dragon-woman, and flew away — fated to haunt the house's fortunes ever after. The Lusignan dynasty kept her as their founding mother, half monster, half ancestress, entirely unforgettable.",
+    source: "Source: the Mélusine romance of medieval France, retold here in brief.",
+    refs: [
+      { title: "Mélusine — the serpent fairy", note: "Wikipedia · the romance in full", url: "https://en.wikipedia.org/wiki/M%C3%A9lusine" },
+      { title: "Melusine's legacy in heraldry & legend", note: "Mythical & historical background", url: "https://www.britannica.com/topic/Melusine" }
+    ],
+    keywords: "france melusine fairy serpent wife saturday promise castle lusignan dragon obscure"
+  },
+  {
+    id: "kalevipoeg", scene: "hero", frame: "knot", era: "Estonian epic · compiled 19th c. from oral runo song",
+    obscure: true,
+    tint: ["#2c3a2c", "#9ab06a", "#d4a24e"],
+    name: "Kalevipoeg, the Stone-Thrower", nation: "Estonia", region: "Baltic · Estonian runo tradition", type: "world", continent: "europe",
+    kind: "National Giant-Hero",
+    creature: "Kalevipoeg, a giant hero-king who hurled boulders across Estonia and fought the underworld's sorcerers",
+    place: "The forests and bogs of Estonia, and the gates of the land of the dead",
+    theme: "A giant's strength cannot save him from his own words — a curse spoken in youth comes due",
+    summary: "The giant king Kalevipoeg cleared Estonia's land and warred with the underworld, but died by a curse of his own making: he had once cursed the sword that finally killed him.",
+    long: "Kalevipoeg, the son of the giant Kalev, grew huge and strong enough to plough with a sword and throw boulders that still sit in the Estonian landscape, each with his name on it in the local telling. He warred against the sorcerers of the underworld, walked into the land of the dead to argue with its rulers, and ruled his young country through strength and appetite. But in his youth he had cursed his own sword after it killed his brother — dooming whoever it next struck — and the curse, patient as curses are, waited. He stepped on the sword's edge in a shallow river, and the wound would not close. Estonia gathered his songs into a national epic in the 19th century, and he remains the landscape itself.",
+    source: "Source: the Kalevipoeg epic of Estonian runo song, retold here in brief.",
+    refs: [
+      { title: "Kalevipoeg — the Estonian epic", note: "Wikipedia · the national epic in full", url: "https://en.wikipedia.org/wiki/Kalevipoeg" },
+      { title: "Estonian folklore — an overview", note: "Wikipedia · the runo song tradition", url: "https://en.wikipedia.org/wiki/Estonian_folklore" }
+    ],
+    keywords: "estonia baltic giant hero kalevipoeg sword curse boulder underworld epic runo obscure"
+  },
+  {
+    id: "basilisk", scene: "fangs", frame: "meander", era: "Medieval bestiary lore · from Pliny to the alchemists",
+    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    name: "The Basilisk, King of Serpents", nation: "Medieval Europe", region: "The bestiaries & alchemical Europe", type: "world", continent: "europe",
+    kind: "Deadly Gaze",
+    creature: "A crowned serpent-king whose gaze kills, whose breath withers, and whose mere path poisons",
+    place: "The desert it renders barren, and the alchemist's laboratory seeking its ashes",
+    theme: "A creature whose danger is looking at all — defeated only by its own reflection",
+    summary: "The basilisk, crowned king of serpents, killed with a look; medieval lore held that a mirror turned its gaze back and destroyed it.",
+    long: "The basilisk entered European lore from classical natural history and grew more lethal with every retelling: a serpent crowned like a king, hatched — the bestiaries insisted — from a cock's egg brooded by a toad, small enough to miss and deadly beyond every larger beast. Its gaze killed, its breath split stone, and the ground it crossed stayed barren. It even poisoned the horse and rider who ran it through with a lance. The remedy the lore settled on was poetic: hold a mirror before it, and let the king of serpents be killed by his own look. Alchemists later claimed its ashes had power, keeping the creature alive in the laboratory imagination.",
+    source: "Source: basilisk lore of the European bestiary tradition, retold here in brief.",
+    refs: [
+      { title: "Basilisk — the serpent king", note: "Wikipedia · the monster in full", url: "https://en.wikipedia.org/wiki/Basilisk" },
+      { title: "Medieval bestiary — the books that carried him", note: "Wikipedia · where Europe kept its monsters", url: "https://en.wikipedia.org/wiki/Medieval_bestiary" }
+    ],
+    keywords: "basilisk serpent king gaze mirror cock egg toad poison medieval bestiary europe"
+  },
+  {
+    id: "rusalka", scene: "spirits", frame: "engraving", era: "Slavic folklore · pre-Christian river lore",
+    tint: ["#1c2c40", "#5f8f8b", "#d4a24e"],
+    name: "The Rusalka of the River", nation: "Slavic world", region: "Russia, Ukraine & the Slavic riverlands", type: "world", continent: "europe",
+    kind: "Water Maiden & Ghost",
+    creature: "A drowned maiden returned as a river spirit — water-weed for hair, and a fatal embrace",
+    place: "The willow-shaded rivers and mill-ponds of the Slavic countryside",
+    theme: "Grief and violence recycled into danger — the drowned girl who pulls others in",
+    summary: "Slavic rivers were said to host rusalki — drowned maidens who lure men to the water with song and laughter, and drown them in the cold.",
+    long: "The rusalka begins as tragedy: a young woman drowned — by betrayal, by violence, by her own despair — who returns as a river spirit, pale and lovely with green water-weed for hair. For one week each early summer, Rusalka Week, she leaves the water to sit in the trees and comb that hair, and any man who passes is drawn to her laughter and her song — and embraced to a cold death in the river. In older tellings she is a vengeful ghost; in later ones a tragic lover. Dvořák's opera made her famous as a yearning heroine, but the village lore behind it is colder: grief and violence recycled into danger.",
+    source: "Source: rusalka lore of the Slavic world, retold here in brief.",
+    refs: [
+      { title: "Rusalka — the drowned maiden", note: "Wikipedia · the spirit in full", url: "https://en.wikipedia.org/wiki/Rusalka" },
+      { title: "Slavic mythology — an overview", note: "Wikipedia · the tradition she swims in", url: "https://en.wikipedia.org/wiki/Slavic_mythology" }
+    ],
+    keywords: "rusalka slavic russia ukraine drowned maiden river water ghost comb song embrace willow"
+  },
+  {
+    id: "gnomes", scene: "hiddenfolk", frame: "engraving", era: "Alpine & Germanic mine lore · Paracelsian tradition",
+    obscure: true,
+    tint: ["#3c3428", "#9ab06a", "#d4a24e"],
+    name: "Kobolds of the Mine", nation: "Germany & the Alps", region: "The mine-shafts of the old Harz mountains", type: "world", continent: "europe",
+    kind: "Mine Spirits",
+    creature: "Kobolds — underground spirits who haunt mines: helpful house-gnomes or lethal gas, depending on their mood",
+    place: "The deep galleries of the Harz silver mines, and the hearth-corner of the farmhouse",
+    theme: "Naming the invisible dangers of the deep earth — and blaming them, too",
+    summary: "German miners blamed the kobold for foul air, cave-ins, and stolen ore — and named the toxic mineral 'cobalt' after it; at home the same spirit swept the floor.",
+    long: "German miners of the Harz mountains worked half a mile underground by candlelight, where the air could turn foul without warning, and they personified the deep earth's moods: the kobold, a small spirit of the rock who could be helpful or hateful. Ore that looked like silver but smelted to poison they called kobold's ore — and when chemistry grew up, the element kept the name: cobalt, named for a mine spirit. The same figure, domesticated, sat by farmhouse hearths and swept the floor for a crust of bread. From this sprite, through a long game of cultural telephone, the world got both the metal in your batteries and the gnomes of fairy-tale illustration.",
+    source: "Source: kobold mine- and house-lore of Germany, retold here in brief.",
+    refs: [
+      { title: "Kobold — the mine spirit", note: "Wikipedia · the spirit in full", url: "https://en.wikipedia.org/wiki/Kobold" },
+      { title: "Cobalt — the metal named for him", note: "Wikipedia · the element that keeps his name", url: "https://en.wikipedia.org/wiki/Cobalt" }
+    ],
+    keywords: "kobold germany mine spirit harz cobalt gas ore gnome house hearth alps obscure"
+  },
+  {
+    id: "yebo", scene: "crocodile", frame: "hiero", era: "Ancient Egypt · New Kingdom, ~13th century BCE",
+    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    name: "Sobek & the Nile's Favor", nation: "Egypt (ancient)", region: "Nile valley · Faiyum & Kom Ombo", type: "world", continent: "africa",
+    kind: "Crocodile God",
+    creature: "Sobek, the crocodile-headed god of the Nile's flood, power and protection",
+    place: "The Nile in flood, and the temple pools where sacred crocodiles were fed and jewelled",
+    theme: "The river's awesome power personified and honoured, so its gift keeps coming",
+    summary: "Ancient Egypt honoured Sobek, the crocodile god of the Nile flood: feared strength turned into protection, with sacred crocodiles kept in temple pools.",
+    long: "The Nile's flood was Egypt's life, and it arrived each year with a crocodile's mixture of abundance and menace. Sobek — the crocodile god, itself the flood's power — was honoured so that the river's strength would be protection rather than appetite. Temples kept sacred crocodiles in pools, fed them the best of offerings, and bedecked them with jewellery; mummified crocodiles by the thousand have been found at his cult centres. In the old hymns he is 'the Lord of the Waters' who made the vegetation green — a theology of the dangerous river: you do not tame the crocodile; you honour it, and it carries you.",
+    source: "Source: Sobek cult of ancient Egypt, retold here in the app's own words.",
+    refs: [
+      { title: "Sobek — the crocodile god", note: "Wikipedia · the god in full", url: "https://en.wikipedia.org/wiki/Sobek" },
+      { title: "Ancient Egyptian religion — an overview", note: "Wikipedia · the cosmology he belongs to", url: "https://en.wikipedia.org/wiki/Ancient_Egyptian_religion" }
+    ],
+    keywords: "egypt sobek crocodile god nile flood temple pool sacred mummy kom ombo faiyum"
+  },
+  {
+    id: "seth", scene: "thunderbird", frame: "hiero", era: "Ancient Egypt · pyramid-text era, ~3rd millennium BCE",
+    tint: ["#4a2420", "#b3492f", "#d4a24e"],
+    name: "Set & the Night Barque", nation: "Egypt (ancient)", region: "Nile valley · the eastern desert", type: "world", continent: "africa",
+    kind: "Storm God & Necessary Villain",
+    creature: "Set, god of storm, desert and disorder — murderer of his brother, and the only one who can fight off the serpent of the dark",
+    place: "The solar barque that crosses the night sky, where Set stands at the prow",
+    theme: "The power of chaos: a murderer by night's story, and the night's only defender",
+    summary: "Set murdered his brother Osiris and wars on order — yet each night he stands at the prow of the sun's barque, the only god strong enough to repel the chaos-serpent Apophis.",
+    long: "Set is Egyptian myth's great problem and its greatest necessity. He is disorder itself: storm, desert, the murderer of his brother Osiris, defeated at last by his nephew Horus. But the sun god Ra knew a truth the moralists could not escape: when the solar barque crosses the night sky, it is attacked by Apophis, the serpent of pure un-creation — and only Set, the strongest and most violent of the gods, can stand at the prow and drive the serpent back. Every night, chaos defends the world from a bigger chaos. Egypt never fully demonised him, because you cannot do without the desert's strength.",
+    source: "Source: the Set and Osiris myth-cycle of ancient Egypt, retold here in brief.",
+    refs: [
+      { title: "Set — the storm god", note: "Wikipedia · the god in full", url: "https://en.wikipedia.org/wiki/Set_(deity)" },
+      { title: "Osiris myth — the family tragedy", note: "Wikipedia · the story he drives", url: "https://en.wikipedia.org/wiki/Osiris_myth" }
+    ],
+    keywords: "egypt set seth storm desert chaos osiris horus apophis serpent night barque ra"
+  },
+  {
+    id: "mokele", scene: "serpent", frame: "engraving", era: "Congo basin lore · living tradition",
+    tint: ["#1c3226", "#5f8f8b", "#d4a24e"],
+    name: "Mokele-mbembe, River Elephant", nation: "Congo Republics", region: "Congo basin · the deep rivers", type: "world", continent: "africa",
+    kind: "River Monster",
+    creature: "A great river-beast of the Congo, described as elephant-bodied, long-necked, and hostile to hippos",
+    place: "The bend-pools and swamps of the Congo's deepest rivers",
+    theme: "The river's last secret — a place too deep and remote for anyone to have claimed certainty",
+    summary: "Congo river peoples tell of mokele-mbembe, a vast long-necked river-beast that capsizes boats and fears no hippo; explorers still argue about what it is.",
+    long: "In the river-pool stories of the Congo basin, mokele-mbembe — 'the one who stops the flow of rivers' — is described as huge, elephant-bodied, long-necked and long-tailed, somewhere between beast and monster. Local tellings agree that it dislikes hippos, capsizes canoes that intrude on its pools, and lives where the forest closes over the water. Outside explorers have spent a century trying to turn it into one thing or another — a surviving dinosaur was the fashion for a while — but the tale's real heart is older than any expedition: the deep river keeps its own animals, and humility near deep water is wise.",
+    source: "Source: mokele-mbembe river lore of the Congo basin, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Mokele-mbembe — the river beast", note: "Wikipedia · the legend and the searches", url: "https://en.wikipedia.org/wiki/Mokele-mbembe" },
+      { title: "Congo Basin — the forest that keeps him", note: "Wikipedia · the deepest river system", url: "https://en.wikipedia.org/wiki/Congo_Basin" }
+    ],
+    keywords: "congo mokele mbembe river monster elephant neck hippo canoe swamp lake tele"
+  },
+  {
+    id: "lightning", scene: "thunderbird", frame: "engraving", era: "Yoruba religion · living tradition, Nigeria & diaspora",
+    tint: ["#3a2c14", "#d4a24e", "#b3492f"],
+    name: "Ṣàngó, Thunder-King of Oyo", nation: "Nigeria & Benin", region: "Yoruba country · old Oyo empire", type: "world", continent: "africa",
+    kind: "Deified King & Thunder",
+    creature: "Ṣàngó, a king of Oyo deified as thunder itself — lightning-axe in hand, justice in his temper",
+    place: "The old capital of Oyo, and every thunderclap over Yoruba land",
+    theme: "A historical king remembered as a force of nature — power that must be just",
+    summary: "The Yoruba remember Ṣàngó, a king of old Oyo, as thunder itself: deified after his reign, his axe-heads fall as thunderstones and his cult of justice thrives from Nigeria to Brazil.",
+    long: "Ṣàngó is the great case of a king remembered as the weather. He ruled the old Oyo empire, and the tradition holds that after his reign — its end variously told as abdication or destruction — he did not die but became thunder, his voice in every storm. Thunderstones, the ancient polished axe-heads the ground gives up, are called his axe-heads and kept as objects of power. He is worshipped as much for justice as for force: a hot-tempered, dancing, righteous king whose cult travelled with the slave trade to Brazil and the Caribbean and thrives there still. History and thunderstorm, one figure.",
+    source: "Source: Ṣàngó traditions of Yoruba religion, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Ṣàngó — the thunder king", note: "Wikipedia · the god in full", url: "https://en.wikipedia.org/wiki/Shango" },
+      { title: "Yoruba religion — an overview", note: "Wikipedia · the tradition he rules in", url: "https://en.wikipedia.org/wiki/Yoruba_religion" }
+    ],
+    keywords: "yoruba nigeria sango shango thunder king oyo lightning axe thunderstone justice brazil"
+  },
+  {
+    id: "tokoloshe", scene: "hiddenfolk", frame: "engraving", era: "Southern African folklore · living tradition",
+    tint: ["#2c2a34", "#8a6fa8", "#d4a24e"],
+    name: "The Tokoloshe", nation: "South Africa & Zimbabwe", region: "Southern Africa · Zulu & wider Nguni lore", type: "world", continent: "africa",
+    kind: "Night Pestsprite",
+    creature: "A small, hairy, mischievous-to-malevolent water sprite, invisible to all but its victims and those with the sight",
+    place: "The space beneath the bed, and the riverbank where it is said to be made",
+    theme: "The unseen small danger — and why beds were raised on bricks",
+    summary: "Southern African lore tells of the tokoloshe, a small hairy night-sprite sent by the resentful to trouble households; beds were raised on bricks to sleep beyond its reach.",
+    long: "The tokoloshe is Southern Africa's small answer to a large question: why do misfortunes visit one house and not another? A short, hairy, grotesquely endowed water-sprite, made by those skilled in such work and sent to trouble a victim — stealing food, souring milk, frightening sleepers, bringing illness and bad luck. Only its victim and those with the gift of second sight can see it. The famous practical response was to raise the bed on bricks: the tokoloshe, being short, could then not reach the sleeper. Whether one reads it as spirit or as the shape resentment takes between neighbours, it remains one of the region's most living beliefs.",
+    source: "Source: tokoloshe lore of Southern Africa, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Tokoloshe — the night sprite", note: "Wikipedia · the belief in full", url: "https://en.wikipedia.org/wiki/Tokoloshe" },
+      { title: "Zulu mythology — an overview", note: "Wikipedia · the tradition it comes from", url: "https://en.wikipedia.org/wiki/Zulu_mythology" }
+    ],
+    keywords: "tokoloshe south africa zulu night sprite water bed bricks invisible mischief"
+  },
+  {
+    id: "hamrammr", scene: "yeti", frame: "engraving", era: "Ethiopian & medieval European lore · merged traditions",
+    obscure: true,
+    tint: ["#3c3428", "#9ab06a", "#d4a24e"],
+    name: "The Bouda & the Were-Hyena", nation: "Ethiopia, Sudan & North Africa", region: "Horn of Africa · the wider Islamic world", type: "world", continent: "africa",
+    kind: "Were-Beast",
+    creature: "Bouda — humans who shift into hyenas by night, a legend that clings to real outcast groups",
+    place: "The edge of the village at dusk, where laughter that is not human crosses the dark",
+    theme: "The werewolf's African cousin — fear of the night predator, cast onto the outsider",
+    summary: "Across the Horn of Africa and the Islamic world run stories of bouda: people who become hyenas by night; the label has too often been thrown at real outcast communities.",
+    long: "Where Europe had the werewolf, North-East Africa and the wider Islamic world had the bouda: a person — often a blacksmith, a potter, an outsider — who slips into hyena shape by night and returns by dawn. The hyena is the perfect protagonist for this fear: a real night animal with a laugh that sounds human and a taste for the buried and the abandoned. Ethiopian, Sudanese, and North African tellings agree on the essentials and add cures and detection tricks. The dark side is historical: the label has been used against real marginal artisan groups, like Ethiopia's Buduma, making the legend a case study in how monsters are made out of neighbours.",
+    source: "Source: were-hyena lore of the Horn of Africa and Islamic world, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Werehyena — the African werewolf", note: "Wikipedia · the shape-shifter in full", url: "https://en.wikipedia.org/wiki/Werehyena" },
+      { title: "Hyena — the real animal behind it", note: "Wikipedia · the laugher herself", url: "https://en.wikipedia.org/wiki/Hyena" }
+    ],
+    keywords: "ethiopia sudan bouda werehyena hyena shapeshift blacksmith outcast night islamic obscure"
+  },
+  {
+    id: "anzil", scene: "spirits", frame: "hiero", era: "Madagascar highland lore · living tradition",
+    obscure: true,
+    tint: ["#1c2c26", "#5f8f8b", "#d4a24e"],
+    name: "The Kalanoro of the Forest", nation: "Madagascar", region: "Highland Madagascar · the eastern rainforest", type: "world", continent: "africa",
+    kind: "Little Forest People",
+    creature: "Kalanoro — short, wild-haired forest dwellers with backward feet, who trade fish and steal children's breath",
+    place: "The rainforest interior of Madagascar, where the trails disappear",
+    theme: "The island's first people remembered as spirits — meetings end in trade or loss",
+    summary: "Madagascar's forests are said to shelter the kalanoro: small wild people with backward-pointing feet who trade miraculous catches of fish and must be treated with wary courtesy.",
+    long: "Madagascar's highland tellings speak of the kalanoro: a people barely a metre tall, hair to the ground, feet pointing backward so their tracks can never be followed. They live deep in the eastern rainforest, near waterfalls; they fish by night, and their baskets come up impossibly full. A kalanoro may trade with a human who shows proper respect — a single fish from their basket feeding a household — but rudeness or curiosity about their feet ends the luck forever. Many Malagasy connect them with the island's first inhabitants, the hunter-gatherers who lived there before the ancestors of today's peoples arrived — history remembered as enchantment.",
+    source: "Source: kalanoro lore of highland Madagascar, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Kalanoro — the forest people", note: "Wikipedia · Madagascar's little people in brief", url: "https://en.wikipedia.org/wiki/Kalanoro" },
+      { title: "Malagasy mythology — an overview", note: "Wikipedia · the island's spirit world", url: "https://en.wikipedia.org/wiki/Malagasy_mythology" }
+    ],
+    keywords: "madagascar kalanoro forest little people backward feet fish rainforest waterfall obscure"
+  },
+  {
+    id: "papatuanuku", scene: "spirits", frame: "tapa", era: "Māori creation tradition · Aotearoa",
+    tint: ["#1c3a2c", "#5f8f8b", "#d4a24e"],
+    name: "Rangi & Papa, Sky and Earth", nation: "Aotearoa New Zealand", region: "Māori creation tradition", type: "world", continent: "oceania",
+    kind: "Creation Parents",
+    creature: "Ranginui the Sky Father and Papatūānuku the Earth Mother, locked in an embrace",
+    place: "The narrow dark between their bodies, where all their children lived",
+    theme: "The world begins as the space won by children from their parents' embrace",
+    summary: "Sky and Earth lay locked together in the dark, their children crowded between them — until Tāne pushed them apart, letting light into the world and grief into the family.",
+    long: "In the Māori telling, the world's first state was darkness: Ranginui the sky and Papatūānuku the earth lay clasped together, and their children — gods of forest, sea, wind, war and peace — lived in the narrow dark between them. The children argued until Tāne, god of the forest, lay on his back and pushed his father upward with his feet, tearing the parents apart and letting light into the world. Tāwhirimātea, god of winds, disagreed so violently that he attacked his siblings with storms forever — which is why the wind hates the forest. Creation here is not a craft project but a family story: light won at the cost of a mother's grief.",
+    source: "Source: the Rangi and Papa creation tradition of Māori Aotearoa, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Rangi and Papa — the embracing parents", note: "Wikipedia · the creation story in full", url: "https://en.wikipedia.org/wiki/Rangi_and_Papa" },
+      { title: "Māori mythology — an overview", note: "Wikipedia · the tradition it opens", url: "https://en.wikipedia.org/wiki/M%C4%81ori_mythology" }
+    ],
+    keywords: "maori new zealand rangi papa sky earth creation tane light dark separation parents"
+  },
+  {
+    id: "maui-potiki", scene: "hiddenfolk", frame: "tapa", era: "Māori tradition · Aotearoa",
+    obscure: true,
+    tint: ["#26342c", "#9ab06a", "#d4a24e"],
+    name: "Pātiki & the Flounder's Revenge", nation: "Aotearoa New Zealand", region: "Coastal Māori tradition", type: "world", continent: "oceania",
+    kind: "Just-So Shape Tale",
+    creature: "The flounder, flattened by Māui's blow, and the snapper that escaped untouched",
+    place: "The shallow coastal waters of Aotearoa",
+    theme: "Why fish are shaped as they are — every animal carries the memory of a story",
+    summary: "Māori tradition explains the flat flounder and the deep-bodied snapper by one of the hero's temper tantrums: the fish he struck stays flat to this day.",
+    long: "A small and delightful piece of coastal Māori tradition answers a child's question — why is the flounder flat? — with a story: the trickster hero, in one telling annoyed by the flounder's taste or insolence, smacked it flat with his hand, and it has lain sideways on the seabed ever since, both eyes migrating to escape the sand. The snapper, which kept out of his way, kept its proud deep body. These little 'just-so' endings matter: they tie the shape of every fish on the table to the doings of the old heroes, making the whole coast a book that can be read at dinner.",
+    source: "Source: coastal Māori just-so tellings, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Māui — the troublemaker", note: "Wikipedia · the hero of the coast's tales", url: "https://en.wikipedia.org/wiki/M%C4%81ui_(M%C4%81ori_mythology)" },
+      { title: "Flounder — the flattened one", note: "Wikipedia · the fish the story explains", url: "https://en.wikipedia.org/wiki/Flounder" }
+    ],
+    keywords: "maori flounder snapper shape just so flat fish maui coastal revenge obscure"
+  },
+  {
+    id: "pele", scene: "fangs", frame: "tapa", era: "Hawaiian tradition · living volcano goddess",
+    tint: ["#4a1e14", "#b3492f", "#d4a24e"],
+    name: "Pele & the Snow Queen", nation: "Hawai'i (USA)", region: "Big Island · Kīlauea's fire pits", type: "world", continent: "oceania",
+    kind: "Volcano Goddess",
+    creature: "Pele, the volcano goddess of Hawai'i, temper and fire in person, who takes lovers and buries villages",
+    place: "Kīlauea's crater, and the slopes of Mauna Loa where her sister's snows hold the line",
+    theme: "Fire against ice on one island: the eternal quarrel of the volcano and the mountain snow",
+    summary: "Pele, Hawai'i's volcano goddess, wars with her snow-goddess sister Poliahu across the Big Island's heights — and demands offerings of gin and flowers to this day.",
+    long: "Pele is the living heart of the Big Island: the goddess of the volcano, whose temper is the eruption, whose hair is the lava strand still called Pele's hair, whose tears are the black glass the mountain weeps. Chant tradition gives her a whole biography — born in the distant south, driven across the Pacific by an older sister, settling at last in Kīlauea — and an eternal quarrel with Poliahu, the snow goddess of Mauna Kea, whose white summit is the high ground fire has never kept. To this day, visitors leave offerings at her crater, and more than one has mailed volcanic rock back to the islands with letters of apology after learning what happens to those who take from Pele.",
+    source: "Source: Pele traditions of Hawai'i, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Pele — the volcano goddess", note: "Wikipedia · the goddess in full", url: "https://en.wikipedia.org/wiki/Pele_(deity)" },
+      { title: "Kīlauea — her home fire", note: "Wikipedia · the volcano she lives in", url: "https://en.wikipedia.org/wiki/K%C4%ABlauea" }
+    ],
+    keywords: "hawaii pele volcano goddess fire lava poliahu snow mauna kea kilauea offering"
+  },
+  {
+    id: "tanarua", scene: "spirits", frame: "tapa", era: "Melanesian kastom tradition · living",
+    tint: ["#1a2e36", "#5f8f8b", "#d4a24e"],
+    name: "The Tamate & the Masked Spirits", nation: "Vanuatu", region: "Islands of Vanuatu · Malekula", type: "world", continent: "oceania",
+    kind: "Masked Ancestor Spirits",
+    creature: "Tamate — masked spirit-beings who emerge from the men's enclosure to dance, judge, and collect",
+    place: "The village dancing ground, where the masks emerge and every child suddenly remembers its manners",
+    theme: "The mask is not pretending to be a spirit; in the dance, it is one",
+    summary: "In Vanuatu, masked tamate spirits emerge from the men's house to dance and to enforce custom: debts are paid and wrongs righted while the masks are out.",
+    long: "In the kastom of Vanuatu's islands, the tamate are not figures of mere theatre: the mask, when danced with the right songs, IS the spirit — an ancestor presence come out of the men's enclosure to walk the village. The carved and painted faces, with towering headdresses of fibre and shell, appear at grade-taking ceremonies and funerals; debts are settled, fines collected, and children sternly reformed while the masks stand by. The masked dancer does not pretend; he is taken over. It is theatre in the oldest, most serious sense — special effects achieved entirely by belief and craft.",
+    source: "Source: tamate mask traditions of Vanuatu, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Vanuatu cultural traditions", note: "Wikipedia · the kastom world of the islands", url: "https://en.wikipedia.org/wiki/Vanuatu" },
+      { title: "Melanesian mythology — an overview", note: "Wikipedia · the region's spirit world", url: "https://en.wikipedia.org/wiki/Melanesian_mythology" }
+    ],
+    keywords: "vanuatu tamate mask spirit dance ancestor men house kastom malekula melanesia"
+  },
+  {
+    id: "debena", scene: "harvest", frame: "tapa", era: "Papuan origin tradition · highlands lore",
+    tint: ["#2c381e", "#9ab06a", "#d4a24e"],
+    name: "The First Pig Feast", nation: "Papua New Guinea", region: "Papua New Guinea highlands", type: "world", continent: "oceania",
+    kind: "Origin of the Feast",
+    creature: "An ancestor woman who kept the first pigs, and the exchange that made society",
+    place: "The highland valleys where pigs are wealth and feasts are history",
+    theme: "Society is built by giving away what matters most",
+    summary: "Highland Papua New Guinea tells how the first pigs came to humankind through an ancestor woman's gift — and why wealth still begins and ends in the feast.",
+    long: "In the highland tellings of Papua New Guinea, pigs are not merely livestock but the original wealth: bride-price, peace-price, and the currency of reputation. The origin stories tell of how the first pigs came to humans — often through an ancestor woman who kept them in the ground or in the forest, and whose gift or loss established the bond. From that first gift flows the whole highland system: pigs are raised with names and affection for years, then given away in vast ceremonial exchanges where a man's standing rises with what he can afford to lose. A myth of economics: wealth is real only when given.",
+    source: "Source: highland Papua New Guinea origin tellings, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Papua New Guinean traditions", note: "Wikipedia · the highlands and their exchanges", url: "https://en.wikipedia.org/wiki/Papua_New_Guinea" },
+      { title: "Moka exchange — the gift economy", note: "Wikipedia · the feast system the story founds", url: "https://en.wikipedia.org/wiki/Moka_exchange" }
+    ],
+    keywords: "papua new guinea pig feast origin gift exchange highland moka wealth bride price"
+  },
+  {
+    id: "matuku", scene: "crocodile", frame: "tapa", era: "Māori & wider Polynesian hero cycles",
+    obscure: true,
+    tint: ["#1c3430", "#5f8f8b", "#d4a24e"],
+    name: "The Taniwha of the Deep Pools", nation: "Aotearoa New Zealand", region: "Rivers & harbours of Aotearoa", type: "world", continent: "oceania",
+    kind: "Water Guardian Beast",
+    creature: "Taniwha — great water-beings of river bend and harbour deep, guardian to their own people, terror to others",
+    place: "The deep pools of the Waikato and the harbour caves of the coast",
+    theme: "A powerful beast bound by kinship: protective to the tribe that honours it, hungry for strangers",
+    summary: "Taniwha are great water guardians of Māori tradition: each tied to a river or harbour, protective of their own people and dangerous to those who arrive without right relationship.",
+    long: "The taniwha are the great water-beings of Māori tradition — serpent, shark, or log-like monsters living in the deepest pools and sea caves, each bound to a particular stretch of water and to the people of that place. For their own people they are guardians: a taniwha might carry a chiefly child across a flooded river, or guard a fishing ground. For strangers or the disrespectful they are drowned and eaten. When a modern highway was rerouted around a taniwha's pool in the 1990s, the country had a genuine public debate about it — the old guardianship still carries weight. A rare case of a mythic being with a continuing role in a nation's planning law.",
+    source: "Source: taniwha traditions of Māori Aotearoa, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Taniwha — the water guardian", note: "Wikipedia · the beings in full", url: "https://en.wikipedia.org/wiki/Taniwha" },
+      { title: "Māori mythology — an overview", note: "Wikipedia · the tradition they swim in", url: "https://en.wikipedia.org/wiki/M%C4%81ori_mythology" }
+    ],
+    keywords: "taniwha new zealand water guardian river harbour pool maori waikato protection obscure"
+  },
+  {
+    id: "rom", scene: "hero", frame: "tapa", era: "Aboriginal Australian songline tradition · living",
+    obscure: true,
+    tint: ["#4a3020", "#d4a24e", "#b3492f"],
+    name: "The Seven Sisters Across the Sky", nation: "Australia (Aboriginal)", region: "Desert songlines · across the continent", type: "world", continent: "oceania",
+    kind: "Chased Stars",
+    creature: "Seven sisters fleeing an unwanted pursuer — as the Pleiades fleeing the hunter Orion's world-counterpart",
+    place: "The night sky and, on earth, a songline of rock and waterhole stretching across the whole continent",
+    theme: "The night sky as a story of escape — read into the ground, a songline of survival",
+    summary: "Across Aboriginal Australia, the Pleiades are seven sisters fleeing a pursuer: the story is sung as a songline binding sky to rock to waterhole across thousands of kilometres.",
+    long: "One of the most widely shared story systems on earth: across many Aboriginal nations, the Pleiades star cluster is the Seven Sisters, young women fleeing the unwanted desire of a pursuer (as the belt of Orion chases them across the sky). The story is not only in the stars: it is mapped onto the land as a songline — a chain of rock formations, hills, and waterholes, each a footprint of the flight — which connects languages and countries across thousands of kilometres of desert. Sing the story in sequence and you have walked a continent. It is also, by the standards of geology, ancient: some researchers link the story's 'land-shaped' elements to landscape features over 10,000 years old, making it a candidate for the oldest continuously told story on earth.",
+    source: "Source: Seven Sisters songline traditions of Aboriginal Australia, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Pleiades in folklore — the chased sisters", note: "Wikipedia · the world's Pleiades stories", url: "https://en.wikipedia.org/wiki/Pleiades_in_folklore" },
+      { title: "Songlines — the singing paths", note: "Wikipedia · how the land carries the story", url: "https://en.wikipedia.org/wiki/Songline" }
+    ],
+    keywords: "australia aboriginal seven sisters pleiades songline orion desert sky waterhole obscure"
+  },
+  {
+    id: "netat", scene: "hiddenfolk", frame: "tapa", era: "Micronesian island lore · living",
+    tint: ["#1a2a3c", "#5f8f8b", "#d4a24e"],
+    name: "Sop of Nan Madol", nation: "Micronesia", region: "Pohnpei · the ruins of Nan Madol", type: "world", continent: "oceania",
+    kind: "City of Stone",
+    creature: "Two brother-builders, Olisihpa and Olosohpa, who levitated the basalt of a floating city",
+    place: "Nan Madol — the megalithic canal-city of Pohnpei, 'the Venice of the Pacific'",
+    theme: "A stone city built by magic, ruined and reclaimed by the sea and the spirits",
+    summary: "Pohnpei's tellings credit the vast stone city of Nan Madol to two brothers who made the basalt fly into place — a city of priest-kings, now haunted and half-drowned.",
+    long: "Nan Madol is real and astonishing: a city of basalt log-columns stacked into temples and tombs on coral reefs and islets, the ancient ceremonial capital of Pohnpei's kings. The oral tradition answers the obvious question — how? — with two brothers, Olisihpa and Olosohpa, who arrived in a great canoe and made the stones fly into place by magic, establishing the priest-king line that ruled from there for centuries. The site's off-limits areas are still treated as the home of spirits; the last priest-king, the Nahnmwarki, abandoned it for water reasons the ruin still demonstrates. A place where the archaeology and the magic tellings lean on each other.",
+    source: "Source: Nan Madol traditions of Pohnpei, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Nan Madol — the stone city", note: "Wikipedia · the real ruins the story explains", url: "https://en.wikipedia.org/wiki/Nan_Madol" },
+      { title: "Pohnpei — the island", note: "Wikipedia · the culture that built and remembers it", url: "https://en.wikipedia.org/wiki/Pohnpei" }
+    ],
+    keywords: "micronesia pohnpei nan madol stone city basalt magic brothers canal pacific venice"
+  },
+  {
+    id: "elal", scene: "hero", frame: "engraving", era: "Patagonian Tehuelche tradition · southern tip of the Americas",
+    tint: ["#2a3444", "#c9d6e4", "#d4a24e"],
+    name: "Elal, the Child of the Chosen", nation: "Argentina & Chile (Tehuelche)", region: "Patagonia · the far south", type: "world", continent: "americas",
+    kind: "Culture Hero Child",
+    creature: "Elal, a miraculous child raised by animals, who gave the Tehuelche their world",
+    place: "The summit of the hill Tecka, where he was hidden as a baby, and the Patagonian steppe",
+    theme: "A hero raised by the animals who then teaches humans to live with them",
+    summary: "The Tehuelche hero Elal, hidden as a baby on a mountain and raised by animals, returned to give humankind fire, the bow, and the rules of the hunt.",
+    long: "The Tehuelche of Patagonia tell of Elal, a child of miraculous birth whose jealous uncles meant to kill him; the ostrich ñandú carried the baby to the summit of the hill Tecka, where the wind sheltered him and animals raised him. When he grew, Elal came down to the people with gifts: fire, the bow and arrow, the guanaco herds, and — crucially — the rules of the hunt, taught to him by the animals themselves, which is why the hunt must respect its prey. In the far south, where the world runs out into wind and ice, the culture hero is not a warrior but an adopted son of the animals.",
+    source: "Source: Elal traditions of the Tehuelche of Patagonia, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Elal — the Patagonian hero", note: "Wikipedia · the culture hero in brief", url: "https://en.wikipedia.org/wiki/Elal" },
+      { title: "Tehuelche people — the tellers", note: "Wikipedia · the people of the far south", url: "https://en.wikipedia.org/wiki/Tehuelche_people" }
+    ],
+    keywords: "patagonia elal tehuelche child animals fire bow hunt guanaco steppe argentina chile"
+  },
+  {
+    id: "wendingo", scene: "yeti", frame: "engraving", era: "Algonquian winter lore · northern forests",
+    tint: ["#22303c", "#c9d6e4", "#d4a24e"],
+    name: "The Wendigo of the Winter Hunger", nation: "Canada & USA (Algonquian peoples)", region: "Northern forests · the subarctic winter", type: "world", continent: "americas",
+    kind: "Hunger Spirit",
+    creature: "The wendigo — a gaunt giant of the deep winter, grown from a human who resorted to cannibalism",
+    place: "The snowed-in winter camp, where hunger is a moral test",
+    theme: "The monster is the neighbour who ate — hunger as moral danger, cannibalism as transformation",
+    summary: "Algonquian tradition warns of the wendigo: a person who eats human flesh in famine becomes a gaunt, heart-of-ice giant, ever-hungrier the more it eats.",
+    long: "Among the Algonquian peoples of the northern forests, the wendigo is winter's own moral: the human who, in famine, eats human flesh becomes something else — gaunt and towering, lips chewed away, heart turned to ice, and cursed with a hunger that grows the more it feeds. The wendigo is never satisfied; the eating that saved it damns it. The story encodes the subarctic's hardest law: in the worst winter, the community holds together or the alternative is not survival but transformation. It is also the rare monster used as a medical metaphor: 'wendigo psychosis,' the historical term for a craving to eat human flesh during famine, entered the psychiatric literature from these tellings.",
+    source: "Source: wendigo lore of the Algonquian peoples, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Wendigo — the winter hunger", note: "Wikipedia · the being in full", url: "https://en.wikipedia.org/wiki/Wendigo" },
+      { title: "Algonquian peoples — the tellers", note: "Wikipedia · the nations of the northern forests", url: "https://en.wikipedia.org/wiki/Algonquian_peoples" }
+    ],
+    keywords: "wendigo winter hunger cannibalism giant ice algonquian canada forest famine monster"
+  },
+  {
+    id: "kachina", scene: "drums", frame: "greca", era: "Pueblo ceremonial tradition · living, the US Southwest",
+    tint: ["#3a2418", "#d4a24e", "#b3492f"],
+    name: "The Katsina Rain-Bringers", nation: "USA (Pueblo peoples)", region: "Hopi & Zuni country · the desert Southwest", type: "world", continent: "americas",
+    kind: "Rain Spirits",
+    creature: "Katsinam — spirit beings of rain and growth, who come as masked dancers to the plaza",
+    place: "The kiva and the plaza of the desert pueblo, at the season of the summer rains",
+    theme: "Survival in the desert depends on respect — the rain comes to those who dance it into being",
+    summary: "In the Pueblo Southwest, the katsinam are rain and ancestral spirits who come each year as masked dancers; their ceremonies call the monsoon that the desert lives on.",
+    long: "In the high desert of the American Southwest, where life hangs on the summer monsoon, the Hopi and Zuni pueblos know the katsinam: spirit beings of rain, clouds, and growth, part ancestor and part weather. For half the year the katsinam are present in the villages as masked dancers — men become the spirits in ceremony, not pretending but embodying them — blessing children, calling the clouds, teaching by clowning. Then they return to the mountains until next season. The dolls carved for children, the katsina figures, are not toys but lessons: the whole desert economy of respect — that rain is a relationship, not a resource — made visible in cottonwood root and paint.",
+    source: "Source: katsina traditions of the Pueblo peoples, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Hopi katsina tradition", note: "Wikipedia · the ceremonial year in full", url: "https://en.wikipedia.org/wiki/Hopi_Kachina_tradition" },
+      { title: "Hopi people — the keepers of the ceremony", note: "Wikipedia · the pueblo that dances the rain", url: "https://en.wikipedia.org/wiki/Hopi" }
+    ],
+    keywords: "hopi zuni pueblo katsina kachina rain spirit masked dancer kiva monsoon desert southwest"
+  },
+  {
+    id: "curupira", scene: "hiddenfolk", frame: "greca", era: "Tupi-Guarani forest lore · Amazon & Atlantic forest",
+    tint: ["#1c3222", "#9ab06a", "#d4a24e"],
+    name: "The Curupira, Backward Feet", nation: "Brazil", region: "Amazon & Atlantic forests", type: "world", continent: "americas",
+    kind: "Forest Guardian",
+    creature: "A small, fiery-haired forest protector whose feet point backward, to confuse hunters",
+    place: "The deep forest paths of Brazil, where footprints lie",
+    theme: "The forest protects itself: follow its guardian's tracks and you are walking exactly wrong",
+    summary: "Brazil's forests are guarded by the curupira, a flame-haired being whose backward feet turn tracking into ruin — hunters who take more than they need are led astray to die.",
+    long: "The curupira is the Brazilian forest's own answer to greed: a small, quick being, sometimes child-sized, hair like fire or like flame-red leaves, and — the famous detail — feet that point backward. Hunters following his tracks are led precisely away from anywhere useful; those who overhunt or abuse the forest are led in circles until they are lost and, in the hard tellings, dead. He whistles to mislead, protects mothers with new babies in the woods, and can be appeased with offerings left in the forest. In 2017, a Brazilian government agency officially classified the curupira as a protected species of folklore — the forest guardian now has legal standing.",
+    source: "Source: curupira lore of Brazil's Tupi-Guarani tradition, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Curupira — the backward-footed guardian", note: "Wikipedia · the forest protector in full", url: "https://en.wikipedia.org/wiki/Curupira" },
+      { title: "Brazilian folklore — an overview", note: "Wikipedia · the forest tradition he rules", url: "https://en.wikipedia.org/wiki/Brazilian_folklore" }
+    ],
+    keywords: "brazil curupira forest guardian backward feet hunter fire hair tupi guarani amazon"
+  },
+  {
+    id: "el-dorado", scene: "pumpkin", frame: "greca", era: "Muisca ceremony · transformed by conquest-era legend",
+    tint: ["#2c3020", "#d4a24e", "#5f8f8b"],
+    name: "The Golden One of Lake Guatavita", nation: "Colombia (Muisca)", region: "The highland lakes of the Andes", type: "world", continent: "americas",
+    kind: "Rite of Gold",
+    creature: "A zipa — Muisca chief — painted in gold dust, who plunged into a sacred lake",
+    place: "Lake Guatavita, high in the Colombian Andes",
+    theme: "A real ceremony that became a conquistador's fever-dream of a city of gold",
+    summary: "The Muisca rite of the gilded chief — a leader dusted in gold who offered treasure to the sacred lake — grew in European telling into El Dorado, the lost city of gold.",
+    long: "At the heart of the El Dorado legend is a real ceremony of the Muisca people of the Colombian highlands: on taking office, a chief — the zipa — was stripped, dusted head to foot with gold, floated on a raft to the centre of the circular sacred lake Guatavita, and plunged in as emeralds and gold offerings rained into the water around him. The conquistadors heard 'gilded man' and multiplied it into a city of gold, draining the lake (still visible scars), dying in the llanos, chasing the reflection of a rite they never understood. The Muisca truth is quieter and stranger: gold, to them, was not wealth but the sun's substance, returned to the water where it belonged.",
+    source: "Source: the Muisca raft ceremony at Lake Guatavita and its El Dorado afterlife, retold here in brief.",
+    refs: [
+      { title: "El Dorado — the legend and its origin", note: "Wikipedia · from Muisca rite to conquistador fever", url: "https://en.wikipedia.org/wiki/El_Dorado" },
+      { title: "Lake Guatavita — the sacred lake", note: "Wikipedia · the lake that held the offerings", url: "https://en.wikipedia.org/wiki/Lake_Guatavita" }
+    ],
+    keywords: "colombia muisca el dorado gold lake guatavita chief raft offering andes conquistador"
+  },
+  {
+    id: "sasquatch", scene: "yeti", frame: "engraving", era: "Pacific Northwest & continental indigenous lore · living",
+    tint: ["#26322a", "#9ab06a", "#d4a24e"],
+    name: "SSásq'ets, the Hairy Giant of the Woods", nation: "Canada & USA (Coast Salish & many nations)", region: "Pacific Northwest · the great forests", type: "world", continent: "americas",
+    kind: "Forest Giant",
+    creature: "Sasquatch — a tall, hair-covered being of the deep woods, known to many Indigenous nations under many names",
+    place: "The old-growth forests of the Pacific Northwest, at the edge of the logging roads",
+    theme: "The wild country's last privacy — a being that exists wherever people still need it to",
+    summary: "Long before 'Bigfoot,' Coast Salish and neighbouring nations told of Sasquatch — a tall, powerful, hair-covered being of the deep forest, best left in peace.",
+    long: "The being the world calls Bigfoot has older names and older manners: sSásq'ets in the Sts'ailes and Halq'emeylem telling, and kin-names in languages up and down the coast and across the continent — a tall, hair-covered, powerful being of the deep woods, associated with the smell of rot, with stone-piles, with a gift for not being found. In many traditional tellings Sasquatch is not a monster but a neighbour of a different order: gifted, sometimes a spirit-being, occasionally dangerous to the disrespectful, and always to be treated with the courtesy due anyone met alone in the bush. The Sts'ailes Nation holds him as a guardian of their territory — a being whose meaning is 'wildness's own privacy' rather than a zoological question.",
+    source: "Source: Sasquatch traditions of the Coast Salish and neighbouring peoples, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Sasquatch — the being and the tradition", note: "Wikipedia · the legend and its Indigenous roots", url: "https://en.wikipedia.org/wiki/Sasquatch" },
+      { title: "Sts'ailes people — the nation of the name", note: "Wikipedia · the people whose guardian he is", url: "https://en.wikipedia.org/wiki/Sts%27ailes" }
+    ],
+    keywords: "sasquatch bigfoot forest giant coast salish pacific northwest stsailes hairy woods guardian"
+  },
+  {
+    id: "estrela", scene: "moon", frame: "greca", era: "Andean highland tradition · living",
+    obscure: true,
+    tint: ["#1a2c3a", "#5f8f8b", "#d4a24e"],
+    name: "The Llama Constellation", nation: "Peru, Bolivia & Ecuador (Andean peoples)", region: "Andes · the high puna", type: "world", continent: "americas",
+    kind: "Sky Herd",
+    creature: "A great dark llama in the sky — the 'dark cloud constellation' of the Milky Way — mother to a baby llama",
+    place: "The Milky Way's dark patches, and the high Andean pastures under them",
+    theme: "Read the sky's dark places, not its lights: the black between stars is a sacred animal",
+    summary: "Andean tradition sees the dark patches of the Milky Way as a great Llama — the sky-herd whose movements tell the seasons, with a baby llama at her side.",
+    long: "Where most traditions drew their constellations from bright stars, the Andean world read the darkness: the black blotches of the Milky Way form a great Llama — Yacana — walking the sky river, a baby llama beside her, a shepherd and a toad nearby. Her risings and settings timed the year: when the celestial llama descends toward the horizon in the dry season, she is thirsty, and she drinks from the mountain springs — which is why shepherds still guide their animals to drink at that time, to share the sky-llama's blessing and ensure the herds multiply. The eyes of the dark llama were also a place of power. A whole astronomy read from the spaces between the stars.",
+    source: "Source: dark-cloud constellation traditions of the Andes, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Dark cloud constellation — the sky's black shapes", note: "Wikipedia · how the Andes read the Milky Way", url: "https://en.wikipedia.org/wiki/Dark_cloud_constellation" },
+      { title: "Inca astronomy — the sky system", note: "Wikipedia · the cosmology it belongs to", url: "https://en.wikipedia.org/wiki/Inca_astronomy" }
+    ],
+    keywords: "andes inca llama constellation milky way dark cloud yacana sky peru bolivia season"
+  },
+  {
+    id: "ceiba", scene: "spirits", frame: "greca", era: "Mesoamerican & Caribbean tradition · living",
+    obscure: true,
+    tint: ["#1c322c", "#5f8f8b", "#d4a24e"],
+    name: "The Ceiba, Tree of the Thirteen Heavens", nation: "Mesoamerica & the Caribbean", region: "From Mexico to Cuba · wherever the great ceiba grows", type: "world", continent: "americas",
+    kind: "World Tree",
+    creature: "The ceiba — a giant tree whose roots reach the underworld and whose crown holds the thirteen heavens",
+    place: "The plaza centre of every old town, where the great ceiba stands alone",
+    theme: "One tree joins the underworld, the earth, and the heavens — never cut one down",
+    summary: "The ceiba is the world-tree of Mesoamerican and Caribbean tradition: roots in the underworld, trunk in the human world, crown in the heavens — a tree never to be felled.",
+    long: "The ceiba grows vast and straight, flanked at its base by plank-roots like the buttresses of a temple, and the peoples of its range — Maya, Taíno, and many others — agreed on what it was: the world-tree, whose roots drink from the underworld, whose trunk is the human world's own axis, and whose crown supports the layered heavens. Under it, souls departed and ancestors were addressed; beside it, towns were founded, the tree marking the centre of the world for that place. The instruction that survives in living tradition is simple and absolute: the ceiba is never cut. Roads bend around it, developments spare it, and old trees stand alone in modern plazas — the world's axis, still standing.",
+    source: "Source: ceiba world-tree traditions of Mesoamerica and the Caribbean, retold here respectfully in the app's own words.",
+    refs: [
+      { title: "Ceiba — the sacred tree", note: "Wikipedia · the tree and its traditions", url: "https://en.wikipedia.org/wiki/Ceiba" },
+      { title: "World tree — the worldwide family", note: "Wikipedia · axis trees across mythologies", url: "https://en.wikipedia.org/wiki/World_tree" }
+    ],
+    keywords: "ceiba world tree maya taino caribbean mesoamerica underworld heavens plaza axis obscure"
+  },
+
+
+
+
+
+
+  {
+    id: "bakunawa", scene: "serpent", frame: "wave", era: "Pre-colonial Visayas · oral tradition",
+    tint: ["#1a2438", "#5f8f8b", "#d4a24e"],
+    name: "Bakunawa & the Seven Moons", nation: "Philippines", region: "Visayas & Hiligaynon country", type: "world", continent: "southeast-asia",
+    kind: "Eater of Moons",
+    creature: "Bakunawa, an immense sea serpent who rose from the deep to swallow the moons of the night sky",
+    place: "The dark sea between the islands, beneath the moon's reflection on the water",
+    theme: "A sky-devouring serpent answered by the noise and courage of ordinary people",
+    summary: "A sea serpent swallows the moons one by one until only one remains; villages bang pots, beat drums, and shout at the sky so it will spit the last moon back out.",
+    long: "In the old telling, the sky once held seven moons, and from the deepest trenches of the sea the great serpent Bakunawa craved their light. One by one it rose in the night and swallowed a whole moon, until a single moon hung alone in the dark. Then the people made their stand — running out of their houses, banging pots and beating drums and shouting 'Return our moon!' — and the noise worked: Bakunawa spat the moon back out. Eclipses, in the old custom, meant everyone must make noise until the moon was safe.",
+    source: "Source: Bakunawa traditions of the Visayan Philippines, retold here in the app's own words.",
+    refs: [
+      { title: "Bakunawa — the moon-eater", note: "Wikipedia · the Philippine serpent in full", url: "https://en.wikipedia.org/wiki/Bakunawa" },
+      { title: "Philippine mythology — an overview", note: "Wikipedia · the islands' mythic landscape", url: "https://en.wikipedia.org/wiki/Philippine_mythology" }
+    ],
+    keywords: "philippines visayas sea serpent moon eclipse bakunawa drums pots noise sky swallow islands"
+  },
+  {
+    id: "bawang", scene: "pumpkin", frame: "kawung", era: "Javanese tale tradition · oral, widely shared",
+    tint: ["#3a2a1c", "#d4a24e", "#b3492f"],
+    name: "Bawang Putih & Bawang Merah", nation: "Indonesia", region: "Java · Riau tale tradition", type: "world", continent: "southeast-asia",
+    kind: "Kindness & Cruelty",
+    creature: "Two sisters of one household — one gentle, one vain — and the old woman in the river's mouth",
+    place: "A riverside village where the deep pool below the washing stones hides a treasure house",
+    theme: "A kind heart is repaid from the water; a greedy heart is repaid in kind",
+    summary: "A gentle sister is pushed into the river and finds a treasure house tended by an old woman; her cruel stepsister jumps in on purpose and leaves with a fitting reward.",
+    long: "Bawang Putih — 'White Garlic' — scrubbed and served for her stepmother and stepsister Bawang Merah until one of the family's washing stones tumbled into the river. Diving after it, she found a small house kept by a very old woman, waited on her politely for a week, and was sent home with a single strange pumpkin that burst open into gold, jewels, and fine cloth. Bawang Merah threw her own stone in and dove after it — but she grumbled, was rude, and went home with a red-hot gourd that burst into stinging wasps. The tale is cousin to Cinderella across the archipelago: courtesy in, courtesy out; rudeness in, wasps out.",
+    source: "Source: the Indonesian folk tale Bawang Putih Bawang Merah, retold here in the app's own words.",
+    refs: [
+      { title: "Bawang Putih Bawang Merah — the tale", note: "Wikipedia · the full Indonesian story", url: "https://en.wikipedia.org/wiki/Bawang_Putih_Bawang_Merah" },
+      { title: "Indonesian folklore — an overview", note: "Wikipedia · the archipelago's tale tradition", url: "https://en.wikipedia.org/wiki/Indonesian_folklore" }
+    ],
+    keywords: "indonesia java sisters kindness cruelty pumpkin treasure river old woman cinderella bawang"
+  },
+  {
+    id: "kraithong", scene: "crocodile", frame: "lotus", era: "Ayutthaya-era tale · shadow-play repertoire",
+    tint: ["#22301e", "#9ab06a", "#d4a24e"],
+    name: "Kraithong, the Crocodile Lord", nation: "Thailand & Laos", region: "Chao Phraya riverlands", type: "world", continent: "southeast-asia",
+    kind: "Crocodile Sorcerer",
+    creature: "Kraithong, a sorcerer who takes crocodile form and hunts the river for maidens and monks",
+    place: "The floating houses, waterways, and deep pools of the great river",
+    theme: "A shapeshifting monster of the river defeated by an even greater master of charms",
+    summary: "A crocodile-sorcerer terrorises the river, dragging victims into his underwater cave, until the monk-magician Si Suvan comes to fight him in the deep.",
+    long: "The great river was not safe in the days of Kraithong, a man who could put on crocodile shape at will. From his cave beneath the water he snatched those who bathed too near the floating houses — most famously the daughters of a rich merchant, carried down alive into the underwater hall. The rescue required a greater power: the master of charms Si Suvan, who rode the river in a boat of demon-made iron, fought Kraithong hand to hand inside the flooded cave, and dragged him up to give up his captives and his shape. The tale was performed for generations in shadow-play and dance.",
+    source: "Source: the Thai-Lao tale of Kraithong, a classic of the shadow-play repertoire, retold here in brief.",
+    refs: [
+      { title: "Thai folklore — an overview", note: "Wikipedia · the tradition Kraithong belongs to", url: "https://en.wikipedia.org/wiki/Thai_folklore" },
+      { title: "Shadow play — the theatre that carried the tale", note: "Wikipedia · how Southeast Asia performed its epics", url: "https://en.wikipedia.org/wiki/Shadow_play" }
+    ],
+    keywords: "thailand laos crocodile sorcerer river shapeshift kraithong monk charm cave rescue chao phraya"
+  },
+  {
+    id: "laclong", scene: "egg", frame: "lotus", era: "Red River delta · origin legend of antiquity",
+    tint: ["#1e3428", "#d4a24e", "#5f8f8b"],
+    name: "Lạc Long Quân & Âu Cơ", nation: "Vietnam", region: "Red River delta · northern mountains", type: "world", continent: "southeast-asia",
+    kind: "Origin of a People",
+    creature: "A water-dragon lord of the sea and a mountain fairy — the two parents of the Vietnamese people",
+    place: "The Red River lowlands and the high peaks where a hundred eggs were hatched",
+    theme: "A nation born of the marriage of water and mountain, divided but never strangers",
+    summary: "The dragon of the sea married the fairy of the mountains; she laid a sack of a hundred eggs, and their children became the ancestors of the Vietnamese people.",
+    long: "The dragon lord Lạc Long Quân came down from the water country and married Âu Cơ, a fairy of the high peaks. She bore a pouch of a hundred eggs, and from them hatched a hundred strong children — but the parents' natures pulled differently, so they divided their house: fifty went with their father to spread along the rivers and deltas, fifty with their mother into the hills. The eldest son became the first of the early kings. Every gathering of kin, in the old phrase, is the hundred eggs coming back together.",
+    source: "Source: the Lạc Long Quân – Âu Cơ origin story of Vietnam, retold here in the app's own words.",
+    refs: [
+      { title: "Lạc Long Quân — the dragon lord", note: "Wikipedia · the sea-dragon father of the legend", url: "https://en.wikipedia.org/wiki/L%E1%BA%A1c_Long_Qu%C3%A2n" },
+      { title: "Âu Cơ — the mountain fairy", note: "Wikipedia · the fairy mother of the legend", url: "https://en.wikipedia.org/wiki/%C3%82u_C%C6%A1" }
+    ],
+    keywords: "vietnam dragon fairy origin hundred eggs red river mountain sea lac long quan au co ancestors"
+  },
+  {
+    id: "reamker", scene: "monkey", frame: "temple", era: "Angkorian era · carved at Angkor Wat",
+    tint: ["#3a2618", "#d4a24e", "#b3492f"],
+    name: "Hanuman of the Ramakerti", nation: "Cambodia", region: "Angkor · the Khmer Ramayana tradition", type: "world", continent: "southeast-asia",
+    kind: "Epic & Monkey Warlord",
+    creature: "Hanuman, the white monkey general who builds a bridge across the sea with stones and devotion",
+    place: "The temple galleries of Angkor Wat, carved full of the great battle",
+    theme: "Loyalty and cleverness of the small and many defeat the giant forces of the proud",
+    summary: "A demon king steals a princess; the monkey general Hanuman raises an army of forest folk, hurls boulders across the sea into a bridge, and storms the island fortress.",
+    long: "The Khmer telling of the great epic fills the carved galleries of Angkor Wat itself. A ten-headed demon king carries off the princess to his island of Lanka, and the prince's hope rests on Hanuman — son of the wind, white-furred, mischievous and utterly loyal. Captured with his tail set alight, he escapes and burns the golden city with it; then he rallies the monkey and bear folk, who tear up mountains and boulders and hurl them into the sea until a bridge rises. The tale remains a living repertoire of Khmer dance and shadow theatre.",
+    source: "Source: the Ramakerti (Khmer Ramayana) tradition of Cambodia, retold here in brief.",
+    refs: [
+      { title: "Reamker — the Khmer Ramayana", note: "Wikipedia · Cambodia's telling of the epic", url: "https://en.wikipedia.org/wiki/Reamker" },
+      { title: "Hanuman — the monkey general", note: "Wikipedia · the hero across the epic's many tellings", url: "https://en.wikipedia.org/wiki/Hanuman" }
+    ],
+    keywords: "cambodia khmer ramayana hanuman monkey army bridge angkor sita demon king epic dance"
+  },
+  {
+    id: "pontianak", scene: "fangs", frame: "kawung", era: "Shared Malay-Indonesian ghost lore · oral tradition",
+    tint: ["#2c1a2a", "#8a6fa8", "#d4a24e"],
+    name: "The Pontianak", nation: "Indonesia & Malaysia", region: "Kalimantan & the wider archipelago", type: "world", continent: "southeast-asia",
+    kind: "Ghost of the Frangipani",
+    creature: "A woman who died in childbirth, returning as a beautiful vampiric ghost with a scent of frangipani",
+    place: "The banana groves and frangipani trees at the edge of the kampung, after midnight",
+    theme: "Beauty that announces itself by fragrance is a warning, not an invitation",
+    summary: "A sweet floral drift at midnight means the Pontianak is near — a ghost of a woman who died in childbirth, who appears beautiful until the moment of attack.",
+    long: "The Pontianak is the most famous ghost of the archipelago: a woman who died in childbed and returns, pale and lovely, standing beneath the frangipani trees. Her presence is announced by a sweet floral scent and the cry of a baby; the closer she is, the fainter the scent becomes — a cruel reversal, for by the time you smell nothing, she is upon you. The old protection was to drive a nail into the hollow of her neck, which in some tellings transforms her back into a beautiful and gentle woman. The city of Pontianak in Kalimantan is named for her.",
+    source: "Source: Pontianak ghost lore shared across Indonesia and Malaysia, retold here in the app's own words.",
+    refs: [
+      { title: "Pontianak — the ghost", note: "Wikipedia · the legend and the city named for her", url: "https://en.wikipedia.org/wiki/Pontianak_(folklore)" },
+      { title: "Indonesian folklore — an overview", note: "Wikipedia · the archipelago's tale tradition", url: "https://en.wikipedia.org/wiki/Indonesian_folklore" }
+    ],
+    keywords: "ghost pontianak vampire childbirth frangipani banana grove midnight woman white dress kalimantan"
+  },
+  {
+    id: "nyai", scene: "princess", frame: "kawung", era: "Mataram-era Java · royal court legend",
+    tint: ["#16384a", "#5f8f8b", "#d4a24e"],
+    name: "Nyai Roro Kidul, Queen of the Southern Sea", nation: "Indonesia", region: "South coast of Java", type: "world", continent: "southeast-asia",
+    kind: "Sea Queen",
+    creature: "A queen of the spirits who rules the Indian Ocean from a sunken palace, and claims what the sea takes",
+    place: "The southern coast of Java, where the surf breaks and the palace guards wear green",
+    theme: "The sea is a kingdom with a queen — and the colour green belongs to her",
+    summary: "Java's southern sea is ruled by a spirit queen of great beauty; sultans sought her alliance, swimmers fear her claim, and no one wears her colour green into her water.",
+    long: "Along the south coast of Java, fishermen speak quietly of Nyai Roro Kidul, the Queen of the Southern Sea, who rules a sunken palace beneath the Indian Ocean and takes those the water claims into her service. The Mataram sultans sought her as a mystical bride and ally — the founding story of the royal house — and to this day Javanese custom avoids wearing green at the southern beaches, for that is the queen's colour worn by her guards. She is neither simply cruel nor kind: she is a sovereign, and the sea's etiquette is hers to set.",
+    source: "Source: Javanese legends of Nyai Roro Kidul and the Mataram court, retold here in the app's own words.",
+    refs: [
+      { title: "Nyai Roro Kidul — the Queen of the Southern Sea", note: "Wikipedia · the legend in full", url: "https://en.wikipedia.org/wiki/Nyai_Roro_Kidul" },
+      { title: "Indonesian folklore — an overview", note: "Wikipedia · the archipelago's tale tradition", url: "https://en.wikipedia.org/wiki/Indonesian_folklore" }
+    ],
+    keywords: "java queen southern sea nyai roro kidul green mataram sultan indian ocean palace coast"
+  },
+  {
+    id: "phayanaga", scene: "serpent", frame: "lotus", era: "Mekong river lore · living tradition",
+    tint: ["#1c2e26", "#5f8f8b", "#d4a24e"],
+    name: "The Phaya Naga of the Mekong", nation: "Laos & Thailand", region: "Mekong river · Isan & Laos", type: "world", continent: "southeast-asia",
+    kind: "River Serpent",
+    creature: "Great serpents of the Mekong, seen as surfacing knots of river in the monsoon",
+    place: "The deep channels of the Mekong, and the river's own fireballs at the October full moon",
+    theme: "A river alive with serpent lords, honoured with festivals to this day",
+    summary: "Villages along the Mekong hold that naga lords live in its deep channels; each October, glowing orbs rise from the river, and the festivals honour the serpents.",
+    long: "The Mekong is not merely water to the villages along it — it is tenanted. The Phaya Naga, great serpent lords, are said to coil in the deepest channels, and their presence is credited with the strange fireballs that rise glowing from the river at the October full moon, an event crowds still gather to watch. Riverside temples keep serpent icons, newlyweds ask the nagas' blessing, and fishermen make offerings before the monsoon crossings. The naga here is not a monster but a neighbour of great power — treated the way one treats a river that gives everything and can take everything.",
+    source: "Source: Mekong naga beliefs of Laos and Isan Thailand, retold here in the app's own words.",
+    refs: [
+      { title: "Nāga — serpent beings of Asia", note: "Wikipedia · the family of serpent beings", url: "https://en.wikipedia.org/wiki/N%C4%81ga" },
+      { title: "Mekong — the river itself", note: "Wikipedia · the great river the nagas call home", url: "https://en.wikipedia.org/wiki/Mekong" }
+    ],
+    keywords: "mekong naga river laos thailand isan serpent fireball october full moon festival fisher"
+  },
+  {
+    id: "manohara", scene: "princess", frame: "lotus", era: "Thai classical dance-drama · court repertoire",
+    obscure: true,
+    tint: ["#3a1e2c", "#b3492f", "#d4a24e"],
+    name: "Manohara, the Kinnari", nation: "Thailand", region: "Siamese classical tradition", type: "world", continent: "southeast-asia",
+    kind: "Bird-Woman Bride",
+    creature: "Manohara, a kinnari — half-woman, half-bird — the youngest and loveliest of her sisters",
+    place: "The forest lake where she bathed, and the mountain of the gods where she longed to return",
+    theme: "A stolen bride's own cleverness wins her way home — a magic ring and a told dream",
+    summary: "A prince snares the bird-woman Manohara by hiding her feathered robe; she wins her freedom by solving the king's dream and flying home to await him.",
+    long: "Manohara, a kinnari — a being half woman and half swan — came down from the mountain of the gods to bathe with her sisters, and lost her feathered robe to a hiding prince, who took her for his bride. Far from home and sky, she kept her wits: when the palace needed a dream interpreted and a terrible toll demanded by rival kings, it was Manohara who solved it, earning the right to walk to the river — where she had hidden her ring, called for her robe, and flew. Her prince followed to the ends of the earth to find her, and the tale, a jewel of Thai dance-drama, ends at the mountain of the gods.",
+    source: "Source: the Thai tale of Manohara, a classic of the court dance repertoire, retold here in brief.",
+    refs: [
+      { title: "Kinnara — the bird-people", note: "Wikipedia · the half-bird beings of Asian myth", url: "https://en.wikipedia.org/wiki/Kinnara" },
+      { title: "Thai folklore — an overview", note: "Wikipedia · the tradition the tale belongs to", url: "https://en.wikipedia.org/wiki/Thai_folklore" }
+    ],
+    keywords: "thailand kinnari manohara bird woman swan maiden bride feather robe dream dance drama obscure"
+  },
+  {
+    id: "bidasari", scene: "moon", frame: "kawung", era: "Classical hikayat literature · Palembang setting",
+    obscure: true,
+    tint: ["#2a2638", "#8a6fa8", "#d4a24e"],
+    name: "Bidasari & the Soul in the Fish", nation: "Indonesia & Malaysia", region: "Palembang · shared hikayat tradition", type: "world", continent: "southeast-asia",
+    kind: "Soul in a Vessel",
+    creature: "A princess whose life is kept outside her body — inside a golden fish in a locked pond",
+    place: "The palace of Palembang and its hidden pond, where a golden fish swims in a golden basin",
+    theme: "A soul hidden outside the body is both a shield and a hostage",
+    summary: "The princess Bidasari keeps her soul in a golden fish; a jealous queen nearly kills her by catching it, and only the fish's return restores her to life.",
+    long: "Bidasari's father, knowing his daughter's fate, hid her soul outside her body — inside a golden fish kept in a hidden pond, so that no harm done to her body could ever be final. Found and brought to court as a mere merchant's daughter, she drew the jealousy of the chief queen, who discovered the secret, had the fish caught and hooked, and watched Bidasari collapse into a death-sleep with every injury the fish endured. She was saved only when the fish was found and returned to the water — a Southeast Asian sister to the Egyptian tale of the soul hidden in a hairpin and the giant's heart in an egg.",
+    source: "Source: the Hikayat Bidasari of the shared Malay-Indonesian classical tradition, retold here in brief.",
+    refs: [
+      { title: "Hikayat — the classical tale form", note: "Wikipedia · the literary tradition Bidasari comes from", url: "https://en.wikipedia.org/wiki/Hikayat" },
+      { title: "External soul — the motif worldwide", note: "Wikipedia · souls hidden in objects across world folklore", url: "https://en.wikipedia.org/wiki/External_soul" }
+    ],
+    keywords: "bidasari soul external fish golden palembang hikayat queen jealousy princess basin obscure"
+  },
+
+];
+const THEME_TAGS = {
+  serpent: "Shared Creature", water: "Shared Place", trickster: "Shared Character",
+  guardian: "Shared Role", giant: "Shared Creature", hero: "Shared Character",
+  mountain: "Shared Place", sacred: "Shared Idea", riddle: "Shared Role",
+  storm: "Shared Idea", creator: "Shared Role", moon: "Shared Idea",
+  flood: "Shared Event", curse: "Shared Idea", devotion: "Shared Character",
+  origin: "Shared Role", hospitality: "Shared Idea", transformation: "Shared Idea",
+  treasure: "Shared Idea", underdog: "Shared Character"
+};
+const PATTERN_LIBRARY = {
+  serpent: "Serpents and dragons as guardians of water, sky, or land appear here — a great coiling creature that must be respected, appeased, or outwitted.",
+  water: "The story is anchored to a body of water — a lake, river, sea, or well that hides, tests, or connects the story's world.",
+  trickster: "Cleverness beats strength: a smaller or seemingly weaker figure wins through wit, bargain, or trick rather than force.",
+  guardian: "A guardian keeps watch over a boundary — a pass, a hall, a stretch of water — and punishes those who cross without respect.",
+  giant: "Oversized beings — giants, ogres, ogresses, wild-men — mark the wild edges of the human world and test visitors' manners.",
+  hero: "A lone hero steps forward when a community cannot save itself, facing the danger directly so others may live in peace.",
+  mountain: "Mountains and high places belong to the powerful, not to people — paths past them demand humility.",
+  sacred: "The land itself holds hidden sacred things — a sunken city, a spirit in the rice — visible only to the respectful.",
+  riddle: "The sharpest weapon is not a blade but a mind — a question, bargain, or answer defeats what strength cannot.",
+  storm: "The sky is a living character — thunder, lightning, and storm belong to a great power rather than to chance.",
+  creator: "The story reaches back to the making of the world, where land, water, and law were set in place by a great being.",
+  moon: "The moon is a character with a fate — eaten, loved, stolen, or followed — and the sky's drama explains what people see at night.",
+  flood: "A great flood or drowning shapes the story — a sunken city, a drowned land, or a world washed clean — memory of water's power.",
+  curse: "A curse or doom drives events: a ruler, family, or treasure carries a hidden fault that must run its course.",
+  devotion: "Loyalty and devotion — to family, lord, or kin — outlast trials that strength alone cannot survive.",
+  origin: "The story explains where a people, place, or practice comes from — an origin charter told as family history.",
+  hospitality: "Hospitality is the test: courtesy to strangers, hosts, or spirits decides fortune, while rudeness brings ruin.",
+  transformation: "Shape-changing runs through the tale — humans becoming beasts, stones, birds, or stars and back again.",
+  treasure: "A treasure or magical gift rewards the worthy — and tests them, for such gifts always carry conditions.",
+  underdog: "The small, the young, or the despised outface the great — humility and low status turn out to be strengths."
+};
+function tagFor(m) {
+  const t = (m.kind + " " + m.creature + " " + m.place + " " + m.theme + " " + m.summary).toLowerCase();
+  const tags = [];
+  if (/serpent|dragon|naga/.test(t)) tags.push("serpent");
+  if (/water|lake|river|loch|sea|coast|ocean|trench/.test(t)) tags.push("water");
+  if (/trickster|wit|clever|bargain|trick|cleverness/.test(t)) tags.push("trickster");
+  if (/riddle|question|answer/.test(t)) tags.push("riddle");
+  if (/guardian|protect|keeper|guard/.test(t)) tags.push("guardian");
+  if (/giant|monster|ogress|ogre|wild-man/.test(t)) tags.push("giant");
+  if (/hero|slayer|warrior/.test(t)) tags.push("hero");
+  if (/mountain|highland|peak|pass|summit/.test(t)) tags.push("mountain");
+  if (/sacred|sunken|ruins|spirit/.test(t)) tags.push("sacred");
+  if (/storm|thunder|lightning/.test(t)) tags.push("storm");
+  if (/creator|creation|making of the world|shaped the land|dreaming/.test(t)) tags.push("creator");
+  if (/moon|eclipse|night sky/.test(t)) tags.push("moon");
+  if (/flood|drown|sunken|deluge|washed|submerged/.test(t)) tags.push("flood");
+  if (/curse|doom|cursed|blessing and|fault/.test(t)) tags.push("curse");
+  if (/loyal|devotion|loyalty|obedien/.test(t)) tags.push("devotion");
+  if (/origin|ancestor|first king|people came|beginning/.test(t)) tags.push("origin");
+  if (/courtesy|hospitality|kind|respect|rude|greed/.test(t)) tags.push("hospitality");
+  if (/shape|transform|turn(ed)? into|became|takes? .*(form|shape)/.test(t)) tags.push("transformation");
+  if (/treasure|gold|gift|jewel|hoard/.test(t)) tags.push("treasure");
+  if (/small|youngest|humble|despised|lowly|clever youth/.test(t)) tags.push("underdog");
+  return tags;
+}
+
+// ---------- State ----------
+let searchWord = "";
+let typeFilter = "all";
+let picks = []; // up to 4 ids, in pick order
+
+const MAX_PICKS = 4;
+const grid = document.getElementById("myth-grid");
+const searchInput = document.getElementById("search");
+const pickCount = document.getElementById("pick-count");
+
+const CONTINENT_LABEL = { "southeast-asia": "Southeast Asia", asia: "Asia", europe: "Europe", africa: "Africa", oceania: "Oceania", americas: "The Americas" };
+function continentLabel(m) { return m.type === "malaysia" ? "Malaysia" : CONTINENT_LABEL[m.continent] || "World"; }
+
+function matches(m) {
+  const q = searchWord.trim().toLowerCase();
+  const okType = typeFilter === "all" || m.type === typeFilter || (m.continent && typeFilter === m.continent);
+  const hay = (m.name + " " + m.nation + " " + m.region + " " + m.kind + " " + m.creature + " " + m.place + " " + m.theme + " " + m.summary + " " + m.keywords).toLowerCase();
+  return okType && (q === "" || hay.includes(q));
+}
+
+function tagHTML(m) {
+  return '<span class="tag ' + m.type + '">' + continentLabel(m) + '</span>'
+    + '<span class="region-badge">' + escapeHtml(m.nation) + ' · ' + escapeHtml(m.region) + '</span>';
+}
+function flagStrip(m) {
+  const colors = m.type === "malaysia"
+    ? ["#b3492f", "#f2e6d0", "#1e3a5c", "#f2e6d0", "#b3492f", "#d4a24e"]
+    : m.continent === "southeast-asia" ? ["#b3492f", "#d4a24e", "#9ab06a", "#d4a24e", "#5f8f8b", "#b3492f"]
+    : m.continent === "asia" ? ["#b3492f", "#d4a24e", "#8a6fa8", "#d4a24e", "#b3492f", "#f2e6d0"]
+    : m.continent === "europe" ? ["#3e5c8a", "#f2e6d0", "#8a6fa8", "#f2e6d0", "#3e5c8a", "#d4a24e"]
+    : m.continent === "africa" ? ["#8a6fa8", "#d4a24e", "#b3492f", "#d4a24e", "#9ab06a", "#8a6fa8"]
+    : m.continent === "oceania" ? ["#b3492f", "#9ab06a", "#5f8f8b", "#d4a24e", "#9ab06a", "#b3492f"]
+    : ["#3e5c8a", "#b3492f", "#f2e6d0", "#d4a24e", "#b3492f", "#3e5c8a"];
+  return '<div class="flag-strip">' + colors.map(c => '<span style="background:' + c + '"></span>').join("") + '</div>';
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+function selClass(id) {
+  const i = picks.indexOf(id);
+  return i < 0 ? "" : " selected-" + "abcd"[i];
+}
+function selHint(m) {
+  const i = picks.indexOf(m.id);
+  if (i < 0) return '<div class="select-hint">Open the card, or add to compare ↓</div>';
+  return '<div class="select-hint">✔ On the compare shelf — slot ' + (i + 1) + '</div>';
+}
+
+// ---------- Myth List ----------
+function renderList() {
+  const visible = MYTHS.filter(matches);
+  if (visible.length === 0) {
+    grid.innerHTML = '<div class="empty-note">No entries match “' + escapeHtml(searchWord) + '”. Try a shorter word — “dragon”, “river”, “spirit”.</div>';
+    return;
+  }
+  grid.innerHTML = visible.map(m => {
+    return '<div class="myth-card' + selClass(m.id) + '" data-id="' + m.id + '" tabindex="0" role="button" aria-label="Open ' + escapeHtml(m.name) + '">'
+      + flagStrip(m)
+      + '<div class="emblem-box">' + emblemSVG(m) + (m.obscure ? '<span class="obscure-badge">✦ Obscure Gem</span>' : '') + '</div>'
+      + '<div class="card-body">'
+      + '<div class="badges">' + tagHTML(m) + '</div>'
+      + '<div class="badges"><span class="era-badge">' + escapeHtml(m.era) + '</span></div>'
+      + '<h3>' + escapeHtml(m.name) + '</h3>'
+      + '<div class="origin">' + escapeHtml(m.region) + '</div>'
+      + '<div class="kind-line">' + escapeHtml(m.kind) + '</div>'
+      + '<p>' + escapeHtml(m.summary) + '</p>'
+      + '<div class="source-line">' + escapeHtml(m.source.replace(/^Source: /, "")) + '</div>'
+      + '<div class="modal-actions" style="margin-top:12px">'
+      + '<button class="btn" data-compare="' + m.id + '" aria-label="Add ' + escapeHtml(m.name) + ' to compare shelf">' + (picks.indexOf(m.id) >= 0 ? "On the Shelf ✔" : "Add to Compare") + '</button>'
+      + '</div>'
+      + selHint(m) + '</div></div>';
+  }).join("");
+}
+
+grid.addEventListener("click", e => {
+  const addBtn = e.target.closest("[data-compare]");
+  if (addBtn) { e.stopPropagation(); togglePick(addBtn.getAttribute("data-compare")); return; }
+  const card = e.target.closest(".myth-card");
+  if (card) openModal(card.dataset.id);
+});
+grid.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("myth-card")) {
+    e.preventDefault();
+    openModal(e.target.dataset.id);
+  }
+});
+
+searchInput.addEventListener("input", e => { searchWord = e.target.value; renderList(); });
+document.getElementById("type-filter").addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  typeFilter = chip.dataset.type;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c === chip));
+  renderList();
+});
+
+// ---------- Tabs ----------
+document.getElementById("tab-list").addEventListener("click", () => switchTab("list"));
+document.getElementById("tab-compare").addEventListener("click", () => switchTab("compare"));
+function switchTab(which) {
+  document.getElementById("tab-list").classList.toggle("active", which === "list");
+  document.getElementById("tab-compare").classList.toggle("active", which === "compare");
+  document.getElementById("view-list").classList.toggle("active", which === "list");
+  document.getElementById("view-compare").classList.toggle("active", which === "compare");
+}
+
+// ---------- Picks / compare shelf ----------
+function togglePick(id) {
+  const i = picks.indexOf(id);
+  if (i >= 0) picks.splice(i, 1);
+  else if (picks.length >= MAX_PICKS) picks.shift(), picks.push(id);
+  else picks.push(id);
+  renderAll();
+}
+function renderAll() {
+  pickCount.textContent = picks.length;
+  renderList();
+  renderCompare();
+  renderPatterns();
+  renderReco();
+}
+
+// ---------- Compare view ----------
+const SLOT_COLORS = ["var(--myth-green)", "var(--gold-bright)", "var(--teal)", "var(--purple)"];
+function renderCompare() {
+  const slotsEl = document.getElementById("compare-slots");
+  let html = "";
+  for (let s = 0; s < MAX_PICKS; s++) {
+    const m = MYTHS.find(x => x.id === picks[s]);
+    if (!m) {
+      html += '<div class="compare-slot"><div class="slot-label">Slot ' + (s + 1) + '</div><em>Empty — add a legend from the Myth List</em></div>';
+    } else {
+      html += '<div class="compare-slot filled" style="border-color:' + SLOT_COLORS[s] + '">'
+        + '<button class="slot-remove" data-remove="' + m.id + '" aria-label="Remove ' + escapeHtml(m.name) + ' from shelf">✕</button>'
+        + '<div class="emblem-box">' + emblemSVG(m) + '</div>'
+        + '<h4>' + escapeHtml(m.name) + '</h4>'
+        + '<div class="slot-region">' + escapeHtml(m.nation) + ' · ' + escapeHtml(m.region) + '</div>'
+        + '<div class="slot-region" style="font-style:normal">' + escapeHtml(m.kind) + '</div>'
+        + '</div>';
+    }
+  }
+  slotsEl.innerHTML = html;
+
+  const tableWrap = document.getElementById("compare-table-wrap");
+  const chosen = picks.map(id => MYTHS.find(x => x.id === id)).filter(Boolean);
+  if (chosen.length < 2) {
+    tableWrap.innerHTML = '<div class="patterns-empty">Add at least two legends to see their details side by side.</div>';
+    return;
+  }
+  function row(label, fn) {
+    return '<tr><th scope="row">' + label + '</th>' + chosen.map(m => '<td>' + fn(m) + '</td>').join("") + '</tr>';
+  }
+  tableWrap.innerHTML = '<div style="overflow-x:auto"><table class="compare-table"><tbody>'
+    + row("Legend", m => '<strong style="color:var(--gold-bright)">' + escapeHtml(m.name) + '</strong><span class="cell-region">' + escapeHtml(m.nation) + ' · ' + escapeHtml(m.region) + '</span><span class="cell-region">' + escapeHtml(m.era) + '</span>')
+    + row("Character / Creature", m => escapeHtml(m.creature))
+    + row("Storied Place", m => escapeHtml(m.place))
+    + row("Core Theme", m => escapeHtml(m.theme))
+    + row("Kind", m => escapeHtml(m.kind))
+    + row("Told In", m => '<em>' + escapeHtml(m.source.replace(/^Source: /, "")) + '</em>')
+    + '</tbody></table></div>';
+}
+document.getElementById("compare-slots").addEventListener("click", e => {
+  const btn = e.target.closest("[data-remove]");
+  if (btn) togglePick(btn.getAttribute("data-remove"));
+});
+
+// ---------- Pattern notes ----------
+function renderPatterns() {
+  const listEl = document.getElementById("patterns-list");
+  const chosen = picks.map(id => MYTHS.find(x => x.id === id)).filter(Boolean);
+  if (chosen.length < 2) {
+    listEl.innerHTML = '<div class="patterns-empty">' + (chosen.length === 1
+      ? 'One legend on the shelf so far — add at least one more to see shared patterns.'
+      : 'Add two to four legends above and their shared story patterns will be noted here.') + '</div>';
+    return;
+  }
+  const tagSets = chosen.map(tagFor);
+  const shared = [...tagSets[0]].filter(t => tagSets.every(set => set.includes(t)));
+  if (shared.length === 0) {
+    listEl.innerHTML = '<div class="patterns-empty">No obvious shared patterns across this shelf — try pairing stories of the same kind, or two water-dwellers, to see connections.</div>';
+    return;
+  }
+  listEl.innerHTML = shared.map(t => {
+    const names = chosen.map(m => '<strong>' + escapeHtml(m.name) + '</strong>').join(", ");
+    return '<div class="pattern-note"><h4>' + THEME_TAGS[t] + ": " + cap(t) + '</h4>'
+      + '<p>' + PATTERN_LIBRARY[t] + ' <em>All of these carry the pattern — ' + names + '.</em></p></div>';
+  }).join("");
+}
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ---------- Recommendation ----------
+function renderReco() {
+  const box = document.getElementById("reco-box");
+  const chosen = picks.map(id => MYTHS.find(x => x.id === id)).filter(Boolean);
+  if (chosen.length < 2) {
+    box.innerHTML = '<div class="reco-empty">Add two or more legends to the shelf above and a kindred tale will be recommended here.</div>';
+    return;
+  }
+  const pickedTags = chosen.map(tagFor);
+  const sharedCount = tag => pickedTags.filter(set => set.includes(tag)).length;
+  const scored = MYTHS.filter(m => picks.indexOf(m.id) < 0).map(m => {
+    const tags = tagFor(m);
+    const hits = tags.filter(t => sharedCount(t) === pickedTags.length);
+    const partial = tags.filter(t => sharedCount(t) > 0);
+    return { m, tags, hits, partial, score: hits.length * 3 + partial.length };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score || (a.m.obscure ? -1 : 1));
+  if (scored.length === 0) {
+    box.innerHTML = '<div class="reco-empty">No kindred tale found for this shelf yet — try a different mix of legends.</div>';
+    return;
+  }
+  const top = scored[0];
+  const reasonTags = (top.hits.length ? top.hits : top.partial).slice(0, 3)
+    .map(t => THEME_TAGS[t] ? THEME_TAGS[t].replace("Shared ", "").toLowerCase() : t).join(", ");
+  box.innerHTML = '<div class="reco-card">'
+    + '<div class="emblem-box">' + emblemSVG(top.m) + '</div>'
+    + '<div class="reco-body">'
+    + '<div class="reco-reason">Kindred pattern: ' + escapeHtml(reasonTags) + '</div>'
+    + '<h4>' + escapeHtml(top.m.name) + '</h4>'
+    + '<div class="badges">' + tagHTML(top.m) + '</div>'
+    + '<p>' + escapeHtml(top.m.summary) + '</p>'
+    + '<p><em>' + escapeHtml(top.m.source.replace(/^Source: /, "")) + '</em></p>'
+    + '<button class="btn" data-compare-reco="' + top.m.id + '">Add to Compare Shelf</button>'
+    + '</div></div>';
+}
+document.getElementById("reco-box").addEventListener("click", e => {
+  const btn = e.target.closest("[data-compare-reco]");
+  if (btn) togglePick(btn.getAttribute("data-compare-reco"));
+});
+
+// ---------- Detail card modal ----------
+const backdrop = document.getElementById("modal-backdrop");
+function openModal(id) {
+  const m = MYTHS.find(x => x.id === id);
+  if (!m) return;
+  const onShelf = picks.indexOf(m.id) >= 0;
+  document.getElementById("modal-content").innerHTML =
+    flagStrip(m)
+    + '<div class="emblem-box">' + emblemSVG(m) + (m.obscure ? '<span class="obscure-badge">✦ Obscure Gem</span>' : '') + '</div>'
+    + '<div class="modal-body">'
+    + '<div class="badges">' + tagHTML(m) + '</div>'
+    + '<h3>' + escapeHtml(m.name) + '</h3>'
+    + '<div class="era-line">' + escapeHtml(m.era) + ' · ' + escapeHtml(m.kind) + '</div>'
+    + '<dl class="detail-grid">'
+    + '<dt>Character / Creature</dt><dd>' + escapeHtml(m.creature) + '</dd>'
+    + '<dt>Sacred / Storied Place</dt><dd>' + escapeHtml(m.place) + '</dd>'
+    + '<dt>Core Theme</dt><dd>' + escapeHtml(m.theme) + '</dd>'
+    + '</dl>'
+    + '<p class="detail-tale">' + escapeHtml(m.long) + '</p>'
+    + '<div class="modal-sources"><h4>Sources to Learn More</h4>'
+    + m.refs.map(r =>
+        '<a class="source-link" href="' + r.url + '" target="_blank" rel="noopener noreferrer">'
+        + escapeHtml(r.title) + '<br><span class="src-note">' + escapeHtml(r.note) + '</span></a>'
+      ).join("")
+    + '</div>'
+    + '<div class="modal-actions">'
+    + '<button class="btn" data-modal-compare="' + m.id + '">' + (onShelf ? "On the Compare Shelf ✔" : "Add to Compare Shelf") + '</button>'
+    + '<button class="btn secondary" data-modal-open-list="1">Browse the Shelf in Compare View</button>'
+    + '</div></div>';
+  backdrop.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() { backdrop.classList.remove("open"); document.body.style.overflow = ""; }
+document.getElementById("modal-close").addEventListener("click", closeModal);
+backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+document.getElementById("modal-content").addEventListener("click", e => {
+  const cmp = e.target.closest("[data-modal-compare]");
+  if (cmp) { togglePick(cmp.getAttribute("data-modal-compare")); openModal(cmp.getAttribute("data-modal-compare")); return; }
+  const go = e.target.closest("[data-modal-open-list]");
+  if (go) { closeModal(); switchTab("compare"); }
+});
+
+// ---------- Initial state: two Malaysian entries already picked & shown ----------
+picks = ["naga", "yamata"];
+renderAll();
+</script>
+</body>
+</html>
