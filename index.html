@@ -47,6 +47,9 @@
     border-color: var(--gold); color: #1c1410;
   }
   .pick-counter { display: inline-block; margin-left: 8px; font-size: 0.78rem; background: rgba(0,0,0,0.3); border-radius: 999px; padding: 2px 9px; }
+  .random-tab { border-color: var(--purple); color: var(--purple); }
+  .random-tab:hover { border-color: #b8a0d8; color: #c8b4e8; box-shadow: 0 0 12px rgba(138,111,168,0.4); }
+  .random-tab:active { transform: scale(0.96); }
   main { max-width: 1220px; margin: 0 auto; padding: 0 20px 60px; }
   .view { display: none; }
   .view.active { display: block; animation: fadeUp 0.35s ease; }
@@ -243,6 +246,7 @@
 <nav>
   <button class="nav-tab active" id="tab-list">Myth List</button>
   <button class="nav-tab" id="tab-compare">Compare Patterns<span class="pick-counter" id="pick-count">0</span></button>
+  <button class="nav-tab random-tab" id="tab-random" title="Open a random legend's card">✦ Surprise Me</button>
 </nav>
 
 <main>
@@ -2000,6 +2004,14 @@ document.getElementById("type-filter").addEventListener("click", e => {
 // ---------- Tabs ----------
 document.getElementById("tab-list").addEventListener("click", () => switchTab("list"));
 document.getElementById("tab-compare").addEventListener("click", () => switchTab("compare"));
+// Random legend button — opens a random card, avoiding an immediate repeat
+let lastRandomId = null;
+document.getElementById("tab-random").addEventListener("click", () => {
+  const pool = MYTHS.filter(m => m.id !== lastRandomId);
+  const m = pool[Math.floor(Math.random() * pool.length)];
+  lastRandomId = m.id;
+  openModal(m.id);
+});
 function switchTab(which) {
   document.getElementById("tab-list").classList.toggle("active", which === "list");
   document.getElementById("tab-compare").classList.toggle("active", which === "compare");
