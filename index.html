@@ -307,11 +307,12 @@
 // Emblem illustrations — inline SVG scenes. Each legend's art
 // uses a border style and palette drawn from its era & place.
 // ============================================================
-function stars(op) {
+function stars(op, color) {
   op = op || 0.7;
+  color = color || "#f0c674";
   let s = "";
   const pts = [[12,14],[30,8],[52,18],[74,10],[96,16],[118,8],[140,14],[22,40],[148,38],[100,36],[60,34],[136,60],[16,62]];
-  pts.forEach((p, i) => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (i % 3 === 0 ? 1.6 : 1) + '" fill="#f0c674" opacity="' + op + '"/>'; });
+  pts.forEach((p, i) => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (i % 3 === 0 ? 1.6 : 1) + '" fill="' + color + '" opacity="' + op + '"/>'; });
   return s;
 }
 // Decorative border strips, each style native to an era/place.
@@ -347,11 +348,97 @@ function frame(style, c1, c2) {
 function emblemSVG(m) {
   const uid = "g" + Math.random().toString(36).slice(2, 8);
   const tint = m.tint;
+  // ---- culture-specific backdrop texture (behind the night sky wash) ----
+  function backdrop(style, c1, c2) {
+    const t = [];
+    if (style === "batik") {
+      // isen batik flowing dots + parang diagonal
+      for (let y = 14; y < 130; y += 22) for (let x = 8; x < 160; x += 20) {
+        t.push('<circle cx="' + (x + (y % 44 === 14 ? 10 : 0)) + '" cy="' + y + '" r="1.6" fill="' + c2 + '" opacity="0.14"/>');
+        t.push('<path d="M' + x + ' ' + (y + 8) + ' q5 -6 10 0" stroke="' + c1 + '" stroke-width="0.8" fill="none" opacity="0.12"/>');
+      }
+    } else if (style === "meander") {
+      // black-figure pottery: terracotta horizontal bands + fine key rows
+      t.push('<rect x="0" y="18" width="160" height="2" fill="' + c2 + '" opacity="0.25"/>');
+      t.push('<rect x="0" y="110" width="160" height="2" fill="' + c2 + '" opacity="0.25"/>');
+      for (let x = 2; x < 160; x += 16) { t.push('<path d="M' + x + ' 24 h8 v4 h-4" stroke="' + c2 + '" stroke-width="0.8" fill="none" opacity="0.2"/><path d="M' + x + ' 104 h8 v-4 h-4" stroke="' + c2 + '" stroke-width="0.8" fill="none" opacity="0.2"/>'); }
+    } else if (style === "hiero") {
+      // papyrus fibre bands
+      for (let y = 16; y < 130; y += 14) { t.push('<rect x="0" y="' + y + '" width="160" height="1" fill="' + c2 + '" opacity="0.16"/>'); }
+      for (let y = 22; y < 130; y += 28) { for (let x = 6; x < 160; x += 26) { t.push('<path d="M' + x + ' ' + y + ' h14" stroke="' + c1 + '" stroke-width="0.7" opacity="0.15" stroke-dasharray="3 3"/>'); } }
+    } else if (style === "wave") {
+      // ukiyo-e seigaiha field
+      for (let y = 12; y < 130; y += 18) for (let x = 2; x < 160; x += 20) {
+        t.push('<path d="M' + x + ' ' + y + ' a8 8 0 0 1 16 0 M' + (x + 4) + ' ' + y + ' a4 4 0 0 1 8 0" stroke="' + c2 + '" stroke-width="0.9" fill="none" opacity="0.15"/>');
+      }
+    } else if (style === "knot") {
+      // illuminated manuscript interlace + vellum wash
+      t.push('<rect x="0" y="0" width="160" height="130" fill="' + c2 + '" opacity="0.06"/>');
+      for (let y = 12; y < 130; y += 24) for (let x = 4; x < 160; x += 26) {
+        t.push('<path d="M' + x + ' ' + y + ' q7 -9 14 0 q-7 9 -14 0" stroke="' + c2 + '" stroke-width="0.9" fill="none" opacity="0.16"/>');
+      }
+    } else if (style === "greca") {
+      // codex red field with step-fret watermark
+      t.push('<rect x="0" y="0" width="160" height="130" fill="' + c1 + '" opacity="0.10"/>');
+      for (let y = 10; y < 130; y += 26) for (let x = 4; x < 160; x += 24) {
+        t.push('<path d="M' + x + ' ' + y + ' v7 h7 v-4 h-3" stroke="' + c2 + '" stroke-width="0.9" fill="none" opacity="0.18"/>');
+      }
+    } else if (style === "kawung") {
+      // kawung field + javanese parang rows
+      for (let y = 12; y < 130; y += 22) for (let x = 6; x < 160; x += 24) {
+        t.push('<ellipse cx="' + x + '" cy="' + y + '" rx="7" ry="5" fill="none" stroke="' + c2 + '" stroke-width="0.8" opacity="0.15"/>');
+        t.push('<circle cx="' + (x + 12) + '" cy="' + y + '" r="1.2" fill="' + c1 + '" opacity="0.15"/>');
+      }
+    } else if (style === "lotus") {
+      // temple mural wash + lotus bud rows
+      for (let y = 14; y < 130; y += 20) for (let x = 4; x < 160; x += 18) {
+        t.push('<path d="M' + x + ' ' + y + ' q4 -8 8 0 q-4 -3 -8 0" fill="' + c2 + '" opacity="0.12"/>');
+      }
+    } else if (style === "tapa") {
+      // tapa bark texture: bands + chevrons
+      for (let y = 10; y < 130; y += 18) { t.push('<rect x="0" y="' + y + '" width="160" height="1.2" fill="' + c2 + '" opacity="0.14"/>'); }
+      for (let y = 18; y < 130; y += 18) for (let x = 4; x < 160; x += 18) {
+        t.push('<path d="M' + x + ' ' + y + ' l5 6 l5 -6" stroke="' + c1 + '" stroke-width="0.9" fill="none" opacity="0.15"/>');
+      }
+    } else if (style === "adinkra") {
+      // stamped adinkra-like motifs grid
+      for (let y = 16; y < 130; y += 26) for (let x = 8; x < 160; x += 28) {
+        t.push('<circle cx="' + x + '" cy="' + y + '" r="5" fill="none" stroke="' + c2 + '" stroke-width="0.9" opacity="0.16"/>');
+        t.push('<path d="M' + (x - 5) + ' ' + y + ' h10 M' + x + ' ' + (y - 5) + ' v10" stroke="' + c2 + '" stroke-width="0.7" opacity="0.16"/>');
+      }
+    } else if (style === "formline") {
+      // formline ovoids and U-shapes
+      for (let y = 14; y < 130; y += 30) for (let x = 8; x < 160; x += 34) {
+        t.push('<ellipse cx="' + x + '" cy="' + y + '" rx="9" ry="6" fill="none" stroke="' + c2 + '" stroke-width="1.1" opacity="0.17"/>');
+        t.push('<path d="M' + (x + 14) + ' ' + (y + 4) + ' q5 -8 10 0" stroke="' + c1 + '" stroke-width="1" fill="none" opacity="0.17"/>');
+      }
+    } else if (style === "sumie") {
+      // sumi-e ink washes, vertical bamboo hint
+      for (let x = 10; x < 160; x += 34) {
+        t.push('<path d="M' + x + ' 10 q-6 55 4 112" stroke="' + c2 + '" stroke-width="2.4" fill="none" opacity="0.10"/>');
+        t.push('<path d="M' + x + ' 40 q10 4 16 12 M' + (x + 2) + ' 74 q-10 4 -16 10" stroke="' + c2 + '" stroke-width="1.2" fill="none" opacity="0.12"/>');
+      }
+      t.push('<rect x="0" y="0" width="160" height="130" fill="' + c1 + '" opacity="0.05"/>');
+    } else if (style === "sandstone") {
+      // khmer sandstone: carved blocks
+      for (let y = 8; y < 130; y += 20) { t.push('<rect x="0" y="' + y + '" width="160" height="0.8" fill="' + c2 + '" opacity="0.22"/>'); }
+      for (let y = 8; y < 130; y += 40) for (let x = 0; x < 160; x += 22) {
+        t.push('<rect x="' + x + '" y="' + y + '" width="1" height="40" fill="' + c2 + '" opacity="0.18"/>');
+      }
+    } else if (style === "engraving") {
+      // copperplate hatching fields
+      for (let y = 8; y < 130; y += 5) { t.push('<path d="M0 ' + y + ' Q80 ' + (y - 3) + ' 160 ' + y + '" stroke="' + c2 + '" stroke-width="0.4" opacity="0.10" fill="none"/>'); }
+      for (let x = 8; x < 160; x += 8) { t.push('<path d="M' + x + ' 8 L' + (x + 10) + ' 122" stroke="' + c1 + '" stroke-width="0.35" opacity="0.09"/>'); }
+    }
+    return t.join("");
+  }
+  const uid2 = uid + "b";
   const sky = '<defs><radialGradient id="' + uid + '" cx="50%" cy="18%" r="95%">'
     + '<stop offset="0%" stop-color="' + tint[0] + '" stop-opacity="0.6"/>'
     + '<stop offset="100%" stop-color="#12100b"/></radialGradient></defs>'
     + '<rect width="160" height="130" fill="url(#' + uid + ')"/>'
-    + stars(m.type === "malaysia" ? 0.75 : 0.55)
+    + backdrop(m.frame, tint[1], tint[2] || "#d4a24e")
+    + stars(m.type === "malaysia" ? 0.75 : 0.5, tint[2] || "#f0c674")
     + frame(m.frame, tint[1], tint[2] || "#d4a24e");
   const ink = "#171008", gold = "#f0c674";
   const art = {
@@ -682,7 +769,7 @@ const MYTHS = [
   // ---------------- WORLD REALMS BY CONTINENT: ASIA, EUROPE, AFRICA, OCEANIA, AMERICAS ----------------
   {
     id: "yamata", scene: "serpent", frame: "wave", era: "Recorded 8th century · Kojiki, Japan's oldest book",
-    tint: ["#3c1e2e", "#b3492f", "#d4a24e"],
+    tint: ["#1c2c44", "#c94f3a", "#8ca6c4"],
     name: "Yamata-no-Orochi", nation: "Japan", region: "Izumo · Sea of Japan coast", type: "world", continent: "asia",
     kind: "Serpent & Sacrifice",
     creature: "An eight-headed, eight-tailed dragon-serpent that demands a yearly maiden",
@@ -750,7 +837,7 @@ const MYTHS = [
   },
   {
     id: "sphinx", scene: "sphinx", frame: "meander", era: "Classical Greece · Theban cycle of tragedy",
-    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    tint: ["#5a2e1c", "#e0a070", "#171008"],
     name: "The Riddle of the Sphinx", nation: "Greece", region: "Greek mainland · near Thebes", type: "world", continent: "europe",
     kind: "Guardian & Riddle",
     creature: "A lion-bodied, winged guardian with a human head who asks one fatal question",
@@ -766,8 +853,8 @@ const MYTHS = [
     keywords: "sphinx riddle guardian greece thebes lion wings oedipus road question"
   },
   {
-    id: "anansi", scene: "spider", frame: "engraving", era: "West African tale cycle · carried across the Atlantic",
-    tint: ["#3c2e14", "#d4a24e", "#b3492f"],
+    id: "anansi", scene: "spider", frame: "adinkra", era: "West African tale cycle · carried across the Atlantic",
+    tint: ["#3a2c14", "#e8b44c", "#8c3a28"],
     name: "Anansi the Spider", nation: "Ghana & the Caribbean", region: "West Africa · Ashanti country", type: "world", continent: "africa",
     kind: "Trickster",
     creature: "Anansi, a spider who outwits gods, tigers, and princes alike",
@@ -783,8 +870,8 @@ const MYTHS = [
     keywords: "trickster spider anansi stories wit clever west africa caribbean sky god ghana ashanti"
   },
   {
-    id: "mamiwata", scene: "spirits", frame: "engraving", era: "West & Central African water-spirit cult · living tradition",
-    tint: ["#123a44", "#5f8f8b", "#d4a24e"],
+    id: "mamiwata", scene: "spirits", frame: "adinkra", era: "West & Central African water-spirit cult · living tradition",
+    tint: ["#14323c", "#4ca6a0", "#e8b44c"],
     name: "Mami Wata, Mother of Water", nation: "West & Central Africa", region: "Coastal West Africa · Congo river systems", type: "world", continent: "africa",
     kind: "Water Mother",
     creature: "A beautiful water mother with a serpent's coils, who gives wealth and takes the absent-minded",
@@ -800,9 +887,9 @@ const MYTHS = [
     keywords: "water mother mami wata africa serpent beauty wealth healing devotion mirror ocean"
   },
   {
-    id: "adze", scene: "spirits", frame: "engraving", era: "Ewe vampire-lore · oral tradition",
+    id: "adze", scene: "spirits", frame: "adinkra", era: "Ewe vampire-lore · oral tradition",
     obscure: true,
-    tint: ["#2c2438", "#8a6fa8", "#d4a24e"],
+    tint: ["#2c2430", "#b088c8", "#e8b44c"],
     name: "The Adze, Fireball Vampire", nation: "Ghana & Togo", region: "Ewe country · Volta region", type: "world", continent: "africa",
     kind: "Firefly Vampire",
     creature: "The adze — a vampiric spirit that flies as a firefly or ball of light and drinks the living",
@@ -869,8 +956,8 @@ const MYTHS = [
     keywords: "feathered serpent quetzalcoatl mexico maize wind wisdom star temple pyramid aztec return"
   },
   {
-    id: "thunderbird", scene: "thunderbird", frame: "engraving", era: "Pacific Northwest · winter ceremonial tradition",
-    tint: ["#22303e", "#8fa6c4", "#d4a24e"],
+    id: "thunderbird", scene: "thunderbird", frame: "formline", era: "Pacific Northwest · winter ceremonial tradition",
+    tint: ["#22303e", "#3a6a8c", "#c94f3a"],
     name: "Thunderbird of the Pacific Coast", nation: "Canada & USA", region: "Pacific Northwest coast", type: "world", continent: "americas",
     kind: "Storm Spirit",
     creature: "A vast bird whose wingbeats are thunder and whose glance is lightning",
@@ -904,7 +991,7 @@ const MYTHS = [
   },
   {
     id: "amaterasu", scene: "moon", frame: "wave", era: "Shinto myth · recorded in the Kojiki, 8th century",
-    tint: ["#3a2c1c", "#d4a24e", "#b3492f"],
+    tint: ["#3a2c1c", "#e0b060", "#c94f3a"],
     name: "Amaterasu & the Hidden Sun", nation: "Japan", region: "Takamagahara · the high plain of heaven", type: "world", continent: "asia",
     kind: "Sun Goddess",
     creature: "Amaterasu, the sun goddess, and her wild brother Susanoo of the storm",
@@ -921,7 +1008,7 @@ const MYTHS = [
   },
   {
     id: "garuda", scene: "thunderbird", frame: "lotus", era: "Hindu & Buddhist tradition · shared across Asia",
-    tint: ["#2a3c50", "#d4a24e", "#b3492f"],
+    tint: ["#3a2a10", "#e8a83c", "#2c7c6c"],
     name: "Garuda & the Naga Mothers", nation: "India & the Buddhist world", region: "Indian subcontinent · spread across Asia", type: "world", continent: "asia",
     kind: "Great Bird & Ancient Feud",
     creature: "Garuda, the eagle-mounted king of birds, born to devour the serpent nagas",
@@ -937,8 +1024,8 @@ const MYTHS = [
     keywords: "garuda eagle bird naga serpent feud elixir immortality india buddhist hindu asia"
   },
   {
-    id: "nezha", scene: "hero", frame: "wave", era: "Ming-era novel tradition · Investiture of the Gods",
-    tint: ["#3a1e28", "#b3492f", "#d4a24e"],
+    id: "nezha", scene: "hero", frame: "sumie", era: "Ming-era novel tradition · Investiture of the Gods",
+    tint: ["#2c2820", "#e8d8b0", "#4a5a7c"],
     name: "Nezha, the Lotus-Born", nation: "China", region: "Chinese classical tradition", type: "world", continent: "asia",
     kind: "Child God & Rebirth",
     creature: "Nezha, a boy warrior born of a lotus after flesh-and-bone rebirth, with Fire-tipped Spear and Wind Fire Wheels",
@@ -955,7 +1042,7 @@ const MYTHS = [
   },
   {
     id: "kaguya", scene: "moon", frame: "wave", era: "Heian-era tale · 10th century, oldest Japanese science fiction",
-    tint: ["#2a2c44", "#8a6fa8", "#d4a24e"],
+    tint: ["#2a2c44", "#c4b4e0", "#8ca6c4"],
     name: "The Tale of the Bamboo Cutter", nation: "Japan", region: "Classical Kyoto literature", type: "world", continent: "asia",
     kind: "Moon Princess",
     creature: "Kaguya-hime, a thumb-sized girl found in bamboo who grows into a princess from the moon",
@@ -971,7 +1058,7 @@ const MYTHS = [
     keywords: "japan kaguya bamboo cutter moon princess five suitors impossible task heian"
   },
   {
-    id: "ghouls", scene: "fangs", frame: "lotus", era: "Arabian Nights & earlier Persian lore",
+    id: "ghouls", scene: "fangs", frame: "kawung", era: "Arabian Nights & earlier Persian lore",
     tint: ["#3a2a1c", "#d4a24e", "#5f8f8b"],
     name: "Scheherazade & the Thousand Nights", nation: "Persia, India & the Arab world", region: "The Silk Road · a shared story ocean", type: "world", continent: "asia",
     kind: "Storyteller Against Doom",
@@ -1042,7 +1129,7 @@ const MYTHS = [
   },
   {
     id: "banshee", scene: "spirits", frame: "knot", era: "Irish & Scottish Gaelic tradition · centuries old",
-    tint: ["#1c3230", "#5f8f8b", "#d4a24e"],
+    tint: ["#2a3230", "#c8d4c8", "#c94f3a"],
     name: "The Banshee's Keen", nation: "Ireland & Scotland", region: "Gaelic world · the old families", type: "world", continent: "europe",
     kind: "Death Messenger",
     creature: "A woman of the otherworld whose unearthly wail announces a death in certain old families",
@@ -1059,7 +1146,7 @@ const MYTHS = [
   },
   {
     id: "brownie", scene: "harvest", frame: "knot", era: "Scottish & English household lore · pre-industrial",
-    tint: ["#3c3424", "#9ab06a", "#d4a24e"],
+    tint: ["#383020", "#d8c8a0", "#c94f3a"],
     name: "The Brownie's Wage", nation: "Scotland & England", region: "The Anglo-Scottish borderlands", type: "world", continent: "europe",
     kind: "Household Spirit",
     creature: "A small, shaggy, helpful spirit who does the farm chores at night in exchange for a bowl of cream",
@@ -1076,7 +1163,7 @@ const MYTHS = [
   },
   {
     id: "midgard", scene: "serpent", frame: "knot", era: "Norse mythology · Poetic & Prose Edda, 13th century",
-    tint: ["#1c3040", "#5f8f8b", "#d4a24e"],
+    tint: ["#1c3040", "#7ca0b8", "#c8d4c8"],
     name: "Jörmungandr, the World Serpent", nation: "Iceland & Scandinavia", region: "The Norse cosmos · encircling Midgard", type: "world", continent: "europe",
     kind: "World-Serpent",
     creature: "Jörmungandr, a serpent so vast it encircles the whole world, tail in its own mouth",
@@ -1092,9 +1179,9 @@ const MYTHS = [
     keywords: "norse world serpent jormungandr midgard ocean encircle ragnarok thor venom loki boundary"
   },
   {
-    id: "melusine", scene: "spirits", frame: "meander", era: "Medieval French romance · 14th century",
+    id: "melusine", scene: "spirits", frame: "knot", era: "Medieval French romance · 14th century",
     obscure: true,
-    tint: ["#2a2c3c", "#8a6fa8", "#d4a24e"],
+    tint: ["#2a2c3c", "#b0c0d8", "#c94f3a"],
     name: "Mélusine & the Broken Promise", nation: "France", region: "Poitou · medieval romance tradition", type: "world", continent: "europe",
     kind: "Serpent-Woman Bride",
     creature: "Mélusine, a fairy wife who is half-serpent on Saturdays, and a husband who could not keep one promise",
@@ -1112,7 +1199,7 @@ const MYTHS = [
   {
     id: "kalevipoeg", scene: "hero", frame: "knot", era: "Estonian epic · compiled 19th c. from oral runo song",
     obscure: true,
-    tint: ["#2c3a2c", "#9ab06a", "#d4a24e"],
+    tint: ["#2c3a2c", "#a8c088", "#e8b44c"],
     name: "Kalevipoeg, the Stone-Thrower", nation: "Estonia", region: "Baltic · Estonian runo tradition", type: "world", continent: "europe",
     kind: "National Giant-Hero",
     creature: "Kalevipoeg, a giant hero-king who hurled boulders across Estonia and fought the underworld's sorcerers",
@@ -1128,8 +1215,8 @@ const MYTHS = [
     keywords: "estonia baltic giant hero kalevipoeg sword curse boulder underworld epic runo obscure"
   },
   {
-    id: "basilisk", scene: "fangs", frame: "meander", era: "Medieval bestiary lore · from Pliny to the alchemists",
-    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    id: "basilisk", scene: "fangs", frame: "engraving", era: "Medieval bestiary lore · from Pliny to the alchemists",
+    tint: ["#4a3820", "#e8c878", "#171008"],
     name: "The Basilisk, King of Serpents", nation: "Medieval Europe", region: "The bestiaries & alchemical Europe", type: "world", continent: "europe",
     kind: "Deadly Gaze",
     creature: "A crowned serpent-king whose gaze kills, whose breath withers, and whose mere path poisons",
@@ -1146,7 +1233,7 @@ const MYTHS = [
   },
   {
     id: "rusalka", scene: "spirits", frame: "engraving", era: "Slavic folklore · pre-Christian river lore",
-    tint: ["#1c2c40", "#5f8f8b", "#d4a24e"],
+    tint: ["#1c2c40", "#8ca6c4", "#c94f3a"],
     name: "The Rusalka of the River", nation: "Slavic world", region: "Russia, Ukraine & the Slavic riverlands", type: "world", continent: "europe",
     kind: "Water Maiden & Ghost",
     creature: "A drowned maiden returned as a river spirit — water-weed for hair, and a fatal embrace",
@@ -1164,7 +1251,7 @@ const MYTHS = [
   {
     id: "gnomes", scene: "hiddenfolk", frame: "engraving", era: "Alpine & Germanic mine lore · Paracelsian tradition",
     obscure: true,
-    tint: ["#3c3428", "#9ab06a", "#d4a24e"],
+    tint: ["#3c3428", "#c8a878", "#e8b44c"],
     name: "Kobolds of the Mine", nation: "Germany & the Alps", region: "The mine-shafts of the old Harz mountains", type: "world", continent: "europe",
     kind: "Mine Spirits",
     creature: "Kobolds — underground spirits who haunt mines: helpful house-gnomes or lethal gas, depending on their mood",
@@ -1181,7 +1268,7 @@ const MYTHS = [
   },
   {
     id: "yebo", scene: "crocodile", frame: "hiero", era: "Ancient Egypt · New Kingdom, ~13th century BCE",
-    tint: ["#4a3820", "#d4a24e", "#b3492f"],
+    tint: ["#4a3a20", "#e8c878", "#3a5a8c"],
     name: "Sobek & the Nile's Favor", nation: "Egypt (ancient)", region: "Nile valley · Faiyum & Kom Ombo", type: "world", continent: "africa",
     kind: "Crocodile God",
     creature: "Sobek, the crocodile-headed god of the Nile's flood, power and protection",
@@ -1198,7 +1285,7 @@ const MYTHS = [
   },
   {
     id: "seth", scene: "thunderbird", frame: "hiero", era: "Ancient Egypt · pyramid-text era, ~3rd millennium BCE",
-    tint: ["#4a2420", "#b3492f", "#d4a24e"],
+    tint: ["#4a2c1e", "#d4885c", "#3a5a8c"],
     name: "Set & the Night Barque", nation: "Egypt (ancient)", region: "Nile valley · the eastern desert", type: "world", continent: "africa",
     kind: "Storm God & Necessary Villain",
     creature: "Set, god of storm, desert and disorder — murderer of his brother, and the only one who can fight off the serpent of the dark",
@@ -1231,8 +1318,8 @@ const MYTHS = [
     keywords: "congo mokele mbembe river monster elephant neck hippo canoe swamp lake tele"
   },
   {
-    id: "lightning", scene: "thunderbird", frame: "engraving", era: "Yoruba religion · living tradition, Nigeria & diaspora",
-    tint: ["#3a2c14", "#d4a24e", "#b3492f"],
+    id: "lightning", scene: "thunderbird", frame: "adinkra", era: "Yoruba religion · living tradition, Nigeria & diaspora",
+    tint: ["#3a2c14", "#e8b44c", "#c94f3a"],
     name: "Ṣàngó, Thunder-King of Oyo", nation: "Nigeria & Benin", region: "Yoruba country · old Oyo empire", type: "world", continent: "africa",
     kind: "Deified King & Thunder",
     creature: "Ṣàngó, a king of Oyo deified as thunder itself — lightning-axe in hand, justice in his temper",
@@ -1248,8 +1335,8 @@ const MYTHS = [
     keywords: "yoruba nigeria sango shango thunder king oyo lightning axe thunderstone justice brazil"
   },
   {
-    id: "tokoloshe", scene: "hiddenfolk", frame: "engraving", era: "Southern African folklore · living tradition",
-    tint: ["#2c2a34", "#8a6fa8", "#d4a24e"],
+    id: "tokoloshe", scene: "hiddenfolk", frame: "adinkra", era: "Southern African folklore · living tradition",
+    tint: ["#2c2a34", "#b088c8", "#e8b44c"],
     name: "The Tokoloshe", nation: "South Africa & Zimbabwe", region: "Southern Africa · Zulu & wider Nguni lore", type: "world", continent: "africa",
     kind: "Night Pestsprite",
     creature: "A small, hairy, mischievous-to-malevolent water sprite, invisible to all but its victims and those with the sight",
@@ -1265,9 +1352,9 @@ const MYTHS = [
     keywords: "tokoloshe south africa zulu night sprite water bed bricks invisible mischief"
   },
   {
-    id: "hamrammr", scene: "yeti", frame: "engraving", era: "Ethiopian & medieval European lore · merged traditions",
+    id: "hamrammr", scene: "yeti", frame: "adinkra", era: "Ethiopian & medieval European lore · merged traditions",
     obscure: true,
-    tint: ["#3c3428", "#9ab06a", "#d4a24e"],
+    tint: ["#3c3428", "#c8a878", "#8c3a28"],
     name: "The Bouda & the Were-Hyena", nation: "Ethiopia, Sudan & North Africa", region: "Horn of Africa · the wider Islamic world", type: "world", continent: "africa",
     kind: "Were-Beast",
     creature: "Bouda — humans who shift into hyenas by night, a legend that clings to real outcast groups",
@@ -1283,9 +1370,9 @@ const MYTHS = [
     keywords: "ethiopia sudan bouda werehyena hyena shapeshift blacksmith outcast night islamic obscure"
   },
   {
-    id: "anzil", scene: "spirits", frame: "hiero", era: "Madagascar highland lore · living tradition",
+    id: "anzil", scene: "spirits", frame: "tapa", era: "Madagascar highland lore · living tradition",
     obscure: true,
-    tint: ["#1c2c26", "#5f8f8b", "#d4a24e"],
+    tint: ["#1c2c26", "#5f8f8b", "#e8b44c"],
     name: "The Kalanoro of the Forest", nation: "Madagascar", region: "Highland Madagascar · the eastern rainforest", type: "world", continent: "africa",
     kind: "Little Forest People",
     creature: "Kalanoro — short, wild-haired forest dwellers with backward feet, who trade fish and steal children's breath",
@@ -1441,7 +1528,7 @@ const MYTHS = [
   },
   {
     id: "elal", scene: "hero", frame: "engraving", era: "Patagonian Tehuelche tradition · southern tip of the Americas",
-    tint: ["#2a3444", "#c9d6e4", "#d4a24e"],
+    tint: ["#2a3444", "#c9d6e4", "#e8b44c"],
     name: "Elal, the Child of the Chosen", nation: "Argentina & Chile (Tehuelche)", region: "Patagonia · the far south", type: "world", continent: "americas",
     kind: "Culture Hero Child",
     creature: "Elal, a miraculous child raised by animals, who gave the Tehuelche their world",
@@ -1457,8 +1544,8 @@ const MYTHS = [
     keywords: "patagonia elal tehuelche child animals fire bow hunt guanaco steppe argentina chile"
   },
   {
-    id: "wendingo", scene: "yeti", frame: "engraving", era: "Algonquian winter lore · northern forests",
-    tint: ["#22303c", "#c9d6e4", "#d4a24e"],
+    id: "wendingo", scene: "yeti", frame: "formline", era: "Algonquian winter lore · northern forests",
+    tint: ["#22303c", "#c9d6e4", "#c94f3a"],
     name: "The Wendigo of the Winter Hunger", nation: "Canada & USA (Algonquian peoples)", region: "Northern forests · the subarctic winter", type: "world", continent: "americas",
     kind: "Hunger Spirit",
     creature: "The wendigo — a gaunt giant of the deep winter, grown from a human who resorted to cannibalism",
@@ -1491,8 +1578,8 @@ const MYTHS = [
     keywords: "hopi zuni pueblo katsina kachina rain spirit masked dancer kiva monsoon desert southwest"
   },
   {
-    id: "curupira", scene: "hiddenfolk", frame: "greca", era: "Tupi-Guarani forest lore · Amazon & Atlantic forest",
-    tint: ["#1c3222", "#9ab06a", "#d4a24e"],
+    id: "curupira", scene: "hiddenfolk", frame: "engraving", era: "Tupi-Guarani forest lore · Amazon & Atlantic forest",
+    tint: ["#1c3222", "#88b060", "#e8b44c"],
     name: "The Curupira, Backward Feet", nation: "Brazil", region: "Amazon & Atlantic forests", type: "world", continent: "americas",
     kind: "Forest Guardian",
     creature: "A small, fiery-haired forest protector whose feet point backward, to confuse hunters",
@@ -1525,8 +1612,8 @@ const MYTHS = [
     keywords: "colombia muisca el dorado gold lake guatavita chief raft offering andes conquistador"
   },
   {
-    id: "sasquatch", scene: "yeti", frame: "engraving", era: "Pacific Northwest & continental indigenous lore · living",
-    tint: ["#26322a", "#9ab06a", "#d4a24e"],
+    id: "sasquatch", scene: "yeti", frame: "formline", era: "Pacific Northwest & continental indigenous lore · living",
+    tint: ["#26322a", "#3a6a8c", "#e8b44c"],
     name: "SSásq'ets, the Hairy Giant of the Woods", nation: "Canada & USA (Coast Salish & many nations)", region: "Pacific Northwest · the great forests", type: "world", continent: "americas",
     kind: "Forest Giant",
     creature: "Sasquatch — a tall, hair-covered being of the deep woods, known to many Indigenous nations under many names",
@@ -1619,7 +1706,7 @@ const MYTHS = [
   },
   {
     id: "kraithong", scene: "crocodile", frame: "lotus", era: "Ayutthaya-era tale · shadow-play repertoire",
-    tint: ["#22301e", "#9ab06a", "#d4a24e"],
+    tint: ["#2a3018", "#d8b060", "#e8d8a0"],
     name: "Kraithong, the Crocodile Lord", nation: "Thailand & Laos", region: "Chao Phraya riverlands", type: "world", continent: "southeast-asia",
     kind: "Crocodile Sorcerer",
     creature: "Kraithong, a sorcerer who takes crocodile form and hunts the river for maidens and monks",
@@ -1636,7 +1723,7 @@ const MYTHS = [
   },
   {
     id: "laclong", scene: "egg", frame: "lotus", era: "Red River delta · origin legend of antiquity",
-    tint: ["#1e3428", "#d4a24e", "#5f8f8b"],
+    tint: ["#1e3428", "#d4a24e", "#5f9f8b"],
     name: "Lạc Long Quân & Âu Cơ", nation: "Vietnam", region: "Red River delta · northern mountains", type: "world", continent: "southeast-asia",
     kind: "Origin of a People",
     creature: "A water-dragon lord of the sea and a mountain fairy — the two parents of the Vietnamese people",
@@ -1704,7 +1791,7 @@ const MYTHS = [
   },
   {
     id: "phayanaga", scene: "serpent", frame: "lotus", era: "Mekong river lore · living tradition",
-    tint: ["#1c2e26", "#5f8f8b", "#d4a24e"],
+    tint: ["#1c2e26", "#5f9f8b", "#e8c878"],
     name: "The Phaya Naga of the Mekong", nation: "Laos & Thailand", region: "Mekong river · Isan & Laos", type: "world", continent: "southeast-asia",
     kind: "River Serpent",
     creature: "Great serpents of the Mekong, seen as surfacing knots of river in the monsoon",
@@ -1722,7 +1809,7 @@ const MYTHS = [
   {
     id: "manohara", scene: "princess", frame: "lotus", era: "Thai classical dance-drama · court repertoire",
     obscure: true,
-    tint: ["#3a1e2c", "#b3492f", "#d4a24e"],
+    tint: ["#3a1e2c", "#c87888", "#e8c878"],
     name: "Manohara, the Kinnari", nation: "Thailand", region: "Siamese classical tradition", type: "world", continent: "southeast-asia",
     kind: "Bird-Woman Bride",
     creature: "Manohara, a kinnari — half-woman, half-bird — the youngest and loveliest of her sisters",
