@@ -453,6 +453,20 @@ function frame(style, c1, c2) {
     for (let x = 8; x < 160; x += 24) { b.push('<ellipse cx="' + x + '" cy="7" rx="6" ry="4" fill="none" stroke="' + c2 + '" stroke-width="1.6"/><ellipse cx="' + (x + 12) + '" cy="7" rx="6" ry="4" fill="none" stroke="' + c1 + '" stroke-width="1.2"/><ellipse cx="' + x + '" cy="123" rx="6" ry="4" fill="none" stroke="' + c2 + '" stroke-width="1.6"/><ellipse cx="' + (x + 12) + '" cy="123" rx="6" ry="4" fill="none" stroke="' + c1 + '" stroke-width="1.2"/>'); }
   } else if (style === "temple") { // khmer colonnade
     for (let x = 6; x < 160; x += 18) { b.push('<rect x="' + x + '" y="3" width="6" height="10" fill="' + c2 + '" opacity="0.8"/><rect x="' + x + '" y="117" width="6" height="10" fill="' + c2 + '" opacity="0.8"/>'); }
+  } else if (style === "sumie") { // japanese ink-brush strokes
+    for (let x = 8; x < 160; x += 26) { b.push('<path d="M' + x + ' 8 q4 5 1 12" stroke="' + c2 + '" stroke-width="2.2" fill="none"/><path d="M' + x + ' 118 q4 5 1 12" stroke="' + c2 + '" stroke-width="2.2" fill="none"/>'); }
+    b.push('<circle cx="150" cy="10" r="3.2" fill="' + c1 + '" opacity="0.9"/><circle cx="10" cy="120" r="3.2" fill="' + c1 + '" opacity="0.9"/>');
+  } else if (style === "adinkra") { // akan stamped motifs
+    for (let x = 10; x < 160; x += 28) {
+      b.push('<circle cx="' + x + '" cy="8" r="5" fill="none" stroke="' + c2 + '" stroke-width="1.6"/><circle cx="' + x + '" cy="8" r="1.8" fill="' + c1 + '"/>');
+      b.push('<path d="M' + (x - 5) + ' 121 l5 -6 l5 6 l-5 6 z" fill="none" stroke="' + c2 + '" stroke-width="1.4"/>');
+    }
+  } else if (style === "formline") { // northwest coast formline ovoids
+    for (let x = 8; x < 160; x += 30) {
+      b.push('<ellipse cx="' + x + '" cy="8" rx="10" ry="5" fill="none" stroke="' + c2 + '" stroke-width="1.8"/>');
+      b.push('<ellipse cx="' + (x + 15) + '" cy="122" rx="10" ry="5" fill="none" stroke="' + c2 + '" stroke-width="1.8"/>');
+      b.push('<path d="M' + (x + 24) + ' 8 h20 M' + (x + 9) + ' 122 h20" stroke="' + c1 + '" stroke-width="1.4"/>');
+    }
   } else { // "engraving": classic double-rule vignette frame
     b.push('<rect x="2" y="2" width="156" height="126" fill="none" stroke="' + c2 + '" stroke-width="1.4"/>');
     b.push('<rect x="6" y="6" width="148" height="118" fill="none" stroke="' + c1 + '" stroke-width="0.8" opacity="0.7"/>');
@@ -822,7 +836,7 @@ const MYTHS = [
     keywords: "hidden people orang bunian forest rainforest invisible realm perak pahang travellers vanish mirror"
   },
   {
-    id: "kumkum", scene: "harvest", frame: "batik", era: "East-coast kampung customs · oral tradition",
+    id: "kumkum", scene: "spirits", frame: "batik", era: "East-coast kampung customs · oral tradition",
     tint: ["#4a4a26", "#9ab06a", "#d4a24e"],
     name: "Berteh & Hantu Kum-Kum", nation: "Malaysia", region: "Kelantan · Malay kampung", type: "malaysia",
     kind: "Spirit & Harvest",
@@ -1237,7 +1251,7 @@ const MYTHS = [
     keywords: "hittite anatolia storm god serpent illuyanka tarhunt bronze age wedding feast dragon obscure"
   },
   {
-    id: "erlik", scene: "yeti", frame: "knot", era: "Turkic & Mongolian cosmology · steppe tradition",
+    id: "erlik", scene: "spirits", frame: "knot", era: "Turkic & Mongolian cosmology · steppe tradition",
     obscure: true,
     tint: ["#262c38", "#8fa6c4", "#d4a24e"],
     name: "Erlik Khan & the First Death", nation: "Mongolia & Central Asia", region: "The steppe · Turkic-Mongol world", type: "world", continent: "asia",
@@ -1271,7 +1285,7 @@ const MYTHS = [
     keywords: "banshee ireland scotland death keen wail family comb fairy woman gaelic"
   },
   {
-    id: "brownie", scene: "harvest", frame: "knot", era: "Scottish & English household lore · pre-industrial",
+    id: "brownie", scene: "hiddenfolk", frame: "knot", era: "Scottish & English household lore · pre-industrial",
     tint: ["#383020", "#d8c8a0", "#c94f3a"],
     name: "The Brownie's Wage", nation: "Scotland & England", region: "The Anglo-Scottish borderlands", type: "world", continent: "europe",
     kind: "Household Spirit",
@@ -1305,7 +1319,7 @@ const MYTHS = [
     keywords: "norse world serpent jormungandr midgard ocean encircle ragnarok thor venom loki boundary"
   },
   {
-    id: "melusine", scene: "spirits", frame: "knot", era: "Medieval French romance · 14th century",
+    id: "melusine", scene: "serpent", frame: "knot", era: "Medieval French romance · 14th century",
     obscure: true,
     tint: ["#2a2c3c", "#b0c0d8", "#c94f3a"],
     name: "Mélusine & the Broken Promise", nation: "France", region: "Poitou · medieval romance tradition", type: "world", continent: "europe",
@@ -1496,7 +1510,7 @@ const MYTHS = [
     keywords: "ethiopia sudan bouda werehyena hyena shapeshift blacksmith outcast night islamic obscure"
   },
   {
-    id: "anzil", scene: "spirits", frame: "tapa", era: "Madagascar highland lore · living tradition",
+    id: "anzil", scene: "hiddenfolk", frame: "tapa", era: "Madagascar highland lore · living tradition",
     obscure: true,
     tint: ["#1c2c26", "#5f8f8b", "#e8b44c"],
     name: "The Kalanoro of the Forest", nation: "Madagascar", region: "Highland Madagascar · the eastern rainforest", type: "world", continent: "africa",
@@ -1549,7 +1563,7 @@ const MYTHS = [
     keywords: "maori flounder snapper shape just so flat fish maui coastal revenge obscure"
   },
   {
-    id: "pele", scene: "fangs", frame: "tapa", era: "Hawaiian tradition · living volcano goddess",
+    id: "pele", scene: "princess", frame: "tapa", era: "Hawaiian tradition · living volcano goddess",
     tint: ["#4a1e14", "#b3492f", "#d4a24e"],
     name: "Pele & the Snow Queen", nation: "Hawai'i (USA)", region: "Big Island · Kīlauea's fire pits", type: "world", continent: "oceania",
     kind: "Volcano Goddess",
@@ -1618,7 +1632,7 @@ const MYTHS = [
     keywords: "taniwha new zealand water guardian river harbour pool maori waikato protection obscure"
   },
   {
-    id: "rom", scene: "hero", frame: "tapa", era: "Aboriginal Australian songline tradition · living",
+    id: "rom", scene: "moon", frame: "tapa", era: "Aboriginal Australian songline tradition · living",
     obscure: true,
     tint: ["#4a3020", "#d4a24e", "#b3492f"],
     name: "The Seven Sisters Across the Sky", nation: "Australia (Aboriginal)", region: "Desert songlines · across the continent", type: "world", continent: "oceania",
@@ -1636,7 +1650,7 @@ const MYTHS = [
     keywords: "australia aboriginal seven sisters pleiades songline orion desert sky waterhole obscure"
   },
   {
-    id: "netat", scene: "hiddenfolk", frame: "tapa", era: "Micronesian island lore · living",
+    id: "netat", scene: "sphinx", frame: "tapa", era: "Micronesian island lore · living",
     tint: ["#1a2a3c", "#5f8f8b", "#d4a24e"],
     name: "Sop of Nan Madol", nation: "Micronesia", region: "Pohnpei · the ruins of Nan Madol", type: "world", continent: "oceania",
     kind: "City of Stone",
@@ -1721,7 +1735,7 @@ const MYTHS = [
     keywords: "brazil curupira forest guardian backward feet hunter fire hair tupi guarani amazon"
   },
   {
-    id: "el-dorado", scene: "pumpkin", frame: "greca", era: "Muisca ceremony · transformed by conquest-era legend",
+    id: "el-dorado", scene: "moon", frame: "greca", era: "Muisca ceremony · transformed by conquest-era legend",
     tint: ["#2c3020", "#d4a24e", "#5f8f8b"],
     name: "The Golden One of Lake Guatavita", nation: "Colombia (Muisca)", region: "The highland lakes of the Andes", type: "world", continent: "americas",
     kind: "Rite of Gold",
@@ -2274,7 +2288,7 @@ const MYTHS = [
     keywords: "thirty-seven nats mount popa burma myanmar spirits wronged dead shrine festival luck volcano"
   },
   {
-    id: "sang-nila-bargain", scene: "serpent", frame: "wave", era: "Singapore straits legend · oral tradition",
+    id: "sang-nila-bargain", scene: "serpent", frame: "batik", era: "Singapore straits legend · oral tradition",
     obscure: true,
     tint: ["#1c2a30", "#5f8f8b", "#d4a24e"],
     name: "Sang Nila's Sea-Spirit Bargain", nation: "Singapore & Malaysia", region: "Singapore straits · founding legend", type: "world", continent: "southeast-asia",
@@ -2291,7 +2305,7 @@ const MYTHS = [
     keywords: "sang nila utama singapura lion sea spirit bargain straits founding storm crown obscure merlion"
   },
   {
-    id: "aung-nat-tree", scene: "harvest", frame: "wave", era: "Shan states folk tale · oral tradition",
+    id: "aung-nat-tree", scene: "harvest", frame: "lotus", era: "Shan states folk tale · oral tradition",
     obscure: true,
     tint: ["#231f2e", "#8a6fa8", "#d4a24e"],
     name: "The Bo Tree That Grants Iron Skin", nation: "Myanmar & Shan states", region: "Shan hills · village bodhi legend", type: "world", continent: "southeast-asia",
@@ -2426,7 +2440,7 @@ const MYTHS = [
     keywords: "garuda golden wings nepal tibet buddha mount naga rooftop protection himalaya obscure bird king"
   },
   {
-    id: "jinn-ring-solomon", scene: "sphinx", frame: "hiero", era: "Middle Eastern & Islamic tradition · Quran and commentary",
+    id: "jinn-ring-solomon", scene: "spirits", frame: "hiero", era: "Middle Eastern & Islamic tradition · Quran and commentary",
     obscure: true,
     tint: ["#1f2a24", "#9ab06a", "#d4a24e"],
     name: "Solomon's Ring and the Jinn of Brass", nation: "Middle East", region: "Jerusalem & the jinn world · Islamic tradition", type: "world", continent: "asia",
@@ -2628,7 +2642,7 @@ const MYTHS = [
     keywords: "black annis dane hills leicestershire winter hag claws window oak den cat may day obscure england"
   },
   {
-    id: "swan-knights-lake", scene: "horse", frame: "meander", era: "Lohengrin tradition · medieval German romance",
+    id: "swan-knights-lake", scene: "feather", frame: "knot", era: "Lohengrin tradition · medieval German romance",
     obscure: true,
     tint: ["#1a2630", "#5f8f8b", "#d4a24e"],
     name: "The Knight of the Swan", nation: "Germany & the Low Countries", region: "The Rhine and Antwerp · Lohengrin cycle", type: "world", continent: "europe",
@@ -2663,7 +2677,7 @@ const MYTHS = [
     keywords: "anansi stories nyame sky god python hornets leopard akan ashanti ghana bargain spider clever"
   },
   {
-    id: "mwanamuti-swan", scene: "harvest", frame: "adinkra", era: "Swahili coast oral tradition · old telling",
+    id: "mwanamuti-swan", scene: "moon", frame: "adinkra", era: "Swahili coast oral tradition · old telling",
     obscure: true,
     tint: ["#1e2a2a", "#5f8f8b", "#d4a24e"],
     name: "The Dhow That Sailed Into the Stars", nation: "Tanzania & Zanzibar", region: "Swahili coast · dhow-sailor legend", type: "world", continent: "africa",
@@ -2680,7 +2694,7 @@ const MYTHS = [
     keywords: "dhow star voyage swahili zanzibar navigator monsoon starlight iron uncharted said bin juma obscure"
   },
   {
-    id: "mami-oba-river", scene: "princess", frame: "adinkra", era: "Yoruba orisha tradition · old telling",
+    id: "mami-oba-river", scene: "spirits", frame: "adinkra", era: "Yoruba orisha tradition · old telling",
     obscure: true,
     tint: ["#2a1e2e", "#8a6fa8", "#d4a24e"],
     name: "Oya, Whirlwind Wife of the Niger", nation: "Nigeria", region: "Niger River · Yoruba orisha tradition", type: "world", continent: "africa",
@@ -2799,7 +2813,7 @@ const MYTHS = [
     keywords: "nine saints ethiopia hyena tigray harar monastery bread pact highlands tamed cliff obscure"
   },
   {
-    id: "mbembe-forest-queen", scene: "harvest", frame: "adinkra", era: "Fang oral tradition · old telling",
+    id: "mbembe-forest-queen", scene: "spider", frame: "adinkra", era: "Fang oral tradition · old telling",
     obscure: true,
     tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
     name: "Nnanga the Spider's Forest Charter", nation: "Equatorial Africa", region: "Fang country · forest-trickster cycle", type: "world", continent: "africa",
@@ -2901,7 +2915,7 @@ const MYTHS = [
     keywords: "menehune hawaii kauai fishpond alekoko one night builders little folk wall stones hidden ancestors"
   },
   {
-    id: "rorotua-blue-lake", scene: "harvest", frame: "tapa", era: "Te Arawa oral tradition · old telling",
+    id: "rorotua-blue-lake", scene: "serpent", frame: "tapa", era: "Te Arawa oral tradition · old telling",
     obscure: true,
     tint: ["#182430", "#5f8f8b", "#d4a24e"],
     name: "The Taniwha Who dug Lake Rotorua", nation: "Aotearoa New Zealand", region: "Rotorua · Te Arawa tradition", type: "world", continent: "oceania",
@@ -3052,7 +3066,7 @@ const MYTHS = [
     keywords: "tree of peace peacemaker hiawatha haudenosaunee iroquois white pine buried weapons eagle onondaga confederacy"
   },
   {
-    id: "curupira-two", scene: "harvest", frame: "engraving", era: "Brazilian colonial-era legend · 16th century record",
+    id: "curupira-two", scene: "spirits", frame: "engraving", era: "Brazilian colonial-era legend · 16th century record",
     obscure: true,
     tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
     name: "The Matinta Perera's Whistle", nation: "Brazil", region: "Amazon & Pará · whistle-witch legend", type: "world", continent: "americas",
@@ -3120,7 +3134,7 @@ const MYTHS = [
     keywords: "wiraqucha viracocha creator flood titicaca sun clay giants second dawn andes inca white robes obscure"
   },
   {
-    id: "inuitt-amorak", scene: "horse", frame: "formline", era: "Northern Athabaskan oral tradition · old telling",
+    id: "inuitt-amorak", scene: "yeti", frame: "formline", era: "Northern Athabaskan oral tradition · old telling",
     obscure: true,
     tint: ["#1a1e2a", "#5f8f8b", "#d4a24e"],
     name: "The Winter Wolf That Sings Down the Sky", nation: "Canada (Yukon)", region: "Yukon & Alaska interior · wolf-lore", type: "world", continent: "americas",
