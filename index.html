@@ -284,6 +284,14 @@
   .tl-marker.tl-focus .tl-label { fill: var(--gold-bright); font-weight: 700; }
   @keyframes tlPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.6); } }
   .tl-marker.tl-focus circle, .tl-marker.tl-focus rect { transform-box: fill-box; transform-origin: center; }
+  .tl-stepbar .tl-open-btn {
+    flex: 1; max-width: 460px; margin: 0 12px; text-transform: none; letter-spacing: 0.5px;
+    font-family: "Cormorant Garamond", Georgia, serif; font-size: 0.95rem; font-weight: 600;
+    border-color: var(--gold); color: var(--gold-bright); white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; display: block;
+  }
+  .tl-stepbar .tl-open-btn:disabled { color: #8f7d63; border-color: var(--line); font-style: italic; }
+  .tl-stepbar .tl-open-btn:not(:disabled):hover { background: rgba(212,162,78,0.15); }
   @media (max-width: 560px) { .tl-viewport { height: 260px; } .tl-hint { display: none; } }
 </style>
 </head>
@@ -370,6 +378,7 @@
       </div>
       <div class="tl-stepbar">
         <button class="tl-btn" id="tl-prev" aria-label="Step to the previous legend" disabled>◀ Previous Legend</button>
+        <button class="tl-btn tl-open-btn" id="tl-open" aria-label="Open the focused legend's story card" disabled>Select a legend to open its card</button>
         <button class="tl-btn" id="tl-next" aria-label="Step to the next legend">Next Legend ▸</button>
       </div>
     </section>
@@ -382,6 +391,7 @@
       </div>
       <div class="tl-stepbar">
         <button class="tl-btn" id="ct-prev" aria-label="Step to the previous cultural event" disabled>◀ Previous Event</button>
+        <button class="tl-btn tl-open-btn" id="ct-open" aria-label="Open details of the focused cultural event" disabled>Select an event to see details</button>
         <button class="tl-btn" id="ct-next" aria-label="Step to the next cultural event">Next Event ▸</button>
       </div>
     </section>
@@ -2519,11 +2529,10 @@ function createTimeline(cfg) {
     k: () => k,
     events,
     get index() { return curIdx; },
-    // Center the viewport on event i; optionally zoom in so the marker is clearly visible.
+    // Center the viewport on event i at the current zoom level.
     focus(i, zoom) {
       curIdx = Math.max(0, Math.min(events.length - 1, i));
       const ev = events[curIdx];
-      if (zoom) k = Math.max(k, 3);
       tx = viewport.clientWidth / 2 - xOf(ev.year) * k;
       clamp(); apply();
       // brief highlight pulse on the focused marker
@@ -2537,7 +2546,6 @@ function createTimeline(cfg) {
     // Center the viewport on an arbitrary year and highlight the event nearest to it.
     // This is what time-based sync uses: the two charts meet at the same moment.
     focusYear(year, zoom) {
-      if (zoom) k = Math.max(k, 3);
       tx = viewport.clientWidth / 2 - xOf(year) * k;
       clamp(); apply();
       let best = -1, bestD = Infinity;
@@ -2588,8 +2596,13 @@ const syncBtn = document.getElementById("tl-sync");
 function setTlFocusLabel(syncedEv, anchorYear) {
   if (!tlLegend) return;
   const i = tlLegend.index;
+  const openBtn = document.getElementById("tl-open");
   tlPrevBtn.disabled = i <= 0;
   tlNextBtn.disabled = i >= tlLegend.events.length - 1 && i >= 0;
+  if (openBtn) {
+    if (i < 0) { openBtn.disabled = true; openBtn.textContent = "Select a legend to open its card"; }
+    else { openBtn.disabled = false; openBtn.textContent = "⤢ Open Card: " + tlLegend.events[i].title; }
+  }
   const el = document.getElementById("tl-focus-label");
   if (!el) return;
   if (i < 0) { el.textContent = "press Next Legend to step through the line"; return; }
@@ -2605,8 +2618,13 @@ function setTlFocusLabel(syncedEv, anchorYear) {
 function setCtFocusLabel(syncedEv, anchorYear) {
   if (!tlCulture) return;
   const i = tlCulture.index;
+  const openBtn = document.getElementById("ct-open");
   ctPrevBtn.disabled = i <= 0;
   ctNextBtn.disabled = i >= tlCulture.events.length - 1 && i >= 0;
+  if (openBtn) {
+    if (i < 0) { openBtn.disabled = true; openBtn.textContent = "Select an event to see details"; }
+    else { openBtn.disabled = false; openBtn.textContent = "⤢ Details: " + tlCulture.events[i].title; }
+  }
   const el = document.getElementById("ct-focus-label");
   if (!el) return;
   if (i < 0) { el.textContent = "press Next Event to step through cultural history"; return; }
@@ -2666,6 +2684,25 @@ syncBtn.addEventListener("click", () => {
   syncBtn.setAttribute("aria-pressed", String(tlSync));
   syncBtn.textContent = tlSync ? "⇄ Sync Timelines: On" : "⇄ Sync Timelines: Off";
   syncBtn.classList.toggle("tl-sync-on", tlSync);
+});
+// centered open buttons: bring up the focused legend's card / culture event details
+document.getElementById("tl-open").addEventListener("click", () => {
+  if (tlLegend && tlLegend.index >= 0) openModal(tlLegend.events[tlLegend.index].id);
+});
+document.getElementById("ct-open").addEventListener("click", () => {
+  if (!tlCulture || tlCulture.index < 0) return;
+  const ev = tlCulture.events[tlCulture.index];
+  const m = MYTHS.find(x => x.name === ev.title);
+  if (m) { openModal(m.id); return; }
+  // cultural events have no card: show a small detail dialog in the same modal shell
+  document.getElementById("modal-content").innerHTML =
+    '<div class="modal-body" style="text-align:center;padding-top:34px">'
+    + '<h3>' + escapeHtml(ev.title) + '</h3>'
+    + '<div class="era-line">' + tlYearLabel(ev.year) + ' · cultural contact event</div>'
+    + '<p class="detail-tale">' + escapeHtml(ev.desc || "") + '</p>'
+    + '</div>';
+  document.getElementById("modal-backdrop").classList.add("open");
+  document.body.style.overflow = "hidden";
 });
 
 // ---------- Initial state: two Malaysian entries already picked & shown ----------
