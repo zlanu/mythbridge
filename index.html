@@ -2365,16 +2365,46 @@ const REC_YEARS = {
   kuti: [1900, "Sri Lankan folk-tale collections"]
 };
 
-// When the cultures behind these legends historically met one another.
+// When the cultures behind these legends historically met one another — first
+// contacts, trade and conquest across every realm in this storybook.
 const CULTURE_EVENTS = [
+  { year: -3100, title: "Egypt & Mesopotamia linked", desc: "Trade up the Nile brings Sumerian ideas to early Egypt — the world's first great cultural bridge." },
+  { year: -2500, title: "Indus & Sumer trade", desc: "Meluhha ships dock at Ur — India's first recorded exchange with Mesopotamia." },
   { year: -2000, title: "Anatolia meets Mesopotamia", desc: "Assyrian trade colonies carry stories between Hatti and Sumer — serpent-slayer tales travel with the caravans." },
+  { year: -1500, title: "Greece meets Egypt & the Levant", desc: "Minoan and Mycenaean sailors trade with Egypt — Egyptian and Near Eastern motifs enter Greek myth." },
+  { year: -1200, title: "Sea Peoples shake the ancient world", desc: "Migrating fleets collide with Egypt and the Hittites — stories scatter across the Mediterranean." },
+  { year: -1000, title: "Phoenician networks", desc: "Tyre's sailors stitch the whole Mediterranean together, carrying tales port to port." },
+  { year: -600, title: "Greece colonises the Black Sea", desc: "Greek traders meet Scythians and Colchians — golden-fleece and serpent-guardian tales take root." },
+  { year: -500, title: "Persia bridges East & West", desc: "The Achaemenid empire links India to Greece and Egypt — imperial roads become story roads." },
+  { year: -330, title: "Alexander reaches India", desc: "Greek and Indian storytelling fuse from Bactria to the Indus." },
   { year: -200, title: "India sails to Southeast Asia", desc: "Hindu and Buddhist traders bring the Ramayana, Garuda and the naga to the Malay world." },
+  { year: -130, title: "Silk Road opens", desc: "Zhang Qian's journeys link Han China to Central Asia, Persia and beyond." },
+  { year: 1, title: "Rome trades with India", desc: "Monsoon ships carry Roman gold to Indian ports and stories both ways." },
+  { year: 100, title: "China meets Buddhism", desc: "Monks carry Indian teaching and Jataka tales over the Himalayas into China." },
+  { year: 400, title: "Ireland meets Christendom", desc: "Christian scribes begin recording Irish oral legend — and carry it across the sea." },
+  { year: 550, title: "Slavic & Byzantine contact", desc: "Trade and war along the rivers bring Byzantine writing to Slavic storytelling lands." },
+  { year: 650, title: "Arab expansion", desc: "A new empire links Spain to Persia and Central Asia — a single scholarly world of stories." },
   { year: 671, title: "Srivijaya's scholarly port", desc: "The monk Yijing studies Sanskrit in Palembang — Buddhist story-cycles spread through the straits." },
+  { year: 793, title: "Norse raiding age opens", desc: "Scandinavian sailors reach Britain, Ireland and beyond — Norse legend meets Celtic." },
+  { year: 1000, title: "Norse reach Turtle Island", desc: "Vinland voyages — the first recorded meeting of European and Native American peoples." },
+  { year: 1050, title: "Ghana & the Maghreb", desc: "Trans-Saharan caravans link West African empires to the Mediterranean world." },
+  { year: 1200, title: "Mongol empire spans Eurasia", desc: "Pax Mongolica lets stories run from Korea to Hungary in a lifetime." },
+  { year: 1275, title: "Marco Polo at Kublai's court", desc: "Venetian and Chinese storytelling worlds collide." },
+  { year: 1300, title: "Swahili coast network", desc: "Persian, Arab, Indian and Bantu trade along East Africa fuses a shared storytelling culture." },
+  { year: 1325, title: "Mali meets the Mediterranean", desc: "Mansa Musa's pilgrimage carries West African wealth and tale to Cairo and Mecca." },
   { year: 1400, title: "Malacca's storytelling crossroads", desc: "Javanese, Tamil, Chinese, Arab and Persian tellers trade tales in the sultanate's harbours." },
+  { year: 1405, title: "Zheng He's treasure fleets", desc: "Ming voyages link China to Southeast Asia, India, Arabia and East Africa." },
+  { year: 1420, title: "Polynesia's final voyages", desc: "Oceanic canoes complete the peopling of the Pacific — Hawai'i to Aotearoa." },
+  { year: 1492, title: "Columbus reaches the Americas", desc: "The Atlantic bridge closes the last great gap between the world's storytelling halves." },
+  { year: 1498, title: "Vasco da Gama reaches India", desc: "Europe rounds Africa into the Indian Ocean trade world." },
   { year: 1511, title: "Portuguese take Malacca", desc: "European scribes begin writing down Malay legends for western readers." },
-  { year: 1541, title: "Spanish chronicles in the Americas", desc: "Conquistador-era records first capture Andean and Mesoamerican myths on paper." },
+  { year: 1519, title: "Spain meets Mesoamerica", desc: "Cortés reaches Tenochtitlan — Aztec and European worlds collide and record one another." },
+  { year: 1541, title: "Spanish chronicles in the Andes", desc: "Conquistador-era records first capture Inca and Muisca myths on paper." },
+  { year: 1606, title: "Europe reaches Australia", desc: "Dutch ships sight Arnhem Land — Aboriginal sky-lore meets written record." },
   { year: 1600, title: "The East India Companies", desc: "Dutch and English factors document folklore across the archipelagos they trade through." },
+  { year: 1700, title: "Korean & Japanese record exchange", desc: "Diplomatic missions trade books and tales across the Tsushima strait." },
   { year: 1786, title: "Penang founded", desc: "British settlement draws collectors of Malay, Chinese and Indian tales to the straits." },
+  { year: 1788, title: "British arrive in Sydney", desc: "Colonial scribes begin recording Aboriginal dreamtime traditions." },
   { year: 1819, title: "Raffles and Singapore", desc: "Colonial scholars begin systematic collections of Malay-world legends." },
   { year: 1820, title: "Pacific missionary era", desc: "Transcriptions of Polynesian oral traditions begin across Oceania." },
   { year: 1885, title: "The folklore fieldwork era", desc: "University ethnographers fan out — African, Native American and Aboriginal tales recorded at scale." },
@@ -2394,7 +2424,7 @@ function createTimeline(cfg) {
   if (!viewport || !canvas) return;
   const H = cfg.height;
   const BASE = Math.round(H * 0.5);
-  const MINY = -2500, MAXY = 2030;
+  const MINY = -3200, MAXY = 2030;
   const PPY = 1.35;
   const W = Math.round((MAXY - MINY) * PPY);
   const xOf = y => (y - MINY) * PPY;
@@ -2406,7 +2436,7 @@ function createTimeline(cfg) {
   // baseline
   s += '<line x1="0" y1="' + BASE + '" x2="' + W + '" y2="' + BASE + '" stroke="#4a3a2a" stroke-width="2"/>';
   // ticks: minor every 100 yrs, major every 500 with labels
-  for (let y = -2500; y <= MAXY; y += 100) {
+  for (let y = -3200; y <= MAXY; y += 100) {
     const X = xOf(y).toFixed(0);
     const major = y % 500 === 0;
     s += '<line x1="' + X + '" y1="' + (BASE - (major ? 14 : 7)) + '" x2="' + X + '" y2="' + (BASE + (major ? 14 : 7)) + '" stroke="' + (major ? "#a9762f" : "#4a3a2a") + '" stroke-width="' + (major ? 1.6 : 1) + '" opacity="' + (major ? 0.9 : 0.45) + '"/>';
