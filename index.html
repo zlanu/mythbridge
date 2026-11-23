@@ -234,6 +234,34 @@
   .reco-reason { color: var(--purple); font-style: italic; font-size: 0.92rem; }
   footer { text-align: center; color: #8f7d63; font-size: 0.88rem; font-style: italic; padding-bottom: 34px; }
   footer::before { content: "❦ ✦ ❦"; display: block; color: var(--gold); letter-spacing: 12px; margin-bottom: 8px; font-style: normal; }
+
+  /* ===== Timeline view ===== */
+  .tl-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tl-btn {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px;
+    padding: 7px 16px; border-radius: 999px; border: 1.5px solid var(--line);
+    background: #1a130d; color: var(--ink-soft); cursor: pointer; transition: all 0.18s;
+  }
+  .tl-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .tl-btn:active { transform: scale(0.95); }
+  .tl-hint { color: #8f7d63; font-size: 0.85rem; font-style: italic; margin-left: 4px; }
+  .tl-viewport {
+    position: relative; overflow: hidden; height: 300px; border-radius: 14px;
+    background: linear-gradient(180deg, #1a130d 0%, #241a13 100%);
+    border: 1px solid var(--line); cursor: grab; touch-action: none; outline: none;
+  }
+  .tl-viewport:focus-visible { border-color: var(--gold); }
+  .tl-viewport.dragging { cursor: grabbing; }
+  .tl-viewport.tl-short { height: 230px; }
+  .tl-canvas { position: absolute; inset: 0; will-change: transform; }
+  .tl-canvas svg { display: block; }
+  .tl-marker { cursor: pointer; }
+  .tl-marker:hover .tl-dot { filter: drop-shadow(0 0 6px rgba(240,198,116,0.9)); }
+  .tl-marker:hover .tl-label { fill: var(--gold-bright); }
+  .tl-marker text { pointer-events: none; }
+  .tl-marker circle, .tl-marker rect { pointer-events: all; }
+  .tl-region { font-family: "Cinzel", Georgia, serif; letter-spacing: 2px; font-weight: 600; }
+  @media (max-width: 560px) { .tl-viewport { height: 260px; } .tl-hint { display: none; } }
 </style>
 </head>
 <body>
@@ -246,6 +274,7 @@
 <nav>
   <button class="nav-tab active" id="tab-list">Myth List</button>
   <button class="nav-tab" id="tab-compare">Compare Patterns<span class="pick-counter" id="pick-count">0</span></button>
+  <button class="nav-tab" id="tab-timeline">Timeline</button>
   <button class="nav-tab random-tab" id="tab-random" title="Open a random legend's card">✦ Surprise Me</button>
 </nav>
 
@@ -292,6 +321,31 @@
       <h2>You May Also Wish to Compare</h2>
       <p class="section-sub">A further legend whose pattern matches the ones on your shelf.</p>
       <div id="reco-box"><div class="reco-empty">Add two or more legends to the shelf above and a kindred tale will be recommended here.</div></div>
+    </section>
+  </div>
+
+  <!-- ============ VIEW 3: TIMELINE ============ -->
+  <div class="view" id="view-timeline">
+    <section id="timeline-section">
+      <h2>Timeline of First Recording</h2>
+      <p class="section-sub">When each legend was first written down — one linear line, oldest to newest. Drag to pan, scroll to zoom, click a marker to open the legend's story card.</p>
+      <div class="tl-controls">
+        <button class="tl-btn" id="tl-zoom-in" aria-label="Zoom in">+ Zoom In</button>
+        <button class="tl-btn" id="tl-zoom-out" aria-label="Zoom out">− Zoom Out</button>
+        <button class="tl-btn" id="tl-reset" aria-label="Reset view">⟲ Reset</button>
+        <span class="tl-hint" id="tl-hint">72 legends · drag to pan · scroll to zoom</span>
+      </div>
+      <div class="tl-viewport" id="tl-viewport" tabindex="0" aria-label="Legend timeline. Use zoom buttons and drag to explore.">
+        <div class="tl-canvas" id="tl-canvas"></div>
+      </div>
+    </section>
+
+    <section id="cultural-timeline-section">
+      <h2>When Cultures Met</h2>
+      <p class="section-sub">Historical moments of contact — trade, conquest, migration and scholarship — that carried these stories between peoples.</p>
+      <div class="tl-viewport tl-short" id="ct-viewport" tabindex="0" aria-label="Cultural interaction timeline. Drag to pan.">
+        <div class="tl-canvas" id="ct-canvas"></div>
+      </div>
     </section>
   </div>
 </main>
@@ -2004,6 +2058,7 @@ document.getElementById("type-filter").addEventListener("click", e => {
 // ---------- Tabs ----------
 document.getElementById("tab-list").addEventListener("click", () => switchTab("list"));
 document.getElementById("tab-compare").addEventListener("click", () => switchTab("compare"));
+document.getElementById("tab-timeline").addEventListener("click", () => switchTab("timeline"));
 // Random legend button — opens a random card, avoiding an immediate repeat
 let lastRandomId = null;
 document.getElementById("tab-random").addEventListener("click", () => {
@@ -2015,8 +2070,11 @@ document.getElementById("tab-random").addEventListener("click", () => {
 function switchTab(which) {
   document.getElementById("tab-list").classList.toggle("active", which === "list");
   document.getElementById("tab-compare").classList.toggle("active", which === "compare");
+  document.getElementById("tab-timeline").classList.toggle("active", which === "timeline");
   document.getElementById("view-list").classList.toggle("active", which === "list");
   document.getElementById("view-compare").classList.toggle("active", which === "compare");
+  document.getElementById("view-timeline").classList.toggle("active", which === "timeline");
+  if (which === "timeline") buildTimelines();
 }
 
 // ---------- Picks / compare shelf ----------
@@ -2184,6 +2242,223 @@ document.getElementById("modal-content").addEventListener("click", e => {
   const go = e.target.closest("[data-modal-open-list]");
   if (go) { closeModal(); switchTab("compare"); }
 });
+
+// ---------- Timeline view ----------
+// Year each legend was first written down (negative = BCE), plus the source note.
+const REC_YEARS = {
+  yebo: [-2400, "Pyramid Texts, Egypt"], seth: [-2350, "Pyramid Texts, Egypt"],
+  tarhunta: [-1250, "Hittite clay tablets, Anatolia"],
+  sphinx: [-429, "Sophocles' Oedipus Tyrannus, Greece"],
+  garuda: [-400, "Mahabharata, India"],
+  basilisk: [77, "Pliny the Elder's Natural History, Rome"],
+  yamata: [712, "Kojiki, Japan's oldest chronicle"],
+  amaterasu: [720, "Nihon Shoki, Japan"],
+  kaguya: [909, "Tale of the Bamboo Cutter, Japan"],
+  ghouls: [850, "Earliest Nights manuscript, Baghdad"],
+  beowulf: [1000, "Nowell Codex manuscript, England"],
+  banshee: [1100, "Medieval Irish annals"],
+  brownie: [1500, "Early Scottish household records"],
+  laclong: [1479, "Đại Việt sử ký, Vietnam"],
+  lembayang: [1612, "Sulalatus Salatin (Malay Annals), Melaka"],
+  buaya: [1612, "Sulalatus Salatin (Malay Annals), Melaka"],
+  bersiong: [1830, "Hikayat Marong Mahawangsa, Kedah"],
+  wendingo: [1636, "Jesuit Relations, New France"],
+  curupira: [1560, "Pedro de Magalhães, Brazil"],
+  kachina: [1590, "Spanish colonial records, New Mexico"],
+  "el-dorado": [1541, "Spanish chronicles, Muisca country"],
+  quetzal: [1558, "Popol Vuh transcription, Guatemala"],
+  ceiba: [1558, "Popol Vuh transcription, Guatemala"],
+  estrela: [1609, "El Inca Garcilaso, Peru"],
+  melusine: [1393, "Jean d'Arras' prose romance, France"],
+  midgard: [1270, "Codex Regius (Poetic Edda), Iceland"],
+  sigurd: [1250, "Völsunga saga, Iceland"],
+  kelpie: [1800, "Highland folklore collections, Scotland"],
+  anansi: [1819, "Jamaican plantation records"],
+  maui: [1820, "Missionary transcriptions, Polynesia"],
+  pele: [1823, "Missionary transcriptions, Hawai'i"],
+  kalevipoeg: [1839, "Estonian folk-song collectors"],
+  kraithong: [1830, "Rama I court recension, Thailand"],
+  jentayu: [1500, "Hikayat Seri Rama, Malay world"],
+  reamker: [1620, "Ramakerti court version, Cambodia"],
+  manohara: [1450, "Paññāsa Jātaka, Thailand"],
+  nyai: [1860, "Sundanese chronicles, Java"],
+  bidasari: [1780, "Hikayat Bidasari, Malay world"],
+  erlik: [1866, "Radloff's Altai fieldwork"],
+  rusalka: [1850, "Slavic ethnographic collections"],
+  gnomes: [1556, "Agricola's De re metallica, Saxony"],
+  papatuanuku: [1850, "Grey's Māori manuscript collections"],
+  matuku: [1850, "Māori oral history transcriptions"],
+  "maui-potiki": [1900, "Ngāi Tahu oral history transcriptions"],
+  titi: [1830, "Malay folk-tale collections, Pahang"],
+  bunian: [1880, "Malay folklore collections"],
+  hantuair: [1900, "Malay folklore collections"],
+  mambang: [1900, "Malay cosmology transcriptions"],
+  kumkum: [1960, "Malaysian campus urban legend"],
+  naga: [1930, "Pahang lake legend fieldwork"],
+  lightning: [1880, "Yoruba oral histories, Oyo"],
+  tokoloshe: [1850, "Zulu/Xhosa ethnographies"],
+  mokele: [1913, "German colonial reports, Congo"],
+  hamrammr: [1900, "Ethiopian highland ethnographies"],
+  anzil: [1880, "Malagasy folklore collections"],
+  adze: [1910, "Ewe folklore fieldwork, Togo"],
+  mamiwata: [1880, "West African coastal folklore"],
+  yeti: [1832, "B.H. Hodgson's Nepal letters"],
+  rainbow: [1890, "Aboriginal mythology fieldwork, Australia"],
+  rom: [1930, "Aboriginal sky-lore fieldwork, Australia"],
+  sasquatch: [1890, "Coast Salish oral history transcriptions"],
+  thunderbird: [1890, "Northwest Coast ethnographies (Boas)"],
+  tanarua: [1910, "Vanuatu ethnographic fieldwork"],
+  debena: [1930, "Highlands Papua New Guinea fieldwork"],
+  netat: [1870, "Nan Madol oral history transcriptions"],
+  bakunawa: [1900, "Philippine folklore collections"],
+  bawang: [1870, "Javanese folk-tale collections"],
+  pontianak: [1900, "Malay folklore collections"],
+  phayanaga: [1890, "Mekong river chronicles"],
+  kuti: [1900, "Sri Lankan folk-tale collections"]
+};
+
+// When the cultures behind these legends historically met one another.
+const CULTURE_EVENTS = [
+  { year: -2000, title: "Anatolia meets Mesopotamia", desc: "Assyrian trade colonies carry stories between Hatti and Sumer — serpent-slayer tales travel with the caravans." },
+  { year: -200, title: "India sails to Southeast Asia", desc: "Hindu and Buddhist traders bring the Ramayana, Garuda and the naga to the Malay world." },
+  { year: 671, title: "Srivijaya's scholarly port", desc: "The monk Yijing studies Sanskrit in Palembang — Buddhist story-cycles spread through the straits." },
+  { year: 1400, title: "Malacca's storytelling crossroads", desc: "Javanese, Tamil, Chinese, Arab and Persian tellers trade tales in the sultanate's harbours." },
+  { year: 1511, title: "Portuguese take Malacca", desc: "European scribes begin writing down Malay legends for western readers." },
+  { year: 1541, title: "Spanish chronicles in the Americas", desc: "Conquistador-era records first capture Andean and Mesoamerican myths on paper." },
+  { year: 1600, title: "The East India Companies", desc: "Dutch and English factors document folklore across the archipelagos they trade through." },
+  { year: 1786, title: "Penang founded", desc: "British settlement draws collectors of Malay, Chinese and Indian tales to the straits." },
+  { year: 1819, title: "Raffles and Singapore", desc: "Colonial scholars begin systematic collections of Malay-world legends." },
+  { year: 1820, title: "Pacific missionary era", desc: "Transcriptions of Polynesian oral traditions begin across Oceania." },
+  { year: 1885, title: "The folklore fieldwork era", desc: "University ethnographers fan out — African, Native American and Aboriginal tales recorded at scale." },
+  { year: 1957, title: "Merdeka", desc: "Independence revives and re-records indigenous storytelling as national heritage." },
+  { year: 1990, title: "Digital bridges", desc: "Online archives make the world's recorded myths available to everyone — MythBridge's own moment." }
+];
+
+function tlYearLabel(y) {
+  return y < 0 ? "c. " + Math.abs(y) + " BCE" : String(y);
+}
+function tlShort(s, n) { s = String(s); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+
+// Generic horizontal timeline: pan by drag, zoom by wheel/buttons, clickable markers.
+function createTimeline(cfg) {
+  const viewport = document.getElementById(cfg.viewport);
+  const canvas = document.getElementById(cfg.canvas);
+  if (!viewport || !canvas) return;
+  const H = cfg.height;
+  const BASE = Math.round(H * 0.5);
+  const MINY = -2500, MAXY = 2030;
+  const PPY = 1.35;
+  const W = Math.round((MAXY - MINY) * PPY);
+  const xOf = y => (y - MINY) * PPY;
+
+  let s = "";
+  // era background: a soft band for the BCE half
+  const bceEnd = xOf(0);
+  s += '<rect x="0" y="0" width="' + bceEnd + '" height="' + H + '" fill="#ffffff" opacity="0.02"/>';
+  // baseline
+  s += '<line x1="0" y1="' + BASE + '" x2="' + W + '" y2="' + BASE + '" stroke="#4a3a2a" stroke-width="2"/>';
+  // ticks: minor every 100 yrs, major every 500 with labels
+  for (let y = -2500; y <= MAXY; y += 100) {
+    const X = xOf(y).toFixed(0);
+    const major = y % 500 === 0;
+    s += '<line x1="' + X + '" y1="' + (BASE - (major ? 14 : 7)) + '" x2="' + X + '" y2="' + (BASE + (major ? 14 : 7)) + '" stroke="' + (major ? "#a9762f" : "#4a3a2a") + '" stroke-width="' + (major ? 1.6 : 1) + '" opacity="' + (major ? 0.9 : 0.45) + '"/>';
+    if (major) {
+      s += '<text x="' + X + '" y="' + (H - 8) + '" text-anchor="middle" font-size="13" fill="#c9b494" font-family="Cinzel, Georgia, serif">' + tlYearLabel(y) + '</text>';
+    }
+  }
+  // markers, staggered into lanes above/below the line to stay uncluttered
+  const events = cfg.events;
+  events.forEach((ev, i) => {
+    const X = xOf(ev.year).toFixed(0);
+    const lane = i % 4;
+    const off = [-64, -32, 32, 64][lane];
+    const labY = BASE + off;
+    const above = off < 0;
+    const col = ev.color || "#d4a24e";
+    s += '<g class="tl-marker" data-id="' + (ev.id || "") + '" data-year="' + ev.year + '">';
+    s += '<title>' + escapeHtml(ev.title + (ev.desc ? " — " + ev.desc : "")) + '</title>';
+    s += '<line x1="' + X + '" y1="' + BASE + '" x2="' + X + '" y2="' + labY + '" stroke="' + col + '" stroke-width="1" opacity="0.55"/>';
+    if (ev.id) {
+      s += '<circle class="tl-dot" cx="' + X + '" cy="' + BASE + '" r="7" fill="' + col + '" stroke="#1c1410" stroke-width="1.6"/>';
+    } else {
+      s += '<rect class="tl-dot" x="' + (X - 5) + '" y="' + (BASE - 5) + '" width="10" height="10" fill="' + col + '" stroke="#1c1410" stroke-width="1.4" transform="rotate(45 ' + X + ' ' + BASE + ')"/>';
+    }
+    s += '<text class="tl-label" x="' + X + '" y="' + (above ? labY - 12 : labY + 14) + '" text-anchor="middle" font-size="12.5" fill="#f2e6d0" font-family="Cormorant Garamond, Georgia, serif" font-weight="600">' + escapeHtml(tlShort(ev.title, 30)) + '</text>';
+    s += '<text x="' + X + '" y="' + (above ? labY + 2 : labY + 28) + '" text-anchor="middle" font-size="11" fill="#d4a24e" font-family="Cinzel, Georgia, serif">' + tlYearLabel(ev.year) + '</text>';
+    s += '</g>';
+  });
+
+  canvas.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' + s + '</svg>';
+
+  // ---- pan & zoom state ----
+  let k = 1, tx = 0, dragging = false, moved = 0, lastX = 0;
+  const apply = () => { canvas.style.transform = "translateX(" + tx + "px) scale(" + k + ")"; canvas.style.transformOrigin = "0 50%"; };
+  apply();
+  const clamp = () => {
+    const vw = viewport.clientWidth;
+    const min = Math.min(0, vw - W * k);
+    tx = Math.max(min, Math.min(0, tx));
+    k = Math.max(1, Math.min(12, k));
+  };
+  function zoomTo(k2, cx) {
+    k2 = Math.max(1, Math.min(12, k2));
+    tx = cx - (cx - tx) * (k2 / k);
+    k = k2; clamp(); apply();
+  }
+
+  let downMarker = null;
+  viewport.addEventListener("pointerdown", e => {
+    dragging = true; moved = 0; lastX = e.clientX;
+    downMarker = e.target.closest ? e.target.closest(".tl-marker") : null;
+    viewport.classList.add("dragging");
+    viewport.setPointerCapture(e.pointerId);
+  });
+  viewport.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    moved += Math.abs(dx);
+    lastX = e.clientX;
+    tx += dx; clamp(); apply();
+  });
+  viewport.addEventListener("pointerup", e => {
+    dragging = false; viewport.classList.remove("dragging");
+    // pointer capture retargets the click event, so resolve the marker from pointerdown
+    if (moved <= 6 && downMarker && downMarker.getAttribute("data-id") && cfg.onOpen) {
+      cfg.onOpen(downMarker.getAttribute("data-id"));
+    }
+    downMarker = null;
+  });
+  viewport.addEventListener("pointercancel", () => { dragging = false; viewport.classList.remove("dragging"); });
+  viewport.addEventListener("wheel", e => {
+    e.preventDefault();
+    const rect = viewport.getBoundingClientRect();
+    zoomTo(k * (e.deltaY < 0 ? 1.2 : 1 / 1.2), e.clientX - rect.left);
+  }, { passive: false });
+
+  return { zoomTo, reset: () => { k = 1; tx = 0; apply(); }, viewport, k: () => k };
+}
+
+// Build both timelines (legend timeline + culture-interaction timeline)
+let tlLegend = null, tlCulture = null;
+function buildTimelines() {
+  if (tlLegend) return;
+  const legEvents = MYTHS.map(m => {
+    const r = REC_YEARS[m.id] || [1950, "modern retelling"];
+    return { year: r[0], title: m.name, desc: r[1], id: m.id, color: m.tint ? m.tint[1] : "#d4a24e" };
+  }).sort((a, b) => a.year - b.year);
+  tlLegend = createTimeline({
+    viewport: "tl-viewport", canvas: "tl-canvas", height: 300,
+    events: legEvents, onOpen: id => openModal(id)
+  });
+  const culEvents = CULTURE_EVENTS.map(e => ({ year: e.year, title: e.title, desc: e.desc, color: "#8a6fa8" }));
+  tlCulture = createTimeline({
+    viewport: "ct-viewport", canvas: "ct-canvas", height: 230,
+    events: culEvents, onOpen: null
+  });
+}
+document.getElementById("tl-zoom-in").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() * 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
+document.getElementById("tl-zoom-out").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() / 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
+document.getElementById("tl-reset").addEventListener("click", () => { if (tlLegend) tlLegend.reset(); if (tlCulture) tlCulture.reset(); });
 
 // ---------- Initial state: two Malaysian entries already picked & shown ----------
 picks = ["naga", "yamata"];

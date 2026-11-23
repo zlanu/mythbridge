@@ -1,7 +1,7 @@
 # deploy.ps1 — commit and push MythBridge to GitHub Pages in one command
 # Usage: .\deploy.ps1 ["optional commit message"]
-$git = "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe"
-$repo = "C:\Users\Saiful Azlan\.ilmucode\workspace\default"
+$git = "C:\Program Files\Git\cmd\git.exe"
+$repo = "C:\Users\azlan\.ilmucode\workspace\default"
 
 Set-Location $repo
 
