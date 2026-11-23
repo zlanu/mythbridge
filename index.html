@@ -261,6 +261,15 @@
   .tl-marker text { pointer-events: none; }
   .tl-marker circle, .tl-marker rect { pointer-events: all; }
   .tl-region { font-family: "Cinzel", Georgia, serif; letter-spacing: 2px; font-weight: 600; }
+  .tl-row2 { margin-top: -4px; }
+  .tl-btn.tl-sync-on {
+    border-color: var(--purple); color: #c8b4e8;
+    background: rgba(138,111,168,0.18); box-shadow: 0 0 12px rgba(138,111,168,0.35);
+  }
+  .tl-marker.tl-focus .tl-dot { filter: drop-shadow(0 0 10px rgba(240,198,116,1)); animation: tlPulse 0.8s ease 2; }
+  .tl-marker.tl-focus .tl-label { fill: var(--gold-bright); font-weight: 700; }
+  @keyframes tlPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.6); } }
+  .tl-marker.tl-focus circle, .tl-marker.tl-focus rect { transform-box: fill-box; transform-origin: center; }
   @media (max-width: 560px) { .tl-viewport { height: 260px; } .tl-hint { display: none; } }
 </style>
 </head>
@@ -335,6 +344,11 @@
         <button class="tl-btn" id="tl-reset" aria-label="Reset view">⟲ Reset</button>
         <span class="tl-hint" id="tl-hint">72 legends · drag to pan · scroll to zoom</span>
       </div>
+      <div class="tl-controls tl-row2">
+        <button class="tl-btn" id="tl-next" aria-label="Step to the next legend">Next Legend ▸</button>
+        <button class="tl-btn" id="tl-sync" aria-pressed="false" title="Step both timelines together">⇄ Sync Timelines: Off</button>
+        <span class="tl-hint" id="tl-focus-label">press Next Legend to step through the line</span>
+      </div>
       <div class="tl-viewport" id="tl-viewport" tabindex="0" aria-label="Legend timeline. Use zoom buttons and drag to explore.">
         <div class="tl-canvas" id="tl-canvas"></div>
       </div>
@@ -343,6 +357,10 @@
     <section id="cultural-timeline-section">
       <h2>When Cultures Met</h2>
       <p class="section-sub">Historical moments of contact — trade, conquest, migration and scholarship — that carried these stories between peoples.</p>
+      <div class="tl-controls tl-row2">
+        <button class="tl-btn" id="ct-next" aria-label="Step to the next cultural event">Next Event ▸</button>
+        <span class="tl-hint" id="ct-focus-label">press Next Event to step through cultural history</span>
+      </div>
       <div class="tl-viewport tl-short" id="ct-viewport" tabindex="0" aria-label="Cultural interaction timeline. Drag to pan.">
         <div class="tl-canvas" id="ct-canvas"></div>
       </div>
@@ -2407,6 +2425,7 @@ function createTimeline(cfg) {
   }
 
   let downMarker = null;
+  let curIdx = -1; // index into events of the currently focused marker (stepping buttons)
   viewport.addEventListener("pointerdown", e => {
     dragging = true; moved = 0; lastX = e.clientX;
     downMarker = e.target.closest ? e.target.closest(".tl-marker") : null;
@@ -2428,6 +2447,8 @@ function createTimeline(cfg) {
     }
     downMarker = null;
   });
+  // manual panning/zooming hands focus control back to the user
+  viewport.addEventListener("pointerdown", () => { curIdx = -1; });
   viewport.addEventListener("pointercancel", () => { dragging = false; viewport.classList.remove("dragging"); });
   viewport.addEventListener("wheel", e => {
     e.preventDefault();
@@ -2435,7 +2456,28 @@ function createTimeline(cfg) {
     zoomTo(k * (e.deltaY < 0 ? 1.2 : 1 / 1.2), e.clientX - rect.left);
   }, { passive: false });
 
-  return { zoomTo, reset: () => { k = 1; tx = 0; apply(); }, viewport, k: () => k };
+  return {
+    zoomTo,
+    reset: () => { k = 1; tx = 0; curIdx = -1; apply(); },
+    k: () => k,
+    events,
+    get index() { return curIdx; },
+    // Center the viewport on event i; optionally zoom in so the marker is clearly visible.
+    focus(i, zoom) {
+      curIdx = Math.max(0, Math.min(events.length - 1, i));
+      const ev = events[curIdx];
+      if (zoom) k = Math.max(k, 3);
+      tx = viewport.clientWidth / 2 - xOf(ev.year) * k;
+      clamp(); apply();
+      // brief highlight pulse on the focused marker
+      const mk = canvas.querySelectorAll(".tl-marker")[curIdx];
+      if (mk) {
+        mk.classList.add("tl-focus");
+        setTimeout(() => mk.classList.remove("tl-focus"), 1600);
+      }
+      return ev;
+    }
+  };
 }
 
 // Build both timelines (legend timeline + culture-interaction timeline)
@@ -2458,7 +2500,57 @@ function buildTimelines() {
 }
 document.getElementById("tl-zoom-in").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() * 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
 document.getElementById("tl-zoom-out").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() / 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
-document.getElementById("tl-reset").addEventListener("click", () => { if (tlLegend) tlLegend.reset(); if (tlCulture) tlCulture.reset(); });
+document.getElementById("tl-reset").addEventListener("click", () => { if (tlLegend) tlLegend.reset(); if (tlCulture) tlCulture.reset(); setTlFocusLabel(); setCtFocusLabel(); });
+
+// ---------- Timeline stepping (next legend / next cultural event, optionally synced) ----------
+let tlSync = false;
+const tlNextBtn = document.getElementById("tl-next");
+const ctNextBtn = document.getElementById("ct-next");
+const syncBtn = document.getElementById("tl-sync");
+
+function setTlFocusLabel() {
+  const el = document.getElementById("tl-focus-label");
+  if (!el || !tlLegend) return;
+  const i = tlLegend.index;
+  el.textContent = i < 0
+    ? "press Next Legend to step through the line"
+    : (i + 1) + "/" + tlLegend.events.length + " · " + tlLegend.events[i].title + " (" + tlYearLabel(tlLegend.events[i].year) + ")";
+}
+function setCtFocusLabel() {
+  const el = document.getElementById("ct-focus-label");
+  if (!el || !tlCulture) return;
+  const i = tlCulture.index;
+  el.textContent = i < 0
+    ? "press Next Event to step through cultural history"
+    : (i + 1) + "/" + tlCulture.events.length + " · " + tlCulture.events[i].title + " (" + tlYearLabel(tlCulture.events[i].year) + ")";
+}
+
+tlNextBtn.addEventListener("click", () => {
+  if (!tlLegend) return;
+  const i = (tlLegend.index + 1) % tlLegend.events.length;
+  tlLegend.focus(i, true);
+  setTlFocusLabel();
+  if (tlSync && tlCulture) {
+    tlCulture.focus(i % tlCulture.events.length, true);
+    setCtFocusLabel();
+  }
+});
+ctNextBtn.addEventListener("click", () => {
+  if (!tlCulture) return;
+  const i = (tlCulture.index + 1) % tlCulture.events.length;
+  tlCulture.focus(i, true);
+  setCtFocusLabel();
+  if (tlSync && tlLegend) {
+    tlLegend.focus(i % tlLegend.events.length, true);
+    setTlFocusLabel();
+  }
+});
+syncBtn.addEventListener("click", () => {
+  tlSync = !tlSync;
+  syncBtn.setAttribute("aria-pressed", String(tlSync));
+  syncBtn.textContent = tlSync ? "⇄ Sync Timelines: On" : "⇄ Sync Timelines: Off";
+  syncBtn.classList.toggle("tl-sync-on", tlSync);
+});
 
 // ---------- Initial state: two Malaysian entries already picked & shown ----------
 picks = ["naga", "yamata"];
