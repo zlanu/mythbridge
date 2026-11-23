@@ -238,6 +238,10 @@
 
   /* ===== Timeline view ===== */
   .tl-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tl-stepbar { display: flex; justify-content: space-between; margin-top: 12px; gap: 10px; }
+  .tl-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .tl-btn:disabled:hover { border-color: var(--line); color: var(--ink-soft); }
+  .tl-btn:disabled:active { transform: none; }
   .tl-btn {
     font-family: "Cinzel", Georgia, serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px;
     padding: 7px 16px; border-radius: 999px; border: 1.5px solid var(--line);
@@ -358,24 +362,27 @@
         <span class="tl-hint" id="tl-hint">72 legends · drag to pan · scroll to zoom</span>
       </div>
       <div class="tl-controls tl-row2">
-        <button class="tl-btn" id="tl-next" aria-label="Step to the next legend">Next Legend ▸</button>
         <button class="tl-btn" id="tl-sync" aria-pressed="false" title="Step both timelines together">⇄ Sync Timelines: Off</button>
         <span class="tl-hint" id="tl-focus-label">press Next Legend to step through the line</span>
       </div>
       <div class="tl-viewport" id="tl-viewport" tabindex="0" aria-label="Legend timeline. Use zoom buttons and drag to explore.">
         <div class="tl-canvas" id="tl-canvas"></div>
       </div>
+      <div class="tl-stepbar">
+        <button class="tl-btn" id="tl-prev" aria-label="Step to the previous legend" disabled>◀ Previous Legend</button>
+        <button class="tl-btn" id="tl-next" aria-label="Step to the next legend">Next Legend ▸</button>
+      </div>
     </section>
 
     <section id="cultural-timeline-section">
       <h2>When Cultures Met</h2>
       <p class="section-sub">Historical moments of contact — trade, conquest, migration and scholarship — that carried these stories between peoples.</p>
-      <div class="tl-controls tl-row2">
-        <button class="tl-btn" id="ct-next" aria-label="Step to the next cultural event">Next Event ▸</button>
-        <span class="tl-hint" id="ct-focus-label">press Next Event to step through cultural history</span>
-      </div>
       <div class="tl-viewport tl-short" id="ct-viewport" tabindex="0" aria-label="Cultural interaction timeline. Drag to pan.">
         <div class="tl-canvas" id="ct-canvas"></div>
+      </div>
+      <div class="tl-stepbar">
+        <button class="tl-btn" id="ct-prev" aria-label="Step to the previous cultural event" disabled>◀ Previous Event</button>
+        <button class="tl-btn" id="ct-next" aria-label="Step to the next cultural event">Next Event ▸</button>
       </div>
     </section>
   </div>
@@ -2544,49 +2551,76 @@ function buildTimelines() {
 document.getElementById("tl-zoom-in").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() * 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
 document.getElementById("tl-zoom-out").addEventListener("click", () => { if (tlLegend) tlLegend.zoomTo(tlLegend.k() / 1.5, document.getElementById("tl-viewport").clientWidth / 2); });
 document.getElementById("tl-reset").addEventListener("click", () => { if (tlLegend) tlLegend.reset(); if (tlCulture) tlCulture.reset(); setTlFocusLabel(); setCtFocusLabel(); });
-
-// ---------- Timeline stepping (next legend / next cultural event, optionally synced) ----------
+// ---------- Timeline stepping (previous/next legend & cultural event, optionally synced) ----------
 let tlSync = false;
 const tlNextBtn = document.getElementById("tl-next");
+const tlPrevBtn = document.getElementById("tl-prev");
 const ctNextBtn = document.getElementById("ct-next");
+const ctPrevBtn = document.getElementById("ct-prev");
 const syncBtn = document.getElementById("tl-sync");
 
 function setTlFocusLabel() {
-  const el = document.getElementById("tl-focus-label");
-  if (!el || !tlLegend) return;
+  if (!tlLegend) return;
   const i = tlLegend.index;
+  tlPrevBtn.disabled = i <= 0;
+  tlNextBtn.disabled = i >= tlLegend.events.length - 1 && i >= 0;
+  const el = document.getElementById("tl-focus-label");
+  if (!el) return;
   el.textContent = i < 0
     ? "press Next Legend to step through the line"
     : (i + 1) + "/" + tlLegend.events.length + " · " + tlLegend.events[i].title + " (" + tlYearLabel(tlLegend.events[i].year) + ")";
 }
 function setCtFocusLabel() {
-  const el = document.getElementById("ct-focus-label");
-  if (!el || !tlCulture) return;
+  if (!tlCulture) return;
   const i = tlCulture.index;
+  ctPrevBtn.disabled = i <= 0;
+  ctNextBtn.disabled = i >= tlCulture.events.length - 1 && i >= 0;
+  const el = document.getElementById("ct-focus-label");
+  if (!el) return;
   el.textContent = i < 0
     ? "press Next Event to step through cultural history"
     : (i + 1) + "/" + tlCulture.events.length + " · " + tlCulture.events[i].title + " (" + tlYearLabel(tlCulture.events[i].year) + ")";
 }
 
 tlNextBtn.addEventListener("click", () => {
-  if (!tlLegend) return;
-  const i = (tlLegend.index + 1) % tlLegend.events.length;
-  tlLegend.focus(i, true);
-  setTlFocusLabel();
-  if (tlSync && tlCulture) {
-    tlCulture.focus(i % tlCulture.events.length, true);
-    setCtFocusLabel();
+  if (tlLegend && tlLegend.index < tlLegend.events.length - 1) {
+    tlLegend.focus(tlLegend.index + 1, true);
+    if (tlSync && tlCulture && tlCulture.index < tlCulture.events.length - 1) {
+      tlCulture.focus(tlCulture.index + 1, true);
+      setCtFocusLabel();
+    }
   }
+  setTlFocusLabel();
+});
+tlPrevBtn.addEventListener("click", () => {
+  if (tlLegend && tlLegend.index > 0) {
+    tlLegend.focus(tlLegend.index - 1, true);
+    if (tlSync && tlCulture && tlCulture.index > 0) {
+      tlCulture.focus(tlCulture.index - 1, true);
+      setCtFocusLabel();
+    }
+  }
+  setTlFocusLabel();
 });
 ctNextBtn.addEventListener("click", () => {
-  if (!tlCulture) return;
-  const i = (tlCulture.index + 1) % tlCulture.events.length;
-  tlCulture.focus(i, true);
-  setCtFocusLabel();
-  if (tlSync && tlLegend) {
-    tlLegend.focus(i % tlLegend.events.length, true);
-    setTlFocusLabel();
+  if (tlCulture && tlCulture.index < tlCulture.events.length - 1) {
+    tlCulture.focus(tlCulture.index + 1, true);
+    if (tlSync && tlLegend && tlLegend.index < tlLegend.events.length - 1) {
+      tlLegend.focus(tlLegend.index + 1, true);
+      setTlFocusLabel();
+    }
   }
+  setCtFocusLabel();
+});
+ctPrevBtn.addEventListener("click", () => {
+  if (tlCulture && tlCulture.index > 0) {
+    tlCulture.focus(tlCulture.index - 1, true);
+    if (tlSync && tlLegend && tlLegend.index > 0) {
+      tlLegend.focus(tlLegend.index - 1, true);
+      setTlFocusLabel();
+    }
+  }
+  setCtFocusLabel();
 });
 syncBtn.addEventListener("click", () => {
   tlSync = !tlSync;
