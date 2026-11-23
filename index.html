@@ -2533,6 +2533,25 @@ function createTimeline(cfg) {
         setTimeout(() => mk.classList.remove("tl-focus"), 1600);
       }
       return ev;
+    },
+    // Center the viewport on an arbitrary year and highlight the event nearest to it.
+    // This is what time-based sync uses: the two charts meet at the same moment.
+    focusYear(year, zoom) {
+      if (zoom) k = Math.max(k, 3);
+      tx = viewport.clientWidth / 2 - xOf(year) * k;
+      clamp(); apply();
+      let best = -1, bestD = Infinity;
+      for (let i = 0; i < events.length; i++) {
+        const d = Math.abs(events[i].year - year);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      curIdx = best;
+      const mk = canvas.querySelectorAll(".tl-marker")[best];
+      if (mk) {
+        mk.classList.add("tl-focus");
+        setTimeout(() => mk.classList.remove("tl-focus"), 1600);
+      }
+      return best >= 0 ? events[best] : null;
     }
   };
 }
@@ -2566,65 +2585,78 @@ const ctNextBtn = document.getElementById("ct-next");
 const ctPrevBtn = document.getElementById("ct-prev");
 const syncBtn = document.getElementById("tl-sync");
 
-function setTlFocusLabel() {
+function setTlFocusLabel(syncedEv, anchorYear) {
   if (!tlLegend) return;
   const i = tlLegend.index;
   tlPrevBtn.disabled = i <= 0;
   tlNextBtn.disabled = i >= tlLegend.events.length - 1 && i >= 0;
   const el = document.getElementById("tl-focus-label");
   if (!el) return;
-  el.textContent = i < 0
-    ? "press Next Legend to step through the line"
-    : (i + 1) + "/" + tlLegend.events.length + " · " + tlLegend.events[i].title + " (" + tlYearLabel(tlLegend.events[i].year) + ")";
+  if (i < 0) { el.textContent = "press Next Legend to step through the line"; return; }
+  const base = (i + 1) + "/" + tlLegend.events.length + " · " + tlLegend.events[i].title + " (" + tlYearLabel(tlLegend.events[i].year) + ")";
+  if (syncedEv && anchorYear !== undefined) {
+    const gap = Math.abs(syncedEv.year - anchorYear);
+    const nearTxt = gap === 0 ? "exact match" : "nearest, " + gap + " yrs away";
+    el.textContent = base + " ⇄ " + syncedEv.title + " (" + tlYearLabel(syncedEv.year) + ") · " + nearTxt;
+    return;
+  }
+  el.textContent = base;
 }
-function setCtFocusLabel() {
+function setCtFocusLabel(syncedEv, anchorYear) {
   if (!tlCulture) return;
   const i = tlCulture.index;
   ctPrevBtn.disabled = i <= 0;
   ctNextBtn.disabled = i >= tlCulture.events.length - 1 && i >= 0;
   const el = document.getElementById("ct-focus-label");
   if (!el) return;
-  el.textContent = i < 0
-    ? "press Next Event to step through cultural history"
-    : (i + 1) + "/" + tlCulture.events.length + " · " + tlCulture.events[i].title + " (" + tlYearLabel(tlCulture.events[i].year) + ")";
+  if (i < 0) { el.textContent = "press Next Event to step through cultural history"; return; }
+  const base = (i + 1) + "/" + tlCulture.events.length + " · " + tlCulture.events[i].title + " (" + tlYearLabel(tlCulture.events[i].year) + ")";
+  if (syncedEv && anchorYear !== undefined) {
+    const gap = Math.abs(syncedEv.year - anchorYear);
+    const nearTxt = gap === 0 ? "exact match" : "nearest, " + gap + " yrs away";
+    el.textContent = base + " ⇄ " + syncedEv.title + " (" + tlYearLabel(syncedEv.year) + ") · " + nearTxt;
+    return;
+  }
+  el.textContent = base;
 }
 
 tlNextBtn.addEventListener("click", () => {
   if (tlLegend && tlLegend.index < tlLegend.events.length - 1) {
-    tlLegend.focus(tlLegend.index + 1, true);
-    if (tlSync && tlCulture && tlCulture.index < tlCulture.events.length - 1) {
-      tlCulture.focus(tlCulture.index + 1, true);
-      setCtFocusLabel();
+    const ev = tlLegend.focus(tlLegend.index + 1, true);
+    if (tlSync && tlCulture) {
+      // time-based sync: bring the other chart to the same moment in history
+      const near = tlCulture.focusYear(ev.year, true);
+      if (near) setCtFocusLabel(near, ev.year);
     }
   }
   setTlFocusLabel();
 });
 tlPrevBtn.addEventListener("click", () => {
   if (tlLegend && tlLegend.index > 0) {
-    tlLegend.focus(tlLegend.index - 1, true);
-    if (tlSync && tlCulture && tlCulture.index > 0) {
-      tlCulture.focus(tlCulture.index - 1, true);
-      setCtFocusLabel();
+    const ev = tlLegend.focus(tlLegend.index - 1, true);
+    if (tlSync && tlCulture) {
+      const near = tlCulture.focusYear(ev.year, true);
+      if (near) setCtFocusLabel(near, ev.year);
     }
   }
   setTlFocusLabel();
 });
 ctNextBtn.addEventListener("click", () => {
   if (tlCulture && tlCulture.index < tlCulture.events.length - 1) {
-    tlCulture.focus(tlCulture.index + 1, true);
-    if (tlSync && tlLegend && tlLegend.index < tlLegend.events.length - 1) {
-      tlLegend.focus(tlLegend.index + 1, true);
-      setTlFocusLabel();
+    const ev = tlCulture.focus(tlCulture.index + 1, true);
+    if (tlSync && tlLegend) {
+      const near = tlLegend.focusYear(ev.year, true);
+      if (near) setTlFocusLabel(near, ev.year);
     }
   }
   setCtFocusLabel();
 });
 ctPrevBtn.addEventListener("click", () => {
   if (tlCulture && tlCulture.index > 0) {
-    tlCulture.focus(tlCulture.index - 1, true);
-    if (tlSync && tlLegend && tlLegend.index > 0) {
-      tlLegend.focus(tlLegend.index - 1, true);
-      setTlFocusLabel();
+    const ev = tlCulture.focus(tlCulture.index - 1, true);
+    if (tlSync && tlLegend) {
+      const near = tlLegend.focusYear(ev.year, true);
+      if (near) setTlFocusLabel(near, ev.year);
     }
   }
   setCtFocusLabel();
