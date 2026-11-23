@@ -2426,7 +2426,8 @@ function createTimeline(cfg) {
     s += '</g>';
   });
 
-  canvas.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' + s + '</svg>';
+  canvas.innerHTML = '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' + s + '</svg>';
+  const svgEl = canvas.querySelector("svg");
 
   // ---- pan & zoom state ----
   let k = 1, tx = 0, dragging = false, moved = 0, lastX = 0;
@@ -2458,7 +2459,13 @@ function createTimeline(cfg) {
       el.style.opacity = (yr % step === 0) ? "1" : "0";
     });
   };
-  const apply = () => { canvas.style.transform = "translateX(" + tx + "px) scale(" + k + ")"; canvas.style.transformOrigin = "0 50%"; updateDensity(); };
+  const apply = () => {
+    // zoom & pan both via the SVG viewBox so shapes stay razor-sharp vectors
+    // at any magnification instead of stretched raster pixels
+    const vw = viewport.clientWidth;
+    svgEl.setAttribute("viewBox", (-tx / k) + " 0 " + (vw / k) + " " + H);
+    updateDensity();
+  };
   apply();
   const clamp = () => {
     const vw = viewport.clientWidth;
