@@ -186,6 +186,9 @@
   .btn.secondary:hover { background: rgba(212,162,78,0.15); }
 
   /* Compare view */
+  .compare-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .compare-header .tl-btn { margin-top: 6px; flex-shrink: 0; border-color: var(--crimson); color: #e8b0a0; }
+  .compare-header .tl-btn:hover { border-color: var(--crimson); color: #ff8f70; background: rgba(179,73,47,0.12); }
   .compare-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
   @media (max-width: 900px) { .compare-slots { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .compare-slots { grid-template-columns: 1fr; } }
@@ -339,8 +342,13 @@
   <!-- ============ VIEW 2: COMPARE ============ -->
   <div class="view" id="view-compare">
     <section id="compare-section">
-      <h2>Compare View</h2>
-      <p class="section-sub">Up to four legends on the shelf. Their key details sit side by side for pattern recognition.</p>
+      <div class="compare-header">
+        <div>
+          <h2>Compare View</h2>
+          <p class="section-sub">Up to four legends on the shelf. Their key details sit side by side for pattern recognition.</p>
+        </div>
+        <button class="tl-btn" id="clear-all-btn" hidden aria-label="Remove all legends from the compare shelf">✕ Clear All</button>
+      </div>
       <div class="compare-slots" id="compare-slots"></div>
       <div id="compare-table-wrap"></div>
     </section>
@@ -3341,6 +3349,8 @@ function renderAll() {
 const SLOT_COLORS = ["var(--myth-green)", "var(--gold-bright)", "var(--teal)", "var(--purple)"];
 function renderCompare() {
   const slotsEl = document.getElementById("compare-slots");
+  const clearBtn = document.getElementById("clear-all-btn");
+  if (clearBtn) clearBtn.hidden = picks.length < 2;
   let html = "";
   for (let s = 0; s < MAX_PICKS; s++) {
     const m = MYTHS.find(x => x.id === picks[s]);
@@ -3442,6 +3452,12 @@ function renderReco() {
 document.getElementById("reco-box").addEventListener("click", e => {
   const btn = e.target.closest("[data-compare-reco]");
   if (btn) togglePick(btn.getAttribute("data-compare-reco"));
+});
+
+// ---------- Clear-all button for the compare shelf ----------
+document.getElementById("clear-all-btn").addEventListener("click", () => {
+  picks = [];
+  renderAll();
 });
 
 // ---------- Detail card modal ----------
