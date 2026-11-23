@@ -367,7 +367,7 @@
         <button class="tl-btn" id="tl-zoom-in" aria-label="Zoom in">+ Zoom In</button>
         <button class="tl-btn" id="tl-zoom-out" aria-label="Zoom out">− Zoom Out</button>
         <button class="tl-btn" id="tl-reset" aria-label="Reset view">⟲ Reset</button>
-        <span class="tl-hint" id="tl-hint">72 legends · drag to pan · scroll to zoom</span>
+        <span class="tl-hint" id="tl-hint">142 legends · drag to pan · scroll to zoom</span>
       </div>
       <div class="tl-controls tl-row2">
         <button class="tl-btn" id="tl-sync" aria-pressed="false" title="Step both timelines together">⇄ Sync Timelines: Off</button>
@@ -687,7 +687,19 @@ function emblemSVG(m) {
       '<path d="M60 66 Q80 56 100 66 M58 84 Q80 74 102 84 M60 100 Q80 92 100 100" stroke="' + ink + '" stroke-width="2.5" fill="none"/>' +
       '<path d="M50 34 Q60 22 70 34 M92 30 Q100 20 108 32" stroke="' + gold + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
       '<circle cx="80" cy="26" r="8" fill="' + gold + '" opacity="0.85"/>' +
-      '<path d="M20 120 Q80 110 140 120" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>'
+      '<path d="M20 120 Q80 110 140 120" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>',
+    rabbit:
+      '<ellipse cx="80" cy="88" rx="30" ry="24" fill="' + tint[1] + '"/>' +
+      '<circle cx="104" cy="62" r="16" fill="' + tint[1] + '"/>' +
+      '<ellipse cx="96" cy="40" rx="5" ry="16" fill="' + tint[1] + '" transform="rotate(-18 96 40)"/>' +
+      '<ellipse cx="112" cy="42" rx="5" ry="16" fill="' + tint[1] + '" transform="rotate(14 112 42)"/>' +
+      '<circle cx="110" cy="58" r="2.2" fill="' + ink + '"/>' +
+      '<circle cx="92" cy="78" r="14" fill="' + gold + '" opacity="0.85"/>' +
+      '<path d="M86 74 Q92 70 98 74 M86 82 Q92 78 98 82" stroke="' + ink + '" stroke-width="1.6" fill="none"/>' +
+      '<circle cx="60" cy="110" r="6" fill="' + tint[1] + '"/><circle cx="72" cy="112" r="6" fill="' + tint[1] + '"/>' +
+      '<circle cx="96" cy="112" r="6" fill="' + tint[1] + '"/><circle cx="108" cy="110" r="6" fill="' + tint[1] + '"/>' +
+      '<path d="M20 34 Q40 22 60 30 M100 22 Q120 14 138 26" stroke="' + gold + '" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>' +
+      '<path d="M20 122 L140 122" stroke="' + tint[2] + '" stroke-width="4" opacity="0.6"/>'
   };
   return '<svg viewBox="0 0 160 130" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of ' + m.name + '">' + sky + (art[m.scene] || art.serpent) + '</svg>';
 }
@@ -1949,6 +1961,1190 @@ const MYTHS = [
     keywords: "bidasari soul external fish golden palembang hikayat queen jealousy princess basin obscure"
   },
 
+  // ---------------- MALAYSIA (batch 2 · 10 more) ----------------
+  {
+    id: "si-tanggang", scene: "hero", frame: "batik", era: "Malay Annals folk tale · oral tradition",
+    tint: ["#3a2c1e", "#b3492f", "#d4a24e"],
+    name: "Si Tanggang, the Ungrateful Son", nation: "Malaysia", region: "Malay Peninsula · widespread folk tale", type: "malaysia",
+    kind: "Curse & Consequence",
+    creature: "A ship's captain who denied his own mother, turned to stone by her grief",
+    place: "The harbour where the prodigal son's ship drops anchor, beneath the hill of Batu Caves",
+    theme: "A child who disowns his parents is frozen at the moment of his shame",
+    summary: "A poor boy leaves home, rises to captain a great ship, and denies the begging woman at the dock is his mother. Her curse turns him and his crew to stone — the origin of a cave hill.",
+    long: "Si Tanggang left home poor and returned rich, master of a fine ship with sails like clouds. At the dock a bent old woman called his name — his own mother, who had begged from village to village looking for him. Ashamed before his crew, he ordered her away: 'I have no mother so wretched.' She raised her hands not in anger but in grief, and the curse fell where it was aimed: masts, rigging, captain and crew all hardened into stone. The hill that bears their shapes still stands, and mothers tell it to sons who forget to write home.",
+    source: "Source: the Si Tanggang (or Malin Kundang) tale as told across the Malay world, retold here in brief.",
+    refs: [
+      { title: "Si Tanggang", note: "Wikipedia · the ungrateful son and his stone ship", url: "https://en.wikipedia.org/wiki/Si_Tanggang" }
+    ],
+    keywords: "si tanggang ungrateful son mother curse stone ship caves malin kundang filial pride storm"
+  },
+  {
+    id: "batu-menangis", scene: "ogress", frame: "batik", era: "Pahang & Perak folk tale · oral tradition",
+    obscure: true,
+    tint: ["#26221a", "#9ab06a", "#d4a24e"],
+    name: "The Weeping Stones of Menangis", nation: "Malaysia", region: "Pahang highlands · village legend", type: "malaysia",
+    kind: "Grief in the Landscape",
+    creature: "Two standing stones that were once an old woman and her lost son",
+    place: "A misty pass between Pahang and Perak where two stones lean together",
+    theme: "The land remembers a mother's waiting longer than any person does",
+    summary: "A mother waited at a mountain pass every day for a son taken by raiders; when she died of waiting, the ground took pity and raised two leaning stones that villagers say still weep in the rain.",
+    long: "The raiders came down from the pass and took the strongest boy in the village. His mother climbed to the pass each dawn, scanning the road, and each dusk she walked home. One season she did not walk home — the villagers found her seated against a boulder, still facing the road. Where mother and son had last embraced, two stones now lean toward each other, and when rain streaks their faces the oldest villagers say: there, the mother is still waiting. Travellers leave betel leaves at their feet before crossing the pass.",
+    source: "Source: a Pahang-Perak border tale of stones raised by grief, retold here in brief.",
+    refs: [
+      { title: "Malay folklore", note: "Wikipedia · the storytelling world of the peninsula", url: "https://en.wikipedia.org/wiki/Malay_folklore" }
+    ],
+    keywords: "weeping stones menangis mother son waiting grief pass rain obscure pahang perak betel"
+  },
+  {
+    id: "puteri-ledang-well", scene: "princess", frame: "kawung", era: "Melaka court legend · oral tradition",
+    obscure: true,
+    tint: ["#1e2a38", "#5f8f8b", "#d4a24e"],
+    name: "The Princess's Seven Wells", nation: "Malaysia", region: "Gunung Ledang · mountain legend", type: "malaysia",
+    kind: "Impossible Dowry",
+    creature: "The mountain princess of Gunung Ledang and the seven impossible gifts she demanded",
+    place: "The seven hilltop wells and the summit of Gunung Ledang",
+    theme: "An impossible bride-price is a polite way of saying no",
+    summary: "Sultan Mahmud courted the princess of the mountain; she named a dowry of seven wells of gold, silver and royal blood, and when the sultan began to meet it, she vanished — leaving only wells no one can count.",
+    long: "The sultan of Melaka sent messengers up the mountain with rings and silks. The princess answered with a dowry: seven wells — a well of gold, a well of silver, a well of copper, and a bridge of the sultan's own subjects' blood. He began to dig. Workmen cut a channel from the palace to the mountain, and the first well filled with gold-dust sand. But the princess watched him weigh human lives beside her hand in marriage, and she rose into the mist, taking her answer with her. The wells remain — seven hollows on the ridge that no surveyor has ever been able to count the same way twice.",
+    source: "Source: a companion tale to the Puteri Gunung Ledang legend, retold here in brief.",
+    refs: [
+      { title: "Gunung Ledang", note: "Wikipedia · the mountain and its princess legends", url: "https://en.wikipedia.org/wiki/Mount_Ophir" }
+    ],
+    keywords: "seven wells gunung ledang princess dowry gold silver sultan mahmud impossible bride obscure melaka"
+  },
+  {
+    id: "hantu-bisu", scene: "hiddenfolk", frame: "batik", era: "Kelantan folk medicine · oral tradition",
+    obscure: true,
+    tint: ["#20261e", "#9ab06a", "#d4a24e"],
+    name: "Hantu Bisu, the Small Whisper", nation: "Malaysia", region: "Kelantan · bomoh tradition", type: "malaysia",
+    kind: "Small Haunting",
+    creature: "A knee-high spirit that rides the shoulder and speaks with a borrowed voice",
+    place: "The footpaths of Kelantan villages, where children walk alone at dusk",
+    theme: "The smallest tempter needs only a whisper",
+    summary: "Hantu Bisu is a dwarf spirit who perches on a wanderer's shoulder and murmurs lazy, cruel little suggestions in a voice like the person's own — and only a bomoh's iron can scrape it off.",
+    long: "He is no taller than a rice measure, they say, and he does not haunt houses. He waits on the dusk paths and leaps lightly onto the shoulder of anyone walking alone. What he whispers sounds like your own tiredness: skip the evening prayer, take the coin, say the cruel word. Nothing he suggests is large — that is his cleverness. A bomoh brushes the shoulder with an iron key or a betel-nut cutter and the little spirit drops off like a wet leaf. Children are taught to greet the dusk aloud, so any voice that answers is known for what it is.",
+    source: "Source: Kelantan folk-psychology of small intrusive spirits, retold here in brief.",
+    refs: [
+      { title: "Hantu - Malay ghost taxonomy", note: "Wikipedia · the ordered world of Malay spirits", url: "https://en.wikipedia.org/wiki/Hantu" }
+    ],
+    keywords: "hantu bisu small whisper shoulder spirit kelantan bomoh whisper temptation dusk obscure iron"
+  },
+  {
+    id: "mahsuri", scene: "princess", frame: "batik", era: "Langkawi island legend · early 1800s record",
+    tint: ["#2b1e26", "#8a6fa8", "#d4a24e"],
+    name: "Mahsuri's Seven Generations", nation: "Malaysia", region: "Langkawi · Kedah", type: "malaysia",
+    kind: "Dying Curse",
+    creature: "A wrongly killed woman whose white blood prophesied seven generations of misfortune",
+    place: "The tomb at Padang Matsirat and the white fields of Langkawi",
+    theme: "Injustice done to one innocent woman curses a whole island",
+    summary: "Falsely accused of adultery, Mahsuri was stabbed; her blood ran white, and with her last breath she cursed Langkawi to seven generations of hardship — a curse the islanders date to every lean year since.",
+    long: "Mahsuri was the most beautiful woman on Langkawi, and the jealousy of the village headman's wife found its shape in an accusation. The elders sentenced her without proof, and the spear that killed her drew not red but white blood — proof, the crowd suddenly understood, of innocence. With her breath she laid the curse: no luck on Langkawi for seven generations. Rice fields whitened with blight, ships passed the island by, and when Siamese raiders burned the villages the islanders knew the curse had arrived. Langkawi's prosperity since the 1980s is read by some as the curse finally running out its generations.",
+    source: "Source: the Langkawi legend of Mahsuri, retold here in brief.",
+    refs: [
+      { title: "Mahsuri", note: "Wikipedia · the legend and its island", url: "https://en.wikipedia.org/wiki/Mahsuri" }
+    ],
+    keywords: "mahsuri langkawi curse white blood seven generations island injustice kedah wrongful"
+  },
+  {
+    id: "raja-donan", scene: "crocodile", frame: "kawung", era: "Perak river legend · oral tradition",
+    obscure: true,
+    tint: ["#1a2e2a", "#5f8f8b", "#d4a24e"],
+    name: "Raja Donan, the Crocodile Prince", nation: "Malaysia", region: "Perak River · boatmen's legend", type: "malaysia",
+    kind: "Cursed Ruler",
+    creature: "A king transformed into a great crocodile who still answers royal titles",
+    place: "The deep bends of the Perak River where the water turns black",
+    theme: "A crown does not exempt a man from what he eats",
+    summary: "King Donan broke a fast with forbidden meat and was turned into a colossal crocodile; boatmen still address the black bends of the Perak as his palace and drop royal tribute overboard.",
+    long: "Raja Donan sailed downriver during a vow of fasting, and the smell of roasted venison broke him — one bite of forbidden meat and the river itself took him. He grew scales the size of temple roofs and sank to the deepest bend, where he remains a king without a crown. Boatmen never call him 'buaya' (crocodile); they call him Raja, drop a pinch of rice and a gold leaf overboard at the black water, and pass quietly. Fishermen who mock the custom swear their nets come up torn in palace-yellow strips.",
+    source: "Source: Perak river-boat custom and legend, retold here in brief.",
+    refs: [
+      { title: "Perak River", note: "Wikipedia · the river of the crocodile king", url: "https://en.wikipedia.org/wiki/Perak_River" }
+    ],
+    keywords: "raja donan crocodile prince perak river cursed king fasting venison tribute boatmen obscure"
+  },
+  {
+    id: "hantu-jepun-kereta", scene: "spirits", frame: "batik", era: "Modern Malaysian urban legend · 1980s onward",
+    obscure: true,
+    tint: ["#1d1d26", "#8a6fa8", "#d4a24e"],
+    name: "The Hitchhiker of Karak Highway", nation: "Malaysia", region: "Karak Highway · modern urban legend", type: "malaysia",
+    kind: "Road Ghost",
+    creature: "A pale woman who appears on the shoulder of Malaysia's most feared highway",
+    place: "The Karak Highway's middle stretches, between the tunnel and the valleys",
+    theme: "The modern road has its own dead, and they still need rides",
+    summary: "Drivers on the Karak Highway tell of picking up a silent woman at night who vanishes from the moving car — leaving behind only a wet seat and the smell of frangipani.",
+    long: "The highway cut through hills the old people already considered unquiet, and the crashes gave the road its own ghosts. The best-known is a woman in pale cloth who stands at the shoulder near the tunnel. Drivers who stop swear she gives no address, rides in silence, and is gone between one bend and the next — the seat wet, frangipani in the air, sometimes a handprint of mud on the glass. Night bus crews say the correct behaviour is simple: you do not stop, and you do not look in the mirror too long.",
+    source: "Source: a Malaysian highway urban legend of the post-tunnel decades, retold here in brief.",
+    refs: [
+      { title: "Karak Expressway", note: "Wikipedia · the road where the legend lives", url: "https://en.wikipedia.org/wiki/Karak_Expressway" }
+    ],
+    keywords: "karak highway hitchhiker ghost road woman urban legend frangipani tunnel night modern obscure"
+  },
+  {
+    id: "hang-tuah", scene: "hero", frame: "kawung", era: "Sulalatus Salatin & Hikayat Hang Tuah · 17th century",
+    tint: ["#2a2416", "#d4a24e", "#f0c674"],
+    name: "Hang Tuah, Laksamana of Melaka", nation: "Malaysia", region: "Melaka · court epic", type: "malaysia",
+    kind: "Peerless Warrior",
+    creature: "The undefeated admiral whose kris Taming Sari made its bearer invincible",
+    place: "Melaka's harbour and the courts of Java, where he fought his closest friend",
+    theme: "Loyalty and genius are a burden the loyal must carry alone",
+    summary: "Melaka's legendary admiral — five brothers-in-arms, a magic kris won in a duel, exile demanded by jealous courtiers, and the tragic duel with Hang Jebat that decided what loyalty costs.",
+    long: "Hang Tuah and his four sworn brothers rose from poor fishermen's sons to the greatest warriors of Melaka. In Java he won the kris Taming Sari from a piratical champion, and with it invincibility — Melaka's name was feared from Siam to the Spice Islands. Courtiers whispered, the sultan believed them, and the loyal admiral was left for dead in a back lane; a hermit healed him in secret. Then Hang Jebat, his closest friend, rose in fury at the injustice and seized the palace, and only Tuah's return could end it. The two dueled for days — loyalty against justice, kris against kris — and the story has kept Malaysians arguing about which of them was right for five hundred years.",
+    source: "Source: Hikayat Hang Tuah and the Malay Annals, retold here in brief.",
+    refs: [
+      { title: "Hang Tuah", note: "Wikipedia · the admiral and the epic", url: "https://en.wikipedia.org/wiki/Hang_Tuah" },
+      { title: "Hikayat Hang Tuah", note: "Wikipedia · one of the great works of Malay literature", url: "https://en.wikipedia.org/wiki/Hikayat_Hang_Tuah" }
+    ],
+    keywords: "hang tuah laksamana melaka admiral taming sari kris jebat duel loyalty warrior brothers epic"
+  },
+  {
+    id: "puteri-bunian-wedding", scene: "princess", frame: "batik", era: "Malay folk tale · oral tradition",
+    obscure: true,
+    tint: ["#202e26", "#9ab06a", "#d4a24e"],
+    name: "The Wedding in the Bunian Wood", nation: "Malaysia", region: "Malay Peninsula · hunter legends", type: "malaysia",
+    kind: "Borrowed Time",
+    creature: "A hunter who followed a wounded deer into a wedding that lasted three days and thirty years",
+    place: "The deep wood where the Orang Bunian hold their unseen feasts",
+    theme: "Time spent among the hidden people runs sideways",
+    summary: "A hunter followed a golden deer into an invisible wedding, danced three days among the Bunian, and came home to find thirty years had passed and everyone he knew was old or gone.",
+    long: "The golden deer was no deer; it was a door. The hunter followed it into a clearing where a feast was set that no villager had ever seen — drums no one could hear from the path, guests in silk the colour of morning. He was welcomed, fed, and asked to dance, and he danced three days out of courtesy. When he stepped back onto his own path the trees were taller, his house roofless, his parents' graves moss-grown. The guests had waved goodbye as if he would only be gone a moment. Old hunters say you may attend — you must attend, if invited — but eat nothing, and never agree to stay the night.",
+    source: "Source: the Malay tale-type of mortal guests among the Orang Bunian, retold here in brief.",
+    refs: [
+      { title: "Orang Bunian", note: "Wikipedia · the hidden people of Malay legend", url: "https://en.wikipedia.org/wiki/Orang_Bunian" }
+    ],
+    keywords: "bunian wedding wedding feast hunter golden deer thirty years time slip dance obscure forest invitation"
+  },
+  {
+    id: "batu-belah", scene: "ogress", frame: "batik", era: "Penang & Kedah legend · oral tradition",
+    obscure: true,
+    tint: ["#2e2018", "#b3492f", "#d4a24e"],
+    name: "Batu Belah Batu Bertangkup", nation: "Malaysia", region: "Penang & Kedah · coastal legend", type: "malaysia",
+    kind: "Devouring Rock",
+    creature: "A cliffs-face rock that hungers for egg yolks and swallows grieving mothers",
+    place: "The splitting rock of the northern shore, that opens at dusk",
+    theme: "A mother's despair, feeding on small losses, can become a monster",
+    summary: "The rock Batu Belah craves the yolk of fried eggs; a mother whose children ate the last yolks without saving hers walks into the opening cliff and is taken — a tale told to teach children to share.",
+    long: "Batu Belah Batu Bertangkup — the rock that splits and opens its mouth — has one appetite: the yolk of a fried egg, offered warm. A widow fried three eggs after days of hunger; her children, not knowing, ate all three yolks. She wept, not for the egg but for the small proof that she was unloved, and the rock — which listens for exactly that despair — opened its face and she walked in. The tale ends with the children wailing at the stone until it releases her, and with parents telling it at tables ever since: pass the yolk to your mother.",
+    source: "Source: the Penang-Kedah legend of the splitting rock, retold here in brief.",
+    refs: [
+      { title: "Batu Belah Batu Bertangkup", note: "Wikipedia · the devouring rock legend", url: "https://en.wikipedia.org/wiki/Batu_Belah_Batu_Bertangkup" }
+    ],
+    keywords: "batu belah bertangkup rock egg yolk mother grief devouring children share penang kedah obscure"
+  },
+
+  // ---------------- SOUTHEAST ASIA (batch 2 · 10 more) ----------------
+  {
+    id: "maria-labuan", scene: "princess", frame: "tapa", era: "Philippine colonial legend · 19th century record",
+    tint: ["#241e2e", "#8a6fa8", "#d4a24e"],
+    name: "Maria Labuan, the Banished Maiden", nation: "Philippines", region: "Mindanao · Bagobo & colonial legend", type: "world", continent: "southeast-asia",
+    kind: "Exile & Return",
+    creature: "A maiden cast out to an island of crabs who returned with the secret of the rains",
+    place: "Labuan island and the crab-shell shores of Mindanao",
+    theme: "Banishment is a door, if you can survive the crabs",
+    summary: "Cast away to an island for a fault she did not commit, Maria learned the language of crabs and storms, and returned to Mindanao as the first rain-bringer the people had ever obeyed.",
+    long: "The villagers put Maria in a canoe with no paddle and pushed it toward the island of Labuan, where the crabs are thick as cobbles. She survived by watching them: which shell opens before rain, which burrow floods first. When the monsoon failed on the mainland and the planting died, she returned — thin, salt-hardened, and able to call the rains down within a day. They made her a priestess instead of a prisoner, and the crab-shell dances of Mindanao remember her judgement and her vindication in the same steps.",
+    source: "Source: the Mindanao legend of Maria Labuan, retold here in brief.",
+    refs: [
+      { title: "Maria Labuan", note: "Wikipedia · the banished maiden of Mindanao", url: "https://en.wikipedia.org/wiki/Maria_Labuan" }
+    ],
+    keywords: "maria labuan maiden banished island crabs rain mindanao bagobo exile monsoon return priestess"
+  },
+  {
+    id: "tala-star", scene: "spirits", frame: "tapa", era: "Tagalog oral tradition · pre-colonial",
+    obscure: true,
+    tint: ["#181f2e", "#5f8f8b", "#d4a24e"],
+    name: "Tala, Bathala's Bright Daughter", nation: "Philippines", region: "Luzon · Tagalog sky tradition", type: "world", continent: "southeast-asia",
+    kind: "Star Maiden",
+    creature: "The morning star personified, who guides lost fishermen and shames lazy hunters",
+    place: "The pre-dawn sky above the Philippine Sea, where Tala rises first",
+    theme: "The brightest light is the one that gets up earliest",
+    summary: "Tala, daughter of the supreme god Bathala, is the morning star: she leads fishermen home, marks the honest hour for work, and dims deliberately over the houses of the idle.",
+    long: "Bathala's children govern the sky: Mayari the moon and Tala the star of dawn among them. Tala's special charge is the sea-road — she rises before anyone who has business on the water, and her light is the fisherman's first landmark. She is also, the old people say, a fair judge of households: over the dwellings of the diligent she burns wide and silver; over the lazy she thins to a needle's point, and hunters who boast and rise late find no star at all above their door.",
+    source: "Source: Tagalog star-lore of the Bathala family, retold here in brief.",
+    refs: [
+      { title: "Tala (goddess)", note: "Wikipedia · the Tagalog morning star deity", url: "https://en.wikipedia.org/wiki/Tala_(goddess)" }
+    ],
+    keywords: "tala bathala morning star tagalog philippines luzon fisherman dawn bright daughter obscure venus"
+  },
+  {
+    id: "preah-thong", scene: "princess", frame: "temple", era: "Cambodian foundation legend · chronicled c. 1600s",
+    tint: ["#1e2a24", "#9ab06a", "#d4a24e"],
+    name: "Preah Thong & the Naga Princess", nation: "Cambodia", region: "Kok Thlok · foundation legend", type: "world", continent: "southeast-asia",
+    kind: "Founding Marriage",
+    creature: "A shipwrecked prince who married the daughter of the naga king and founded a kingdom",
+    place: "The drowned-and-risen land of Kok Thlok, beneath Phnom Penh's rivers",
+    theme: "A kingdom begins as a wedding between land and water",
+    summary: "Shipwrecked prince Preah Thong married the naga princess Neang Neak; her father drank up the sea to give them land, and every Khmer wedding still re-enacts their procession.",
+    long: "Preah Thong was cast ashore on the sandbank of Kok Thlok, where the only building was a great ghost-house and the only neighbour was a princess who came up from the water wearing the lower world's gold. Her father, the naga king, drank the sea around the sandbank until it was a kingdom's worth of dry land, and crowned the couple its first king and queen. Khmer weddings to this day walk the same procession the two first walked, with the bride leading and the groom following — the whole nation tracing its founding couple's steps.",
+    source: "Source: the Cambodian foundation legend of Preah Thong and Neang Neak, retold here in brief.",
+    refs: [
+      { title: "Preah Thong and Neang Neak", note: "Wikipedia · the founding couple of Cambodia", url: "https://en.wikipedia.org/wiki/Preah_Thong_and_Neang_Neak" }
+    ],
+    keywords: "preah thong neang neak naga princess cambodia foundation wedding khmer procession sea land"
+  },
+  {
+    id: "judge-rabbit", scene: "monkey", frame: "temple", era: "Khmer & Lao oral tradition · jataka-descended",
+    obscure: true,
+    tint: ["#26221c", "#9ab06a", "#d4a24e"],
+    name: "The Judge Rabbit's Last Case", nation: "Cambodia & Laos", region: "Temple and village · wise-hare cycle", type: "world", continent: "southeast-asia",
+    kind: "Wise Judge",
+    creature: "The rabbit who judged disputes between kings and crocodiles",
+    place: "The banyan tree where all disputes were argued aloud",
+    theme: "Cleverness and fairness outlast empires",
+    summary: "The rabbit judge who settled every quarrel — including the famous case of the crocodile, the ox-cart and the missing calf — and who retired only when no one could out-argue him, which meant everyone could.",
+    long: "Under the great banyan sat the rabbit, and before the rabbit came kings and beggars alike, because he had never once been caught in a lie. His most famous case: a crocodile claimed an ox-calf, the owner claimed the crocodile had eaten it, and the rabbit ordered the river's water level read like a ledger — the mud told the truth the witnesses would not. He judged until he was old, then hopped away rather than become a litigant himself. Villages still say of a fair settlement: 'the rabbit sat under that tree.'",
+    source: "Source: the judge-rabbit tale-cycle of Cambodia and Laos, retold here in brief.",
+    refs: [
+      { title: "Judge Rabbit", note: "Wikipedia · the Khmer-Lao wise hare cycle", url: "https://en.wikipedia.org/wiki/Judge_Rabbit" }
+    ],
+    keywords: "judge rabbit khmer laos wise hare court banyan crocodile ox fairness clever obscure jataka"
+  },
+  {
+    id: "nang-tani", scene: "princess", frame: "lotus", era: "Thai folk legend · oral tradition",
+    tint: ["#22301e", "#9ab06a", "#d4a24e"],
+    name: "Nang Tani, the Banana Ghost Bride", nation: "Thailand", region: "Central Thailand · banana-grove legend", type: "world", continent: "southeast-asia",
+    kind: "Green Bride",
+    creature: "The ghost who lives in the wild banana tree and takes lovers with green-scented promises",
+    place: "The wild banana clumps at the field's edge, where the leaves glitter at night",
+    theme: "Desire that grows overnight is harvested with a price",
+    summary: "A beautiful woman appears at dusk near the wild banana clump and asks men home; her house is a ghost's illusion, and by morning the lover is found dazed at the tree's roots, green-fingered.",
+    long: "Nang Tani is the ghost of the cultivated grove — beautiful in the failing light, her teeth unglittered, her house implied just past the trees. A man who follows her smells ripe banana where no banana grows, and the night passes in luxury. At dawn he wakes against the trunk with green-stained fingers, an empty wallet, and a week of his life missing. Field farmers placate her with red cloth and rice whiskey tied to the clump's tallest stalk; the correct gift, they insist, is respect, not exorcism — she was a woman once, and the grove remembers.",
+    source: "Source: the Thai banana-ghost (Nang Tani) tradition, retold here in brief.",
+    refs: [
+      { title: "Nang Tani", note: "Wikipedia · the banana-tree ghost of Thai folklore", url: "https://en.wikipedia.org/wiki/Nang_Tani" }
+    ],
+    keywords: "nang tani banana ghost bride thai grove desire green illusion red cloth respect tree"
+  },
+  {
+    id: "rice-mother", scene: "harvest", frame: "lotus", era: "Vietnamese village legend · oral tradition",
+    obscure: true,
+    tint: ["#2a2618", "#d4a24e", "#9ab06a"],
+    name: "The Rice Mother of the Red River", nation: "Vietnam", region: "Red River Delta · farming legend", type: "world", continent: "southeast-asia",
+    kind: "Grain Guardian",
+    creature: "A woman who hid the last rice seed in her mouth to save it from invaders",
+    place: "The delta paddies, where the first sheaf of every harvest is set aside",
+    theme: "A civilization is a seed someone refused to swallow",
+    summary: "When raiders burned the granaries, one woman swallowed the last sacred rice seed; from her grave grew a stalk unlike any other, and the delta's rice descends from her sacrifice.",
+    long: "The raiders burned the terraces and poured the seed-stock into the river. One grandmother gathered what she could carry — a fistful — and when the soldiers came she swallowed it rather than give it up. She was killed; they thought the grain destroyed with her. But rice sprang from her grave in the spring, a stalk with a thousand grains, and the delta's farmers have planted its descendants ever since. At the first harvest a sheaf is still laid on her mound, because the whole crop is, properly speaking, hers.",
+    source: "Source: a Red River Delta tale of the rice mother, retold here in brief.",
+    refs: [
+      { title: "Rice in Vietnamese culture", note: "Wikipedia · the grain at the centre of Vietnamese life", url: "https://en.wikipedia.org/wiki/Culture_of_Vietnam" }
+    ],
+    keywords: "rice mother red river delta vietnam seed swallowed grain sacrifice harvest sheaf obscure invaders"
+  },
+  {
+    id: "golden-goose-lao", scene: "feather", frame: "lotus", era: "Lao court legend · jataka tradition",
+    obscure: true,
+    tint: ["#262e1c", "#d4a24e", "#9ab06a"],
+    name: "The Golden Goose of the Mekong", nation: "Laos", region: "Luang Prabang · Mekong legend", type: "world", continent: "southeast-asia",
+    kind: "Sacred Bird",
+    creature: "A goose of solid gold who fed monks from her own feathers",
+    place: "The Mekong rapids below Luang Prabang, where gold glitters in the spray",
+    theme: "Generosity that regrows is the only wealth that counts",
+    summary: "A golden goose plucked a feather each week to feed the monks of the river; when a greedy man plucked her bare, the gold turned to ordinary feather and returned only with true apology.",
+    long: "The goose landed on the rapids' stone each full moon and let the abbot pluck one feather, which became enough gold to feed the monastery a month. A rich man heard and came by night, plucking every feather on her back — and they fell as common grey quills. The goose said nothing, only looked at him; but the gold-feathers would not return until he had given away his fortune at the temple steps, one bowl of rice at a time. The rapids still glitter, and the monks say it is not gold in the water, but memory.",
+    source: "Source: a Lao Mekong tale of the giving goose, retold here in brief.",
+    refs: [
+      { title: "Golden Goose (jataka)", note: "Wikipedia · the jataka tale-family the Lao story belongs to", url: "https://en.wikipedia.org/wiki/Golden_Goose" }
+    ],
+    keywords: "golden goose laos mekong luang prabang feathers monks greed generosity jataka obscure rapids"
+  },
+  {
+    id: "thirtyseven-nats", scene: "spirits", frame: "wave", era: "Burmese nat tradition · oral record",
+    tint: ["#1f2430", "#5f8f8b", "#d4a24e"],
+    name: "The Thirty-Seven Nats of Mount Popa", nation: "Myanmar", region: "Mount Popa · nat belief tradition", type: "world", continent: "southeast-asia",
+    kind: "Host of Spirits",
+    creature: "Thirty-seven enspirited dead who rule the volcano and must be honored before any journey",
+    place: "Mount Popa's crater rim and its golden shrine",
+    theme: "A pantheon built from history's wronged dead",
+    summary: "The Thirty-Seven Lords are historical figures killed unjustly — queens, brigands, a buffalo boy — enshrined as nats on Mount Popa, and no Burmese venture of importance begins without their leave.",
+    long: "The nat pantheon is a court of the wrongly dead. Each of the Thirty-Seven was once a person — a queen drowned by rival wives, a brigand king pardoned too late, a boy killed by a buffalo, a knight executed on a false charge — and the cult gathered them onto Popa's slopes as lords of the air. Their images stand in a golden shrine on the crater rim, each with a story and a festival day. Gamblers, kings and bus drivers alike pin nat leaves to their shirts before important journeys, because the dead who were treated unjustly now hold the keys to luck.",
+    source: "Source: the Burmese nat tradition of Mount Popa, retold here in brief.",
+    refs: [
+      { title: "Nat (deity)", note: "Wikipedia · the thirty-seven lords of Burmese spirit belief", url: "https://en.wikipedia.org/wiki/Nat_(deity)" },
+      { title: "Mount Popa", note: "Wikipedia · the volcano that is their home", url: "https://en.wikipedia.org/wiki/Mount_Popa" }
+    ],
+    keywords: "thirty-seven nats mount popa burma myanmar spirits wronged dead shrine festival luck volcano"
+  },
+  {
+    id: "sang-nila-bargain", scene: "serpent", frame: "wave", era: "Singapore straits legend · oral tradition",
+    obscure: true,
+    tint: ["#1c2a30", "#5f8f8b", "#d4a24e"],
+    name: "Sang Nila's Sea-Spirit Bargain", nation: "Singapore & Malaysia", region: "Singapore straits · founding legend", type: "world", continent: "southeast-asia",
+    kind: "Founding Bargain",
+    creature: "The sea spirit who demanded Sang Nila Utama rename his city in exchange for calm straits",
+    place: "The straits between the lion-rock and the old ports of the Riau",
+    theme: "Every founding is a negotiation with the water",
+    summary: "When Sang Nila Utama sighted the lion on the island, the sea beneath his boat had already agreed: name the city for what you saw, and the straits will carry your ships — break the promise, and they will drown it.",
+    long: "The Srivijayan prince was hunting when he saw a lion-sized beast on an island's shore and gave the place its name. What the chronicles leave out is the storm before the sighting: the sea rose against his fleet, his men threw cargo, crowns, finally prayers overboard — and the water answered. Name the land for what stands on it, the spirit demanded, and treat the lion as your landlord. Singapura has kept the bargain since: the lion on the merlion's breast, and the straits — most days — keeping their temper.",
+    source: "Source: the Sang Nila Utama founding legend with its sea-spirit layer, retold here in brief.",
+    refs: [
+      { title: "Sang Nila Utama", note: "Wikipedia · the founder of Singapura", url: "https://en.wikipedia.org/wiki/Sang_Nila_Utama" }
+    ],
+    keywords: "sang nila utama singapura lion sea spirit bargain straits founding storm crown obscure merlion"
+  },
+  {
+    id: "aung-nat-tree", scene: "harvest", frame: "wave", era: "Shan states folk tale · oral tradition",
+    obscure: true,
+    tint: ["#231f2e", "#8a6fa8", "#d4a24e"],
+    name: "The Bo Tree That Grants Iron Skin", nation: "Myanmar & Shan states", region: "Shan hills · village bodhi legend", type: "world", continent: "southeast-asia",
+    kind: "Votive Tree",
+    creature: "A bodhi tree where executions once took place, now granting the condemned a second skin",
+    place: "The old execution ground at the hill village's edge, under a bo tree",
+    theme: "A place of death, honored, becomes a place of protection",
+    summary: "Villagers tie cloth to a bo tree that once shaded an execution ground; those who tie with honest prayers come away, they say, with skin no blade can cut until the cloth rots.",
+    long: "The tree remembers what hung beneath it. For a generation it was the village's place of justice, and the roots drank deep. When the monks consecrated the ground the dead were forgiven, but the tree kept their vigilance. Now villagers tie threads of cloth to its branches before dangerous journeys, and the custom holds that while the cloth stays whole, the traveller's skin cannot be broken — knife, thorn, or hook. One man tried to sell the tree's bark as a charm; his own razor failed him for a year, and he apologized with a silk cloth the size of a sail.",
+    source: "Source: a Shan-states tale of a votive bodhi tree, retold here in brief.",
+    refs: [
+      { title: "Bodhi Tree", note: "Wikipedia · the sacred fig in Southeast Asian belief", url: "https://en.wikipedia.org/wiki/Bodhi_Tree" }
+    ],
+    keywords: "bo tree iron skin votive shan myanmar bodhi execution cloth protection obscure village blade"
+  },
+
+  // ---------------- ASIA (batch 2 · 10 more) ----------------
+  {
+    id: "moon-rabbit", scene: "rabbit", frame: "sumie", era: "Buddhist Jataka tale · East Asian spread",
+    tint: ["#1c2230", "#5f8f8b", "#d4a24e"],
+    name: "The Rabbit in the Moon", nation: "China, Japan & Korea", region: "East Asia · Buddhist jataka tradition", type: "world", continent: "asia",
+    kind: "Selfless Sacrifice",
+    creature: "A rabbit who offered its own body to a hungry beggar and was set upon the moon",
+    place: "The full moon's face, where the rabbit pounds the elixir of immortality",
+    theme: "Self-giving is written where all the world can see it",
+    summary: "When an old man begged for food, monkey, fox and rabbit offered their stores; only the rabbit offered itself — and the grateful beggar, a god in disguise, placed its image on the moon for all to honor.",
+    long: "Sakka, lord of heaven, came down as a starving old man and asked the animals of the forest for food. The monkey brought fruit, the fox brought fish, and the rabbit — who had nothing — built a fire and leapt in, saying: eat me. Sakka snatched it from the flames unharmed and, so the image would outlast memory, drew the rabbit's shape on the moon. Mid-autumn festivals across East Asia still point up at the full moon and see the rabbit there, pounding rice-cake or the elixir of life, a lesson in giving that never sets.",
+    source: "Source: the Śaśa Jātaka as it spread through East Asia, retold here in brief.",
+    refs: [
+      { title: "Moon rabbit", note: "Wikipedia · the rabbit on the moon across Asia", url: "https://en.wikipedia.org/wiki/Moon_rabbit" }
+    ],
+    keywords: "moon rabbit jataka sakka selfless sacrifice rice cake elixir east asia mid autumn festival china japan korea"
+  },
+  {
+    id: "chang-e", scene: "moon", frame: "sumie", era: "Chinese classical myth · Han dynasty texts",
+    tint: ["#181d2e", "#5f8f8b", "#d4a24e"],
+    name: "Chang'e, Lady of the Moon Palace", nation: "China", region: "Heavenly court · classical myth", type: "world", continent: "asia",
+    kind: "Sky Exile",
+    creature: "The archer Houyi's wife, who drank the elixir and rose to the cold moon",
+    place: "The Moon Palace of Guanghan, with its cassia tree and jade rabbit",
+    theme: "Immortality is a palace with only one room",
+    summary: "Houyi shot down nine suns and won the elixir of immortality; his wife Chang'e drank it — some say to save it from a thief — and rose to the moon, where Mid-Autumn festival crowds send her cakes and prayers.",
+    long: "Houyi the archer saved the world by shooting nine of the ten suns from the sky, and heaven paid him with a single dose of immortality. He hid it under the bed and loved his wife Chang'e; a treacherous pupil broke in to steal it, and she swallowed the elixir herself rather than let evil live forever. The weight of it pulled her up past the roofs, past the mountains, to the cold moon, where she lives with the jade rabbit and the cassia tree. At Mid-Autumn, families set out mooncakes and tell her — a little tenderly — that she should have shared.",
+    source: "Source: the Chinese myth of Chang'e, retold here in brief.",
+    refs: [
+      { title: "Chang'e", note: "Wikipedia · the moon goddess of the Mid-Autumn festival", url: "https://en.wikipedia.org/wiki/Chang%27e" }
+    ],
+    keywords: "chang e houyi archer moon palace elixir immortality mid autumn china mooncake cassia jade rabbit"
+  },
+  {
+    id: "momotaro", scene: "hero", frame: "sumie", era: "Edo-period Japanese folk tale · widely printed 1700s",
+    tint: ["#2a1c22", "#b3492f", "#d4a24e"],
+    name: "Momotaro, the Peach-Born Boy", nation: "Japan", region: "Okayama · Edo folk tale", type: "world", continent: "asia",
+    kind: "Peach-Born Champion",
+    creature: "A boy born from a giant peach who marched devils off an island with a dog, a monkey and a pheasant",
+    place: "Onigashima, the demons' island, somewhere across the Inland Sea",
+    theme: "The smallest household's child can be the country's champion",
+    summary: "An old couple found a boy inside a floating peach; Momotaro grew up in a day, marched to the demons' island with millet dumplings and three animal companions, and came home with the devils' treasure.",
+    long: "The old woman was washing in the river when the biggest peach she had ever seen came floating down. Inside was a boy who announced he had been sent by heaven to be their son. Grown strong and polite, Momotaro heard of the demons who raided the coast from their island, took a bag of his mother's millet dumplings, and recruited — by dumpling diplomacy — a dog, a monkey and a pheasant. The pheasant scouted, the monkey scaled the walls, the dog and Momotaro broke the gate, and the demon king surrendered his hoard. The tale is a nursery story with a general's spine: courage, rations, and good friends.",
+    source: "Source: the Japanese tale of Momotaro, retold here in brief.",
+    refs: [
+      { title: "Momotarō", note: "Wikipedia · the peach boy of Japanese folklore", url: "https://en.wikipedia.org/wiki/Momotar%C5%8D" }
+    ],
+    keywords: "momotaro peach boy japan okayama onigashima demons dog monkey pheasant dumpling edo folk hero"
+  },
+  {
+    id: "urashima-taro", scene: "horse", frame: "sumie", era: "Man'yōshū era tale · Japanese classical record",
+    tint: ["#1a2430", "#5f8f8b", "#d4a24e"],
+    name: "Urashima Taro and the Dragon Palace", nation: "Japan", region: "Shizuoka coast · classical legend", type: "world", continent: "asia",
+    kind: "Time's Deep Water",
+    creature: "A fisherman who spent three days at the Dragon Palace and returned three hundred years late",
+    place: "Ryūgū-jō, the dragon palace beneath the waves, and the beach he left from",
+    theme: "The sea keeps its own calendar",
+    summary: "Urashima saved a turtle, was rewarded with a visit to the dragon palace under the sea, and danced three days there — then came home to find his village three centuries gone and himself an old man overnight.",
+    long: "Urashima Taro rescued a turtle from boys on the beach, and the turtle offered him a ride to the Dragon Palace as thanks. There the princess Otohime fed him the seasons in courses, and every night was warmer and stranger than the last. Three days — he was sure it was three days — passed in songs and lanterns. She gave him a lacquered box he must never open, and sent him home: the beach was different, the houses stone-walled, and an old woman by the well told him about Urashima Taro, lost three hundred years ago. He opened the box. Cloud came out, and it settled on him as age, three centuries of it, all at once.",
+    source: "Source: the Japanese legend of Urashima Tarō, retold here in brief.",
+    refs: [
+      { title: "Urashima Tarō", note: "Wikipedia · the fisherman of the Dragon Palace", url: "https://en.wikipedia.org/wiki/Urashima_Tar%C5%8D" }
+    ],
+    keywords: "urashima taro dragon palace otohime turtle time slip japan box three hundred years fisherman sea"
+  },
+  {
+    id: "aravan-krishna", scene: "princess", frame: "lotus", era: "Tamil folk tradition · temple festival legend",
+    obscure: true,
+    tint: ["#2e1c2a", "#8a6fa8", "#d4a24e"],
+    name: "Aravan & the One Night of Mohini", nation: "India", region: "Tamil Nadu · Koothandavar temple tradition", type: "world", continent: "asia",
+    kind: "Compassionate Deception",
+    creature: "Aravan, the hero demanded as sacrifice, and Krishna who granted him one night as a bride",
+    place: "The temple of Koothandavar at Koovagam, where the marriage is re-enacted yearly",
+    theme: "The god who pities is the god who marries",
+    summary: "Before his ritual death, the hero Aravan asked to know marriage; Krishna took his own Mohini form for one night as Aravan's bride — and today thousands of transgender devotees marry the god each year in his memory.",
+    long: "Aravan, son of Arjuna, was demanded by the gods as sacrifice — his death would guarantee victory, but it must come before his wedding morning. He asked for one night of marriage first, and no family would give a daughter to a doomed man. Krishna, who never refused a reasonable request, took the form of Mohini and spent the night as his bride. At Koovagam, each Chaitra full moon, thousands of transgender and cross-dressing devotees marry Aravan in the temple, mourn him as widows the next day, and the state of their grief is the village's blessing: love, even one night of it, outweighs an old war's arithmetic.",
+    source: "Source: the Tamil legend of Aravan and the Koothandavar festival, retold here in brief.",
+    refs: [
+      { title: "Aravan", note: "Wikipedia · the hero, the sacrifice, and the festival", url: "https://en.wikipedia.org/wiki/Aravan" }
+    ],
+    keywords: "aravan mohini krishna tamil koothandavar koovagam transgender marriage sacrifice one night india obscure festival"
+  },
+  {
+    id: "baital-vetal", scene: "spirits", frame: "lotus", era: "Vetala Panchavimshati · Sanskrit story cycle",
+    obscure: true,
+    tint: ["#1f1e2e", "#8a6fa8", "#d4a24e"],
+    name: "The Twenty-Five Tales of the Baital", nation: "India", region: "Sanskrit storytelling cycle · vetala tales", type: "world", continent: "asia",
+    kind: "Riddling Corpse",
+    creature: "A vetala — a spirit in a corpse — who rode a king's shoulders and posed riddles that cost lives if answered wrong",
+    place: "The cremation ground at the city's edge, and the banyan where the corpse hung",
+    theme: "A riddle answered is a promise betrayed",
+    summary: "King Vikram must carry a corpse to a sorcerer; the corpse is a wise spirit who tells a story each night and ends it with a riddle — answer wrongly and you die, answer rightly and the corpse flies back to its tree.",
+    long: "The sorcerer's instructions were exact: fetch the corpse from the banyan, carry it in silence. Silence never lasted. The vetala inside began a tale each night — of fathers, brides, debts and monsters — and closed with a question: which of them was right? The king, honour-bound, answered. 'But you have spoken,' the vetala would say, and fly laughing back to the banyan, resetting the whole night's journey. Twenty-five times it flew; on the last, the king could not answer, and the vetala — impressed — warned him the sorcerer meant him harm. The twenty-sixth trip, the king carried the warning instead of the corpse.",
+    source: "Source: the Sanskrit Vetala Panchavimshati frame-tale cycle, retold here in brief.",
+    refs: [
+      { title: "Vetala", note: "Wikipedia · the riddling spirit of Sanskrit literature", url: "https://en.wikipedia.org/wiki/Vetala" },
+      { title: "Vikram and the Vampire", note: "Wikipedia · the classic English retelling of the cycle", url: "https://en.wikipedia.org/wiki/Vikram_and_the_Vampire" }
+    ],
+    keywords: "baital vetala vikram corpse riddle twenty five tales banyan sorcerer sanskrit india obscure vampire"
+  },
+  {
+    id: "garuda-golden-wings", scene: "feather", frame: "wave", era: "Buddhist & Hindu tradition · across Asia",
+    obscure: true,
+    tint: ["#2e2418", "#d4a24e", "#f0c674"],
+    name: "The Golden-Winged King of Birds", nation: "Nepal & Tibet", region: "Himalayan Buddhist art · garuda tradition", type: "world", continent: "asia",
+    kind: "Sky Sovereign",
+    creature: "The garuda — golden wings that beat storms, carrying the Buddha's protection on its back",
+    place: "The wind-line of the high Himalaya, above which only garudas fly",
+    theme: "The biggest strength kneels to the smallest prayer",
+    summary: "In Himalayan Buddhism the garuda who ate nagas whole became the Buddha's mount and emblem — its image carved on rooftops to keep serpents, storms and sickness off the household beneath.",
+    long: "The garuda was born from an egg the size of a mountain and hatched so hungry it ate the naga serpents whole — until the Buddha taught it restraint, and the great bird bent its neck. In Nepal and Tibet its golden wings spread across temple roofs and door lintels, not as a memory of appetite but as a promise: the serpent of greed, the storm of anger, the sickness that flies at night — the golden king of birds eats them all before they reach the threshold.",
+    source: "Source: Himalayan garuda iconography and legend, retold here in brief.",
+    refs: [
+      { title: "Garuda in Buddhism", note: "Wikipedia · the bird of protection on temple roofs", url: "https://en.wikipedia.org/wiki/Garuda#In_Buddhism" }
+    ],
+    keywords: "garuda golden wings nepal tibet buddha mount naga rooftop protection himalaya obscure bird king"
+  },
+  {
+    id: "jinn-ring-solomon", scene: "sphinx", frame: "hiero", era: "Middle Eastern & Islamic tradition · Quran and commentary",
+    obscure: true,
+    tint: ["#1f2a24", "#9ab06a", "#d4a24e"],
+    name: "Solomon's Ring and the Jinn of Brass", nation: "Middle East", region: "Jerusalem & the jinn world · Islamic tradition", type: "world", continent: "asia",
+    kind: "Sealed Command",
+    creature: "The Prophet-King whose signet ring commanded wind, birds and jinn",
+    place: "The throne hall of Jerusalem and the copper vessels that seal the jinn away",
+    theme: "Command is a service, not a trophy",
+    summary: "God gave Solomon authority over the jinn, the wind and the speech of birds; his brass bottles — sealed with his ring — hold the wilder ones still, and fishermen who pull one up make three wishes and regret two.",
+    long: "The ring bore the Name, and with it the wind carried Solomon's carpet where he wished, the hoopoe reported from Sheba, and the jinn built him palaces by night. When he died standing in prayer, the jinn — not knowing — kept working, propping him up, until a termite ate through his staff and he fell: the lesson the Quran leaves with the reader. The brass bottles came later, in the storytellers' market: fishermen trawl up a copper flask sealed with his signet, uncork it, and out comes a jinn with a thousand years of opinions and three wishes — the oldest wish-caveat in the world attached.",
+    source: "Source: Solomon traditions from the Quran and the Arabian storytellers, retold here in brief.",
+    refs: [
+      { title: "Solomon in Islam", note: "Wikipedia · the prophet-king and the jinn", url: "https://en.wikipedia.org/wiki/Solomon_in_Islam" }
+    ],
+    keywords: "solomon ring jinn brass bottle islam quran wind birds hoopoe sheba wishes prophet king obscure"
+  },
+  {
+    id: "klementje-vila", scene: "hiddenfolk", frame: "knot", era: "Slavic & Balkan tradition · oral record",
+    obscure: true,
+    tint: ["#1e2430", "#5f8f8b", "#d4a24e"],
+    name: "The Vilas of the Mountain Wind", nation: "Slavic & Balkan world", region: "Carpathians & the Balkans · vila belief", type: "world", continent: "asia",
+    kind: "Wind Sisters",
+    creature: "Storm-riding sisterhoods who guard wells, dance in circles, and shoot the unfaithful",
+    place: "Mountain peaks and wellheads across the Slavic lands",
+    theme: "The wild feminine keeps its own law",
+    summary: "Vilas are wind-women who dance in mountain circles — cure the sick, curse oath-breakers, and punish any man who steals their winged cloak, holding his freedom until he returns it.",
+    long: "A vila is a woman of the wind: white gowns, hair to the heels, wings or a cloak of feathers left on the riverbank when she dances. Steal the cloak and she becomes your wife — dutiful, cold, and always scanning the sky — until she finds it, whereupon the marriage ends like weather. But honor her wells and her mountain meadows and she is the best neighbour a village has: she curdles milk into medicine, drowns only oath-breakers, and her arrow never misses the false. The oldest songs call her sister to the wind itself, and no one has ever heard the wind apologize.",
+    source: "Source: the Slavic-Balkan vila tradition, retold here in brief.",
+    refs: [
+      { title: "Vila (Slavic folklore)", note: "Wikipedia · the wind-women of Slavic legend", url: "https://en.wikipedia.org/wiki/Vila" }
+    ],
+    keywords: "vila vilas slavic balkan wind women mountain dance cloak wings well oath storm obscure carpathian"
+  },
+  {
+    id: "shahmaran-kurdish", scene: "serpent", frame: "hiero", era: "Kurdish & Anatolian legend · oral epic",
+    obscure: true,
+    tint: ["#22301e", "#9ab06a", "#d4a24e"],
+    name: "Shahmaran, Queen of Serpents", nation: "Kurdish & Anatolian world", region: "Tarsus & the Taurus mountains · snake epic", type: "world", continent: "asia",
+    kind: "Serpent Wisdom",
+    creature: "A woman above and serpent below, keeper of all medicine in a hidden cave-city",
+    place: "The cave of Maran, where the snake-people keep the water of life",
+    theme: "Wisdom given is wisdom spent, and spending it has a price",
+    summary: "A young man found Shahmaran's hidden world, lived in wisdom with her, then betrayed it for a bag of gold — and the snake queen's dying words made him the century's greatest healer and the century's saddest man.",
+    long: "Tahmasp fell through a honey-thief's hole into the cave-city of the Maran, half-serpent people ruled by Shahmaran — a queen with a woman's face and a serpent's coils who had read every secret of medicine. He stayed a year, sworn to secrecy, and loved her; then homesickness and gold pulled him back to the world above, where the sultan was sick and the court had learned of the snake-queen. They dragged him to the cistern to point her out. Shahmaran was brought up in a great basin and, dying, told Tahmasp the last secret: bathe the sultan in my broth, and keep my two scales — one cures, one kills. He became the healer of kings, and never spoke of her without weeping.",
+    source: "Source: the Kurdish-Anatolian epic of Shahmaran, retold here in brief.",
+    refs: [
+      { title: "Shahmaran", note: "Wikipedia · the serpent queen of Anatolian and Kurdish legend", url: "https://en.wikipedia.org/wiki/Shahmaran" }
+    ],
+    keywords: "shahmaran serpent queen kurdish anatolia tarsus taurus snake medicine wisdom betrayal cave obscure"
+  },
+
+  // ---------------- EUROPE (batch 2 · 10 more) ----------------
+  {
+    id: "roland-blasphemers-bell", scene: "hero", frame: "engraving", era: "Frankish chanson de geste · 11th-12th century",
+    tint: ["#241e1a", "#b3492f", "#d4a24e"],
+    name: "Roland and the Horn of Roncevaux", nation: "France", region: "Roncevaux Pass · Song of Roland", type: "world", continent: "europe",
+    kind: "Tragic Valor",
+    creature: "The paladin who would not blow the horn until it was too late",
+    place: "The pass of Roncevaux in the Pyrenees, where the rearguard fell",
+    theme: "Pride makes heroes die with the trumpet in their hand",
+    summary: "Charlemagne's rearguard was ambushed in the mountains; Roland, too proud to call for help, held the pass with his sword until only he remained — and the horn he finally blew was heard leagues away, too late to save him but in time to avenge him.",
+    long: "The Franks were crossing into France when the Basque-turned-Saracen ambush fell on the rearguard. Roland's comrades begged him to sound Olifant, the great horn that Charlemagne would hear across the mountains; Roland refused — 'that would be shaming my kin.' He fought until the pass was heaped with both armies' dead, then blew the horn with such force that his temples burst. Charlemagne heard it, turned the army, and wept at what he found: a paladin dead facing the enemy, sword raised, and the mountain pass named for grief ever since.",
+    source: "Source: the Song of Roland (Chanson de Roland), retold here in brief.",
+    refs: [
+      { title: "The Song of Roland", note: "Wikipedia · the chanson de geste of Roncevaux", url: "https://en.wikipedia.org/wiki/The_Song_of_Roland" }
+    ],
+    keywords: "roland olifant horn roncevaux charlemagne paladin pass ambush pride song of roland france epic"
+  },
+  {
+    id: "faust-bargain", scene: "sphinx", frame: "engraving", era: "German chapbook legend · 1587 onward",
+    tint: ["#1f1a2e", "#8a6fa8", "#d4a24e"],
+    name: "Doctor Faustus and the Twenty-Four Years", nation: "Germany", region: "Wittenberg & the wider Empire · Faust tradition", type: "world", continent: "europe",
+    kind: "Damned Bargain",
+    creature: "A scholar who sold his soul to Mephostophiles for knowledge and pleasure",
+    place: "The study at Wittenberg, where the devil wears a scholar's gown",
+    theme: "Knowledge bought on credit is repaid in yourself",
+    summary: "Faustus signed his soul away in his own blood for twenty-four years of power and answers; the devil came for the debt to the minute, and the play of his ruin has been performed in every century since.",
+    long: "Doctor Faustus was the finest scholar of his age and bored with all of it. In a night study he drew the circle, called, and got Mephostophiles — polite, punctual, and thorough. The contract: twenty-four years of service, all knowledge, all pleasures, against his immortal soul. He travelled, conjured Helen of Troy before students, and laughed at his own warnings. At the end the clock struck eleven, then twelve, and the room filled with thunder. The chapbooks were printed as true case histories, and every age since — Marlowe's, Goethe's, ours — has retold the bargain with itself as the customer.",
+    source: "Source: the German Faustbuch tradition, retold here in brief.",
+    refs: [
+      { title: "Faust", note: "Wikipedia · the scholar and the devil across four centuries", url: "https://en.wikipedia.org/wiki/Faust" }
+    ],
+    keywords: "faust faustus mephostophiles devil bargain soul germany wittenberg helen twenty four years scholar"
+  },
+  {
+    id: "huldra-forest-bride", scene: "princess", frame: "knot", era: "Scandinavian folk legend · oral tradition",
+    obscure: true,
+    tint: ["#1e2a1f", "#9ab06a", "#d4a24e"],
+    name: "The Huldra's Hollow Back", nation: "Norway & Sweden", region: "The boreal forest · huldra tales", type: "world", continent: "europe",
+    kind: "Forest Bride",
+    creature: "A beautiful forest woman with a cow's tail and a hollow back, who rewards the kind",
+    place: "The spruce deepwoods where charcoal burners and hunters winter alone",
+    theme: "Kindness to the hidden folk is repaid in timber and luck",
+    summary: "The huldra courts woodsmen — beautiful, singing, with a tail she hides and a back hollow as a log. To the courteous she brings luck and fattened herds; to the rude she gives the forest's own cold manners.",
+    long: "Sawmill men and charcoal burners knew her by her song before they saw her: a woman in the deepwoods, blond as birch, asking after their mothers. She is human everywhere but the tail and the hollowed-out back — empty as a rotten log, for she belongs to the troll-kin. Marry her in church and the tail drops, the back fills, and she is a perfect wife until she offends the pastor once too often. But most tales are of short acquaintance: leave your lunch half and your axe unsworn at her tree, and your herd doubles by spring. Curse her, and the forest itself walks you in circles until the dogs find you.",
+    source: "Source: Scandinavian huldra tales, retold here in brief.",
+    refs: [
+      { title: "Hulder", note: "Wikipedia · the forest woman of Scandinavia", url: "https://en.wikipedia.org/wiki/Hulder" }
+    ],
+    keywords: "huldra hulder forest woman tail hollow back norway sweden woodsman courtesy troll obscure bride"
+  },
+  {
+    id: "golem-prague", scene: "sphinx", frame: "engraving", era: "Prague Jewish legend · 19th century compilation",
+    tint: ["#22201a", "#d4a24e", "#f0c674"],
+    name: "The Golem of Prague", nation: "Czech lands (Bohemia)", region: "Prague's Jewish Town · Rabbi Loew legend", type: "world", continent: "europe",
+    kind: "Made Protector",
+    creature: "A man of river clay with a shem written on his brow, built to defend the ghetto",
+    place: "The Altneuschul synagogue and the clay of the Vltava banks",
+    theme: "A protector made for one purpose is dangerous at rest",
+    summary: "Rabbi Loew shaped a golem from Vltava clay to defend Prague's Jews from pogroms; when the emperor promised peace, the rabbi unmade it — and its remains wait in the synagogue attic still.",
+    long: "Blood-libel riots were coming every spring, and Rabbi Judah Loew ben Bezalel dreamed the answer: a man without a soul cannot be accused of anything. With two shammes assistants he shaped a giant of river clay, walked the kabbalistic circle, and wrote emet — truth — on its brow. The golem patrolled the gates, catching conspirators and carrying the dead to safety, growing larger each month like any unopposed power. When the emperor swore protection, the rabbi erased one letter — alef — leaving met: death. The clay collapsed into the arms of its makers. The attic of the Old-New Synagogue is empty to visitors, and the tale says why: the remains are up there, waiting to be needed again.",
+    source: "Source: the Prague golem legend of Rabbi Loew, retold here in brief.",
+    refs: [
+      { title: "Golem", note: "Wikipedia · the clay protector of Prague", url: "https://en.wikipedia.org/wiki/Golem" }
+    ],
+    keywords: "golem prague rabbi loew clay shem emet met pogrom defender attic synagogue bohemian jewish"
+  },
+  {
+    id: "selkie-seal-bride", scene: "horse", frame: "knot", era: "Scottish & Faroese folk ballad · oral tradition",
+    tint: ["#1a222e", "#5f8f8b", "#d4a24e"],
+    name: "The Selkie's Stolen Skin", nation: "Scotland & the Faroe Islands", region: "Northern isles · selkie tradition", type: "world", continent: "europe",
+    kind: "Seal Bride",
+    creature: "Seal-women whose sealskin, stolen, chains them to a marriage on land",
+    place: "The grey rocky beaches of Orkney, Shetland and the Faroes",
+    theme: "Love without consent is a cage with a view of the sea",
+    summary: "A fisherman hides a selkie's sealskin and she must marry him; years later her children find the skin in the rafters, and the sea takes her back mid-song — gently, inevitably, like tide.",
+    long: "The selkie-women shed their seal-skins on the rocks and dance as humans under the moon. A lonely fisherman who steals one skin owns her — she cannot return to the waves, and she marries, and bears his children, and her love is real but always facing east. One day a child hunting in the thatch finds a bundle of slick grey fur and asks what it is. The mother stops at the door, takes the skin, looks long at her family, and walks into the sea — and the tales are gentle here, saying she visits her sons as a seal that surfaces near their boats, or brings fish in lean years. The husband never remarries; how could he, with the whole sea as her road home?",
+    source: "Source: the selkie tradition of the Northern Isles, retold here in brief.",
+    refs: [
+      { title: "Selkie", note: "Wikipedia · the seal-people of Scottish and Faroese legend", url: "https://en.wikipedia.org/wiki/Selkie" }
+    ],
+    keywords: "selkie seal skin stolen bride orkney shetland faroe fisherman marriage sea return children scotland"
+  },
+  {
+    id: "chained-lady-andromeda", scene: "princess", frame: "meander", era: "Greek myth via Ovid's Metamorphoses",
+    obscure: true,
+    tint: ["#1e2030", "#5f8f8b", "#d4a24e"],
+    name: "Andromeda and the Sea-Fed Monster", nation: "Greece (ancient)", region: "Joppa coast · Greek myth", type: "world", continent: "europe",
+    kind: "Sacrificial Chains",
+    creature: "The princess chained to a rock for a sea monster sent by an offended god",
+    place: "The grey cliffs of Joppa, where the chain rings were cut into stone",
+    theme: "Parents' boasting is paid in children's chains",
+    summary: "Queen Cassiopeia boasted her daughter fairer than the Nereids; Poseidon flooded the coast and sent Cetus. Andromeda was chained as the price, rescued by Perseus, and hung in the stars beside the monsters.",
+    long: "Cassiopeia could not stop talking about her daughter's beauty, and the Nereids heard it from the waves themselves. The sea-god's answer was arithmetic: flood the kingdom, send Cetus from the deep, and chain the girl to the rock at feeding time. Perseus, flying home with the Gorgon's head, struck the bargain — the monster for the girl — and used the Gorgon's face to turn Cetus to island-stone. The gods hung the whole quarrel in the sky: Andromeda, her mother still seated in her chair, and the monster beneath them all, where constellations do what families do — circle each other forever.",
+    source: "Source: the Andromeda episode of Greek myth via Ovid, retold here in brief.",
+    refs: [
+      { title: "Andromeda (mythology)", note: "Wikipedia · the chained princess and the constellations", url: "https://en.wikipedia.org/wiki/Andromeda_(mythology)" }
+    ],
+    keywords: "andromeda cassiopeia cetus perseus chained rock sea monster joppa greece constellation boasting ovid"
+  },
+  {
+    id: "wandering-jew", scene: "hero", frame: "engraving", era: "Medieval European legend · 13th century onward",
+    obscure: true,
+    tint: ["#26221c", "#b3492f", "#d4a24e"],
+    name: "The Wandering Pilgrim", nation: "Medieval Europe", region: "The long roads of Christendom · legend", type: "world", continent: "europe",
+    kind: "Eternal Road",
+    creature: "A man cursed to walk the earth until a certain day he cannot name",
+    place: "Every road in Europe, always mid-journey, always nearly home",
+    theme: "The cruellest curse is time without rest",
+    summary: "The medieval legend of a man who taunted the condemned Christ and was told 'tarry till I come' — condemned to walk through history, meeting every plague, war and century, forever one step from rest.",
+    long: "The legend walks out of the thirteenth century: a man on the Via Dolorosa shoved the condemned Christ along and told him to hurry. 'I go,' the answer came, 'but you will tarry till I come.' After that the man could not die. He appears in tavern tales as an old pilgrim who speaks all languages, knows the plague's arrival before the beacons, weeps at crucifixes, and never stays in one town more than a night. Every century retold him as its own wanderer — the shoemaker, the cartwright, the jeweller — each town claiming he passed through last week. The story is dark but oddly tender: Europe filled its roads with a man it could neither forget nor forgive, walking out its own guilt.",
+    source: "Source: the medieval legend of the Wandering Jew, retold here as a sample adaptation.",
+    refs: [
+      { title: "Wandering Jew", note: "Wikipedia · the eternal pilgrim of European legend", url: "https://en.wikipedia.org/wiki/Wandering_Jew" }
+    ],
+    keywords: "wandering jew pilgrim eternal road curse medieval europe tarry time plague forever obscure via dolorosa"
+  },
+  {
+    id: "herla-king-fairy", scene: "horse", frame: "knot", era: "Walter Map's De Nugis Curialium · 12th century",
+    obscure: true,
+    tint: ["#1f222e", "#8a6fa8", "#d4a24e"],
+    name: "King Herla's Three-Century Ride", nation: "England & Wales", region: "The Welsh borders · Walter Map's court tale", type: "world", continent: "europe",
+    kind: "Fairy Ride",
+    creature: "A king who attended a dwarf-king's wedding and rode out three hundred years late",
+    place: "The deep cave in the Welsh mountains where the fairy court held its feast",
+    theme: "A gift with one condition is a trap with good manners",
+    summary: "King Herla feasted three days in the underground kingdom of a dwarf-king and left bearing a gift — a blood-filled chalice he must not look into until crossed by daylight — and emerged three centuries later.",
+    long: "The dwarf king came out of a cave to pay Herla a wedding visit of improbable splendour, then demanded the return feast in his own halls below. Three days of feasting — Herla was sure it was three days — and the host gave him going-away gifts: hounds, horses, and a small chalice of the plainest work. 'Look not inside until sunlight strikes it.' Herla's party rode out and found the river valleys renamed, shepherds who spoke of King Herla as a tale of three centuries past. An old man leapt to steal a horse, touched the chalice — and daylight flashed in a gout of blood that drowned him. The king and his train ride still, they say: the Wild Hunt of the British borders, always one war behind.",
+    source: "Source: Walter Map's 12th-century tale of King Herla, retold here in brief.",
+    refs: [
+      { title: "Herla", note: "Wikipedia · the king who rode out of fairy time", url: "https://en.wikipedia.org/wiki/Herla" }
+    ],
+    keywords: "king herla fairy ride dwarf chalice blood three centuries wild hunt walter map welsh borders obscure"
+  },
+  {
+    id: "dempsey-witch-horse", scene: "ogress", frame: "knot", era: "British legend · recorded in Early Modern pamphlets",
+    obscure: true,
+    tint: ["#221c26", "#8a6fa8", "#d4a24e"],
+    name: "Black Annis of the Dane Hills", nation: "England", region: "Leicestershire · Dane Hills legend", type: "world", continent: "europe",
+    kind: "Winter Hag",
+    creature: "A blue-faced hag with iron claws who claws children from windows at the year's coldest turn",
+    place: "The Dane Hills of Leicestershire and the oak she scratched hollow for a den",
+    theme: "Winter itself, given a face to frighten children indoors",
+    summary: "Black Annis — blue-faced, iron-clawed, she-cat fanged — dug her den in the Dane Hills oak and reached through windows for stray children; cottages built small windows high up still remember her reach.",
+    long: "She is winter with a personality: black face, tusks, claws like scythes, and a temper that only thaws at spring. She scratched the oak with her own hands to make a den, and at the year's dark turn she crouched on the hills to listen for children out after dusk. Mothers in old Leicester built their windows small and high — glass wide enough only for moonlight, not for claws — and hung cat-skins at the lintel to suggest that the huntress had been already paid. The May Day hunt that followed her trail through the hills was the town declaring the winter over, with Annis supposedly fleeing to Scotland until next cold.",
+    source: "Source: the Black Annis legend of the Dane Hills, retold here as a sample adaptation.",
+    refs: [
+      { title: "Black Annis", note: "Wikipedia · the winter hag of Leicestershire", url: "https://en.wikipedia.org/wiki/Black_Annis" }
+    ],
+    keywords: "black annis dane hills leicestershire winter hag claws window oak den cat may day obscure england"
+  },
+  {
+    id: "swan-knights-lake", scene: "horse", frame: "meander", era: "Lohengrin tradition · medieval German romance",
+    obscure: true,
+    tint: ["#1a2630", "#5f8f8b", "#d4a24e"],
+    name: "The Knight of the Swan", nation: "Germany & the Low Countries", region: "The Rhine and Antwerp · Lohengrin cycle", type: "world", continent: "europe",
+    kind: "Questionless Champion",
+    creature: "A knight who arrives by swan-boat, saves the innocent, and must leave if his origin is asked",
+    place: "The Rhine's misty banks and the duchy of Brabant's disputed halls",
+    theme: "A rescue bought with silence lasts exactly as long as the silence",
+    summary: "Elsa of Brabant was accused of murder no one could disprove; a knight arrived on a boat drawn by a swan, won her name back in trial by combat, married her — and was lost the morning she asked where he came from.",
+    long: "The rule was one sentence long: defend her, marry her, and never ask. The knight in shining unknown arms arrived downriver drawn by a swan, defeated the false accuser in single combat, and governed Brabant so well that the question felt unnecessary — which is how such questions always feel, until a wedding-night certainty replaces them. Elsa asked. The knight told the court his name, traced his line to the Grail itself, and stepped onto the swan-boat as morning broke; Elsa's brothers, restored by magic he had worked in secret, watched the river take him. The swan was her brother, transformed. Some rescues are better thanked than understood.",
+    source: "Source: the Knight of the Swan (Lohengrin) romance, retold here in brief.",
+    refs: [
+      { title: "Lohengrin", note: "Wikipedia · the swan-knight of the Grail cycle", url: "https://en.wikipedia.org/wiki/Lohengrin_(opera)" }
+    ],
+    keywords: "swan knight lohengrin elsa brabant grail question silence rescue rhine antwerp obscure romance"
+  },
+
+  // ---------------- AFRICA (batch 2 · 10 more) ----------------
+  {
+    id: "anansi-tiger-stories", scene: "spider", frame: "adinkra", era: "Akan oral tradition · old telling",
+    tint: ["#262218", "#d4a24e", "#f0c674"],
+    name: "Anansi Buys All the Stories", nation: "Ghana", region: "Akan country · Ashanti tradition", type: "world", continent: "africa",
+    kind: "Clever Purchase",
+    creature: "The spider who paid for all the world's stories with a swarm, a hornet nest and a python",
+    place: "The sky god Nyame's court, above the forest roads of the Akan",
+    theme: "Cleverness is legal tender among the desperate",
+    summary: "Stories belonged to the sky god; Anansi, too poor to buy them, captured a python, a swarm of hornets and a leopard with wits alone — and stories have been the spider's ever since.",
+    long: "Nyame priced all stories at three payments: Onini the python, Osebo the leopard, and Mmoboro the hornets. Anansi the spider had no gold, so he bargained with the goods themselves. To the python: 'she is longer than the palm branch, she is not.' To the hornets: 'rain is falling, get in this calabash.' To the leopard: 'the python claims your tail can't tie him, prove it.' Each captive tied and bagged itself. Nyame paid up, and every story told since — this one included — belongs to the spider.",
+    source: "Source: the Akan tale of how Anansi bought the stories, retold here in brief.",
+    refs: [
+      { title: "Anansi", note: "Wikipedia · the spider and the origin of stories", url: "https://en.wikipedia.org/wiki/Anansi" }
+    ],
+    keywords: "anansi stories nyame sky god python hornets leopard akan ashanti ghana bargain spider clever"
+  },
+  {
+    id: "mwanamuti-swan", scene: "harvest", frame: "adinkra", era: "Swahili coast oral tradition · old telling",
+    obscure: true,
+    tint: ["#1e2a2a", "#5f8f8b", "#d4a24e"],
+    name: "The Dhow That Sailed Into the Stars", nation: "Tanzania & Zanzibar", region: "Swahili coast · dhow-sailor legend", type: "world", continent: "africa",
+    kind: "Sky Voyage",
+    creature: "A dhow captain who followed a new star past the edge of the charts",
+    place: "The Indian Ocean monsoon road from Zanzibar eastward",
+    theme: "The last port is always one monsoon further",
+    summary: "A master dhow navigator chased a star no chart had recorded and brought back a cargo of starlight iron; his descendants still navigate by his original error, kept deliberately on the books.",
+    long: "Captain Said bin Juma was the best reckoner on the Zanzibar run, and the new star offended him professionally: it had no name, no risings, no port. He provisioned the dhow for a month and sailed east against the monsoon's rules. The crew told of nights where the water mirrored the sky and the boat sailed both. They returned with a harpoon head of iron that never rusted — star-metal, said the smiths — and Said's log with the star's track copied into it. His family still checks that track each generation, in case the star comes round again and the cargo needs renewing.",
+    source: "Source: a Swahili dhow-sailor's legend of the uncharted star, retold here in brief.",
+    refs: [
+      { title: "Swahili culture", note: "Wikipedia · the monsoon sailing world of the legend", url: "https://en.wikipedia.org/wiki/Swahili_culture" }
+    ],
+    keywords: "dhow star voyage swahili zanzibar navigator monsoon starlight iron uncharted said bin juma obscure"
+  },
+  {
+    id: "mami-oba-river", scene: "princess", frame: "adinkra", era: "Yoruba orisha tradition · old telling",
+    obscure: true,
+    tint: ["#2a1e2e", "#8a6fa8", "#d4a24e"],
+    name: "Oya, Whirlwind Wife of the Niger", nation: "Nigeria", region: "Niger River · Yoruba orisha tradition", type: "world", continent: "africa",
+    kind: "Storm Queen",
+    creature: "Oya, the orisha of storms and the Niger, who guards the cemetery gates",
+    place: "The Niger's nine mouths and every marketplace the wind rips through",
+    theme: "Change is a wind that sweeps the market clean",
+    summary: "Oya commands lightning's gentler partner, the whirlwind; her nine rivers flow from a single grief, and she is honored by traders and by the dead, whose gates she keeps.",
+    long: "Oya is the wife of Shango the thunder-king, but her element is subtler than his: the whirlwind that comes before it, the change that scatters the market stalls and the old order alike. She gave her name to the Niger's nine mouths, and the story of how they split is the story of a grief — the loss that broke one great water into nine. She is Iyansan, the mother of nine, keeper of cemetery gates; traders salute her before big bargains, because all fortune is weather, and weather is hers.",
+    source: "Source: Yoruba orisha lore of Oya, retold here in brief.",
+    refs: [
+      { title: "Oya", note: "Wikipedia · the orisha of winds, storms and transformation", url: "https://en.wikipedia.org/wiki/Oya" }
+    ],
+    keywords: "oya whirlwind niger nine rivers orisha yoruba storm shango cemetery market change nigeria goddess"
+  },
+  {
+    id: "kaggen-mantis", scene: "monkey", frame: "adinkra", era: "San oral tradition · hunter's telling",
+    obscure: true,
+    tint: ["#2a2418", "#d4a24e", "#9ab06a"],
+    name: "Kaggen, the Trickster Mantis", nation: "San peoples (Southern Africa)", region: "Kalahari & Drakensberg · San myth-cycle", type: "world", continent: "africa",
+    kind: "First Trickster",
+    creature: "The mantis who made elands and mistakes, sometimes on purpose",
+    place: "The rock overhangs of the Drakensberg, painted with his failures",
+    theme: "The creator learns by getting it wrong",
+    summary: "Kaggen the mantis led the San gods in mishap: he created the great eland out of love, lost it to death out of jealousy, and painted his adventures on rock walls that still glow in firelight.",
+    long: "Kaggen is not a god of order but a god of attempts. He brought the first eland to life and loved it like a son; when other hunters killed it, his grief and anger gave the world death itself — the first story, and the worst. He turned into a mantis, an antelope, a hartebeest, a thundercloud, usually at the wrong moment. The Drakensberg shelters where his painters recorded it all: eland running, hunters kneeling, the mantis mid-escape. The San read the walls aloud to their children, and so Kaggen keeps his job — the one who tries, fails, and hands the failure on as wisdom.",
+    source: "Source: San (Bushmen) mythology of Kaggen, retold here in brief.",
+    refs: [
+      { title: "ǀKaggen", note: "Wikipedia · the mantis trickster of San mythology", url: "https://en.wikipedia.org/wiki/%C7%81Kaggen" }
+    ],
+    keywords: "kaggen mantis san bushmen kalahari drakensberg eland trickster creator rock art painted obscure"
+  },
+  {
+    id: "sundiata-griot", scene: "hero", frame: "adinkra", era: "Manden Kurufaba epic · griot recitation",
+    tint: ["#2b2018", "#d4a24e", "#b3492f"],
+    name: "Sundiata, the Lion King of Mali", nation: "Mali & Guinea", region: "Manden · Epic of Sundiata", type: "world", continent: "africa",
+    kind: "Disabled Conqueror",
+    creature: "The crippled boy who rose to found the Mali Empire and broke a sorcerer-king",
+    place: "Niani, capital of old Mali, and the plain of Krina where the empire was won",
+    theme: "Greatness ripens late and in the mocked",
+    summary: "Sundiata crawled on all fours until age seven, was mocked, exiled, and then called back to break the sorcerer Soumaoro — founding the Mali Empire and its greatest epic, recited by griots ever since.",
+    long: "The king's heir could not walk. Sundiata dragged himself through the compound on all fours while the co-wife laughed, until one morning he pulled himself up on an iron rod so heavy no man could bend it, and stood. Exile made him a man; the sorcerer-king Soumaoro's terror made him a general. At Krina his archers found the one weapon Soumaoro's magic feared — a white rooster's spur — and the empire that followed, Mali, measured its wealth in gold and its law in the Kurukan Fuga charter. The griots still sing it: a crippled boy, a broken tyrant, a charter of rights older than most nations.",
+    source: "Source: the Epic of Sundiata as recited by Mande griots, retold here in brief.",
+    refs: [
+      { title: "Epic of Sundiata", note: "Wikipedia · the founding epic of the Mali Empire", url: "https://en.wikipedia.org/wiki/Epic_of_Sundiata" }
+    ],
+    keywords: "sundiata lion king mali epic griot soumaoro sorcerer krina crippled iron rod empire charter"
+  },
+  {
+    id: "zulu-unyonkulu", scene: "ogress", frame: "adinkra", era: "Zulu oral tradition · old telling",
+    obscure: true,
+    tint: ["#2a1a1a", "#b3492f", "#d4a24e"],
+    name: "Unyonkulu, the Earth That Eats Back", nation: "South Africa", region: "KwaZulu-Natal · Zulu earth-lore", type: "world", continent: "africa",
+    kind: "Hungry Ground",
+    creature: "The earth personified as a great devourer who takes what she gave",
+    place: "The graveyards and sinkholes of the Natal uplands",
+    theme: "The earth's appetite is a mother's as well",
+    summary: "Zulu elders teach that the earth is Unyonkulu, a devourer as much as a giver: she takes the dead back into her black mouth, and the living answer her hunger with cattle offered at the sinkholes.",
+    long: "Unyonkulu is the earth's second nature. She grew the millet and the cattle, and she also opened sinkholes that swallowed whole herds, and took the ancestors into her dark, rich silence. Nothing she takes stays lost — the dead speak through the diviner's bones, and the cattle that sink are seen again in the herds of the shades. But her appetite must be met with respect: at the deep sinkholes of the uplands, Zulu families have thrown beads, snuff and milk since before anyone wrote it down, asking the great eater to be, for another season, the great giver.",
+    source: "Source: Zulu earth-devourer lore, retold here as a sample adaptation.",
+    refs: [
+      { title: "Zulu mythology", note: "Wikipedia · the belief world of the Zulu", url: "https://en.wikipedia.org/wiki/Zulu_mythology" }
+    ],
+    keywords: "unyonkulu earth devourer zulu sinkhole grave ancestor cattle beads natal hunger obscure ground"
+  },
+  {
+    id: "akuj-valley", scene: "harvest", frame: "adinkra", era: "Turkana oral tradition · old telling",
+    obscure: true,
+    tint: ["#2a2018", "#d4a24e", "#b3492f"],
+    name: "Akuj and the Herd That Fell From Heaven", nation: "Kenya & South Sudan", region: "Turkana country · cattle creation tale", type: "world", continent: "africa",
+    kind: "Sky Cattle",
+    creature: "The high god Akuj, who lowered the first cattle to earth on a long rope",
+    place: "The Turkana sky and its dry-season winds, where the rope once hung",
+    theme: "Wealth from heaven must be managed on earth",
+    summary: "Akuj lowered cattle to the Turkana on a heaven-rope; when the first greedy men cut it to keep all the herds, the rope withdrew forever — and drought is its memory.",
+    long: "In the beginning the sky hung low enough for its business, and Akuj let down the first cattle on a rope of cloud — one herd, then another, each on its well-earned rope. But the strong men of one village, seeing the chance, cut the rope to keep their herd from being recalled. The rope withdrew to heaven, the sky rose out of reach, and since that day cattle are born of cattle and none fall from the clouds. The Turkana count their herds the way other peoples count children, and they name droughts the way other peoples name wars: the rope, they say, remembers.",
+    source: "Source: Turkana sky-cattle creation lore, retold here as a sample adaptation.",
+    refs: [
+      { title: "Turkana people", note: "Wikipedia · the herding world of the Turkana", url: "https://en.wikipedia.org/wiki/Turkana_people" }
+    ],
+    keywords: "akuj turkana cattle sky rope heaven herd drought kenya south sudan creation obscure cut"
+  },
+  {
+    id: "tell-el-amarna-scribe", scene: "sphinx", frame: "hiero", era: "Egyptian Middle Kingdom teaching · known texts",
+    obscure: true,
+    tint: ["#2a2418", "#d4a24e", "#f0c674"],
+    name: "Khun-Anup, the Eloquent Peasant", nation: "Egypt (ancient)", region: "Thebes · Middle Kingdom literature", type: "world", continent: "africa",
+    kind: "Voice Against Power",
+    creature: "A peasant whose nine speeches of justice shamed Egypt's highest official",
+    place: "The road to Herakleopolis, where the goods were seized",
+    theme: "A single honest voice, repeated enough times, moves the state",
+    summary: "A trader named Khun-Anup was robbed by an official; his petitions were so beautiful that the Pharaoh's high steward kept him waiting — not to ignore him, but to record him. His nine speeches became Egypt's manual of justice.",
+    long: "Khun-Anup was a peasant with donkeys and goods worth stealing, and a minor official stole them. The law said peasants do not address the high steward Rensi directly; Khun-Anup did, in speech after speech — 'do not be great in your own greatness, you who are appointed to hear' — so fine that Rensi reported them to Pharaoh, who ordered the peasant kept talking and the speeches written down. The robber was punished in the end, but the real product was the nine petitions, copied by scribes for centuries as the purest example of the moral argument in Egyptian literature.",
+    source: "Source: the Middle Kingdom Tale of the Eloquent Peasant, retold here in brief.",
+    refs: [
+      { title: "The Eloquent Peasant", note: "Wikipedia · the petitions that became a classic", url: "https://en.wikipedia.org/wiki/The_Eloquent_Peasant" }
+    ],
+    keywords: "khun anup eloquent peasant egypt justice petitions rensi pharaoh middle kingdom speeches scribe obscure"
+  },
+  {
+    id: "zamani-migmat", scene: "harvest", frame: "hiero", era: "Ethiopian highland legend · church record",
+    obscure: true,
+    tint: ["#1f2a1e", "#9ab06a", "#d4a24e"],
+    name: "The Nine Saints Who Freed the Hyenas", nation: "Ethiopia", region: "Tigray highlands · church founding legend", type: "world", continent: "africa",
+    kind: "Blessed Wolves",
+    creature: "The nine saints who tamed the hyenas of the highlands with bread and fair dealing",
+    place: "The cliff monasteries of Tigray, where hyenas still visit at dusk",
+    theme: "Fair dealing turns predators into neighbors",
+    summary: "Ethiopian tradition holds that the nine saints who founded the highland monasteries struck a pact with the hyenas: no lambs taken, bread provided at the monasteries' gates — and to this day the hyenas of Harar are fed by hand.",
+    long: "The nine saints came from Rome, Constantinople and Syria to the Tigray cliffs and found the hyenas bold as magistrates. Instead of driving them off, each saint offered terms: bread at the gate, no interference with the flocks, and the hyenas' part — keep the paths clean of the true carrion, and howl before trouble. The pack respected it, and the custom spread. In Harar to this night, men feed wild hyenas by hand at the city walls, and the animals — the tale says — are still keeping the saints' half of the bargain, one generation of bread-takers after another.",
+    source: "Source: Ethiopian legends of the Nine Saints and the tamed hyenas, retold here in brief.",
+    refs: [
+      { title: "Nine Saints (Ethiopia)", note: "Wikipedia · the founders of the highland monasteries", url: "https://en.wikipedia.org/wiki/Nine_Saints" },
+      { title: "Hyena-men of Harar", note: "Wikipedia · the living continuation of the pact", url: "https://en.wikipedia.org/wiki/Hyena" }
+    ],
+    keywords: "nine saints ethiopia hyena tigray harar monastery bread pact highlands tamed cliff obscure"
+  },
+  {
+    id: "mbembe-forest-queen", scene: "harvest", frame: "adinkra", era: "Fang oral tradition · old telling",
+    obscure: true,
+    tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
+    name: "Nnanga the Spider's Forest Charter", nation: "Equatorial Africa", region: "Fang country · forest-trickster cycle", type: "world", continent: "africa",
+    kind: "Forest Law",
+    creature: "The spider Nnanga, who argued the forest's rights before a king's court",
+    place: "The rainforest clearings where the Fang held their palavers",
+    theme: "The forest speaks through its smallest, busiest citizen",
+    summary: "When a king claimed he owned the forest because he owned its paths, Nnanga the spider sued him in his own court, walking every path at once — and won a charter of forest rights still recited at palavers.",
+    long: "The king's surveyors strung ropes from tree to tree and declared the forest counted, owned, taxed. Nnanga the spider attended the palaver — uninvited, as always — and asked one question: 'which of your ropes holds the midge, and which the midge's maker?' He then demonstrated by walking every path simultaneously, in eight directions, until the surveyors wept. The king granted a forest charter: the trees belong to all who live under them, paths to whoever keeps them, and the spider to nobody. Fang children still recite the charter's first line as a riddle: who owns what he cannot walk all of at once?",
+    source: "Source: a Fang forest-law tale of the spider Nnanga, retold here as a sample adaptation.",
+    refs: [
+      { title: "Fang people", note: "Wikipedia · the forest world of Fang storytelling", url: "https://en.wikipedia.org/wiki/Fang_people" }
+    ],
+    keywords: "nnanga spider fang forest charter palaver king surveyors paths rights equatorial africa obscure"
+  },
+
+  // ---------------- OCEANIA (batch 2 · 10 more) ----------------
+  {
+    id: "tangaroa-canoe", scene: "serpent", frame: "tapa", era: "Polynesian tradition · old telling",
+    tint: ["#16222e", "#5f8f8b", "#d4a24e"],
+    name: "Tangaroa, Father of the Sea Roads", nation: "Cook Islands & French Polynesia", region: "The ocean roads · Polynesian tradition", type: "world", continent: "oceania",
+    kind: "Ocean Father",
+    creature: "The great atua whose children are every fish, tide and voyaging wave",
+    place: "The moana — the open ocean that is Polynesia's true homeland",
+    theme: "The sea is a family, and voyaging is visiting",
+    summary: "Tangaroa fathered the sea's children and quarrelled with the land's; every launch of a voyaging canoe since is a courtesy call on his household, performed with prayer, protocol and packed provisions.",
+    long: "When Rangi and Papa were parted, their sons divided the world. Tangaroa took the ocean and all in it — fish as his children, tides as his breathing, storm waves as his anger. His brother Tane took the forest, and the war between them is why the sea eats the land at every beach. The Polynesian answer was not conquest but diplomacy: canoes were built with prayers, launched with feasts, and navigated as guests on a relative's sea-road. To sail to Hawai'i or Aotearoa was to visit family — dangerous family, best handled with genealogy recited correctly.",
+    source: "Source: the Polynesian tradition of Tangaroa and the ocean roads, retold here in brief.",
+    refs: [
+      { title: "Tangaroa", note: "Wikipedia · the great atua of the sea", url: "https://en.wikipedia.org/wiki/Tangaroa" }
+    ],
+    keywords: "tangaroa ocean father polynesia canoe voyaging sea roads atua tide fish cook islands navigation"
+  },
+  {
+    id: "tane-maui-rope", scene: "hero", frame: "tapa", era: "Maori oral tradition · old telling",
+    obscure: true,
+    tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
+    name: "Māui and the Rope of Heaven", nation: "Aotearoa New Zealand", region: "Te Ika-a-Māui · Māori tradition", type: "world", continent: "oceania",
+    kind: "Sun-Tamer",
+    creature: "The demigod who noosed the sun with a rope woven from his sisters' hair",
+    place: "The volcano rim where the sun rises too fast, on the North Island's coast",
+    theme: "Even heaven can be reasoned with, if you bring rope",
+    summary: "The sun raced across the sky so fast the days were too short; Māui wove ropes from his sisters' hair, noosed the sun at its pit, and beat it until it agreed to cross slowly — the origin of the longer day.",
+    long: "In the days of Māui's youth, Tama-nui-te-rā the sun ran his course in the time it takes to cook a meal, and the people starved in permanent half-light. Māui's plan was a hunter's plan: he wove ropes from his sisters' hair, strong because of the love in it, laid them across the sun's rising pit, and when the great head came up he threw the noose. He beat the sun with the jawbone of his ancestress until the old fire agreed to travel slower — six months of the year, at a dignified crawl. His brothers' part in the affair, as usual, was to hold the ropes and complain.",
+    source: "Source: the Māori tale of Māui slowing the sun, retold here in brief.",
+    refs: [
+      { title: "Māui (Māori mythology)", note: "Wikipedia · the demigod's deeds in Aotearoa", url: "https://en.wikipedia.org/wiki/M%C4%81ui_(M%C4%81ori_mythology)" }
+    ],
+    keywords: "maui sun rope sisters hair noose tama nui te ra slow day maori aotearoa jawbone hero obscure"
+  },
+  {
+    id: "hine-nui-te-po", scene: "moon", frame: "tapa", era: "Maori oral tradition · old telling",
+    obscure: true,
+    tint: ["#1a1420", "#8a6fa8", "#d4a24e"],
+    name: "Hine-nui-te-Pō, the Great Woman of Night", nation: "Aotearoa New Zealand", region: "Te Pō · Māori tradition", type: "world", continent: "oceania",
+    kind: "Death's Doorway",
+    creature: "The first woman turned night-goddess, whose body is the door all dead must pass",
+    place: "Te Pō, the night that precedes and follows everything, entered at the world's edge",
+    theme: "Death is a return home, taken sleeping",
+    summary: "Māui tried to crawl through the sleeping goddess Hine-nui-te-Pō to win humans immortality; a bird laughed him awake, her jaws closed, and so death stays — but as a return to a mother, not a monster's meal.",
+    long: "Hine-tītama began as the dawn-maiden, daughter of Tāne — until she learned her husband was her father, and fled to the world's edge to become Hine-nui-te-Pō, the great woman of night, her body the gateway every dead person passes. Māui, ever the fixer, decided to crawl through her while she slept and come out the other side carrying immortality for humankind. The plan required silence. The fantail piwakawaka laughed at the sight of the trickster's tattooed legs vanishing into a goddess, she woke, and the door closed forever. Māui died — but the tradition reads the door gently: to die is to go home to the night that bore everyone.",
+    source: "Source: the Māori tradition of Hine-nui-te-Pō and Māui's last quest, retold here in brief.",
+    refs: [
+      { title: "Hine-nui-te-pō", note: "Wikipedia · the goddess of night and death", url: "https://en.wikipedia.org/wiki/Hine-nui-te-p%C5%8D" }
+    ],
+    keywords: "hine nui te po night death goddess maui fantail immortality door maori aotearoa dawn maiden obscure"
+  },
+  {
+    id: "kava-ceremony-fei", scene: "harvest", frame: "tapa", era: "Fijian & Vanuatu tradition · old telling",
+    obscure: true,
+    tint: ["#20261e", "#9ab06a", "#d4a24e"],
+    name: "The First Kava and the Patient Chief", nation: "Fiji & Vanuatu", region: "The kava rings · island tradition", type: "world", continent: "oceania",
+    kind: "Ceremonial Gift",
+    creature: "The chief who waited a season for the kava root's forgiveness, and the peace it brewed",
+    place: "The groves where kava is grown for ceremony, and the circular mats where it is drunk",
+    theme: "The strongest drink is brewed from patience",
+    summary: "Kava's origin-tales agree on one thing: the root was a gift born of a sacrifice accepted slowly — the drink that lets chiefs speak softly has a violent story, and the ceremony keeps the story in view.",
+    long: "The island traditions differ on whose body fed the first kava plant — a daughter's, a brother's, a valued guest's — but they agree on the shape: a death freely given, a grave watered, a root that grew from the grave with the dead person's peace inside it. The drink made from that root does not fire men up like alcohol; it settles them, orders the speech-making, and turns war-councils into word-councils. The ceremony remembers the cost every time: the cup goes to the guest of honor, the least to the youngest, and no one drinks quickly.",
+    source: "Source: kava (yaqona) origin traditions of Fiji and Vanuatu, retold here in brief.",
+    refs: [
+      { title: "Kava", note: "Wikipedia · the ceremonial root of the Pacific", url: "https://en.wikipedia.org/wiki/Kava" }
+    ],
+    keywords: "kava yaqona origin ceremony fiji vanuatu chief patience peace root grave sacrifice obscure pacific"
+  },
+  {
+    id: "hawaiian-menehune", scene: "hiddenfolk", frame: "tapa", era: "Hawaiian oral tradition · early written record",
+    tint: ["#1e2e26", "#9ab06a", "#d4a24e"],
+    name: "The Menehune's One-Night Fishpond", nation: "Hawai'i (USA)", region: "Kaua'i · menehune tradition", type: "world", continent: "oceania",
+    kind: "Night Builders",
+    creature: "The hidden little folk who built walls and fishponds in a single night",
+    place: "The Alekoko fishpond on Kaua'i, with its wall of fitted stones",
+    theme: "A masterpiece built overnight is built by teamwork",
+    summary: "The menehune — Hawai'i's hidden builders — are credited with walls, fishponds and heiau foundations no human crew could raise in daylight; their one-night construction leaves the neat seams visible still.",
+    long: "Kaua'i's oldest walls are too neat. The Alekoko (Menehune) fishpond's wall — nine hundred paces of fitted basalt in six feet of water — is credited to the little folk who work only between full dark and first rooster-crow, passing stones hand to hand in a line that stretches from the mountain to the sea. The cost of their help is silence and one meal left out at the work site; look once, and the line breaks, the wall stops growing, and you get the odd half-wall that explains itself. Hawaiian families of the uplands claim the menehune as ancestors; nobody asks them to prove it, and the walls stand to reason.",
+    source: "Source: the Hawaiian menehune tradition of Kaua'i, retold here in brief.",
+    refs: [
+      { title: "Menehune", note: "Wikipedia · Hawai'i's hidden builders", url: "https://en.wikipedia.org/wiki/Menehune" }
+    ],
+    keywords: "menehune hawaii kauai fishpond alekoko one night builders little folk wall stones hidden ancestors"
+  },
+  {
+    id: "rorotua-blue-lake", scene: "harvest", frame: "tapa", era: "Te Arawa oral tradition · old telling",
+    obscure: true,
+    tint: ["#182430", "#5f8f8b", "#d4a24e"],
+    name: "The Taniwha Who dug Lake Rotorua", nation: "Aotearoa New Zealand", region: "Rotorua · Te Arawa tradition", type: "world", continent: "oceania",
+    kind: "Landforming Beast",
+    creature: "A taniwha whose tail-digging scooped the lake basin and whose sighs still steam",
+    place: "Lake Rotorua's grey-green water and the steam vents at its southern shore",
+    theme: "Geography is biography",
+    summary: "The ancestor taniwha Te Rangihouhata dug Lake Rotorua with his tail for a food-garden; his buried sighs are the steam that still warms the district, and his moods decide the year's flooding.",
+    long: "Te Arawa people say the lake is a work, not an accident: an ancestor taniwha, told the plateau was useless, dragged his tail through the rhyolite in one huge circuit, making a basin the rain could fill. His garden was the lake's fish, his tools the cliffs he threw in. When the district smells of rotten eggs, elders read it as his breath — a taniwha remembering good eating. Surveyors note the basin is almost a perfect circle with a single island in the middle, and the oral maps say: that is the belly, do not dig there.",
+    source: "Source: Te Arawa traditions of Lake Rotorua's making, retold here as a sample adaptation.",
+    refs: [
+      { title: "Lake Rotorua", note: "Wikipedia · the lake and its traditions", url: "https://en.wikipedia.org/wiki/Lake_Rotorua" }
+    ],
+    keywords: "taniwha lake rotorua te arawa tail dug basin steam geothermal sighs garden maori obscure"
+  },
+  {
+    id: "melanesia-cargo-cult", scene: "spirits", frame: "tapa", era: "Melanesian tradition · mid-20th century onward",
+    obscure: true,
+    tint: ["#20241e", "#9ab06a", "#d4a24e"],
+    name: "John Frum and the Plane From Tanna", nation: "Vanuatu", region: "Tanna island · cargo tradition", type: "world", continent: "oceania",
+    kind: "Modern Myth",
+    creature: "A spirit messenger whose promised cargo returns by airplane",
+    place: "The airstrip Tanna islanders maintain on Green Point, cross in hand",
+    theme: "When the gods' arrival is promised by radio, the altar becomes a runway",
+    summary: "On Tanna, villagers built a runway and control tower for John Frum, a spirit who promised cargo and a return flight — a living myth that reworks the old gods for the age of engines.",
+    long: "The tradition fused old prophecy with wartime spectacle: American forces landed on Vanuatu with radios, planes and goods that seemed conjured. When the army left, Tanna islanders reasoned that the goods came from the gods, and the soldiers had simply known the right rituals. John Frum — 'John from America,' or a contraction of an older spirit's name — is the promised messenger: cross on the runway, red-painted regiment on February 15th, and the faith that one day the planes come back with the cargo for those who kept the forms. The great gods of the volcanic ash plain are credited with the arrangement.",
+    source: "Source: the John Frum tradition of Tanna, Vanuatu, retold here in brief.",
+    refs: [
+      { title: "John Frum", note: "Wikipedia · the cargo messiah of Tanna", url: "https://en.wikipedia.org/wiki/John_Frum" }
+    ],
+    keywords: "john frum tanna vanuatu cargo cult plane runway spirit messiah american new gods obscure military"
+  },
+  {
+    id: "chatham-moriori-covenant", scene: "harvest", frame: "tapa", era: "Moriori tradition · Rekohu record",
+    obscure: true,
+    tint: ["#1e2226", "#5f8f8b", "#d4a24e"],
+    name: "Nunuku's Covenant Against Killing", nation: "Aotearoa New Zealand (Rēkohu)", region: "Chatham Islands · Moriori tradition", type: "world", continent: "oceania",
+    kind: "Peace Charter",
+    creature: "The ancestor Nunuku-whenua, whose covenant banned killing among his people forever",
+    place: "Rēkohu (the Chatham Islands), where the covenant shaped a whole society",
+    theme: "A people can opt out of war — at a price they know in advance",
+    summary: "After centuries of warfare, the ancestor Nunuku forbade killing outright: Moriori covenant law said that he who first draws a weapon dies of shame — and the society that followed his rule paid dearly for it, and never broke it.",
+    long: "Nunuku-whenua was a warrior who had seen enough. His covenant — the Tenetawai — banned killing among Moriori forever: no weapon drawn even in justified anger, no revenge pursued across generations. The system worked for the islands' eight hundred years of settlement, with wars replaced by a regulated, often absurdly formal, tree-limb duel that stopped at first blood. Then the covenant met a fleet from New Zealand armed to the teeth, in 1835. Moriori chose to obey their law rather than break it, were enslaved and decimated — and the covenant stands as one of history's most deliberate, most costly, and most morally serious refusals of violence.",
+    source: "Source: Moriori covenant tradition of Rēkohu, retold here in brief.",
+    refs: [
+      { title: "Moriori", note: "Wikipedia · the people of the Chatham Islands and their covenant", url: "https://en.wikipedia.org/wiki/Moriori" }
+    ],
+    keywords: "moriori nunuku covenant chatham rekohu peace no killing tenetawai duel 1835 invasion obscure"
+  },
+  {
+    id: "papua-tumbuna-ancestors", scene: "spirits", frame: "tapa", era: "Papua New Guinea highlands · oral record",
+    obscure: true,
+    tint: ["#221e2a", "#8a6fa8", "#d4a24e"],
+    name: "The First Pig Feast of the Ancestors", nation: "Papua New Guinea", region: "Highlands · tumbuna traditions", type: "world", continent: "oceania",
+    kind: "Ancestor Exchange",
+    creature: "The ancestor spirits who taught men to raise pigs, and demand feasts in return",
+    place: "The highland garden walls and the ceremonial grounds where pigs are killed",
+    theme: "Every feast is a payment to the invisible partners",
+    summary: "Highland traditions hold that the tumbuna ancestors gave men their pigs, their garden magic and their fertility itself — and that a generation without a pig feast starves its dead and, soon after, its living.",
+    long: "The first ancestors taught the highlanders the whole system: the taro gardens, the pig-husbandry, the marriages that turn strangers into in-laws. All of it, the tumbuna insist, is rented, not owned — and the rent is the pig feast. When a community fattens its herds for years and then slaughters dozens, scores, hundreds in a single day, it is not waste but payment: the ancestors eat the smoke and the sound, the living share the meat, and the debts of fertility, rain and health are settled for another generation. Skip the feast, the elders say, and the ancestors go hungry, and hungry ancestors — as any garden will show — are nobody's friend.",
+    source: "Source: highland New Guinea ancestor-feast traditions, retold here as a sample adaptation.",
+    refs: [
+      { title: "Papua New Guinea", note: "Wikipedia · the highland world of the feast tradition", url: "https://en.wikipedia.org/wiki/Papua_New_Guinea" }
+    ],
+    keywords: "tumbuna pig feast ancestors papua new guinea highlands garden taro rent fertility payment obscure"
+  },
+  {
+    id: "torres-strait-zogo", scene: "spirits", frame: "tapa", era: "Torres Strait Islands tradition · oral record",
+    obscure: true,
+    tint: ["#1a2626", "#5f8f8b", "#d4a24e"],
+    name: "The Bomai-Zogo Turtle-God of the Straits", nation: "Australia (Torres Strait Islands)", region: "Torres Strait · sacred turtle cult", type: "world", continent: "oceania",
+    kind: "Turtle Cult",
+    creature: "Bomai and Malo, the god-brothers whose turtle cult ruled the strait's ceremonies",
+    place: "Mabuiag and the reef passages where turtles gather",
+    theme: "Law written on turtle shells is still law",
+    summary: "In the Torres Strait, the sacred turtle Bomai-Zogo gave the islands their law in dream-visitations, written in turtle-shell glyphs — and the turtle-hunt ceremony renews that law every generation.",
+    long: "The brothers Bomai and Malo came as sacred turtles, were harpooned, and became zogo — cult objects of stone and turtle shell on which the islands' laws were shown in glyphs. Each community kept its zogo in a sacred hut, and the turtles that pass the strait were read as the god-brothers' own children: the ritual first-harpoon strike, the ceremony of distribution, the dances that divide the catch — all renew the contract the turtles wrote. The mission era closed the cult houses, but the glyphs still read to divers as warnings, and the ritual harpooning survived into living memory.",
+    source: "Source: Torres Strait turtle-cult (Bomai-Zogo) traditions, retold here in brief.",
+    refs: [
+      { title: "Torres Strait Islanders", note: "Wikipedia · the island world of the turtle cult", url: "https://en.wikipedia.org/wiki/Torres_Strait_Islanders" }
+    ],
+    keywords: "bomai malo zogo turtle god torres strait mabuiag harpoon law glyphs cult ceremony obscure brothers"
+  },
+
+  // ---------------- THE AMERICAS (batch 2 · 10 more) ----------------
+  {
+    id: "raven-steals-light", scene: "feather", frame: "formline", era: "Pacific Northwest oral tradition · old telling",
+    tint: ["#161e28", "#5f8f8b", "#d4a24e"],
+    name: "Raven Steals the Daylight", nation: "Canada & USA (Pacific Northwest)", region: "Haida & Tlingit coast · raven cycle", type: "world", continent: "americas",
+    kind: "Light Thief",
+    creature: "The trickster raven who stole the sun from a grandfather's box inside a daughter's belly",
+    place: "The Nass River country where the first light burst from the sky",
+    theme: "Everything worth having is stolen from someone who hoards it",
+    summary: "In the beginning all light was locked in a chief's bentwood box; raven turned himself into a pine needle, was swallowed, born as the chief's grandson, cried for the box — and flew out through the smokehole with the sun in his beak.",
+    long: "The world was dark, and the old man who owned the light kept it in a box within a box within a box. Raven — the trickster with a plan for every lock — flew to a stream, became a hemlock needle, and drifted into the water the chief's daughter drank. She bore a strange grey-eyed boy who cried for nothing but the biggest box, and was granted it. Alone with his toys, the boy-bird seized the sun-bundle, shifted back to raven, and burst through the smokehole — which is why ravens are black to this day, scorched by the light they stole. Rivers, islands and people all lit up as he flew, and he was kind enough, in the end, to throw most of the light into the sky where everyone could use it.",
+    source: "Source: the Northwest Coast raven-steals-the-light cycle, retold here in brief.",
+    refs: [
+      { title: "Raven Tales", note: "Wikipedia · the trickster cycle of the Northwest Coast", url: "https://en.wikipedia.org/wiki/Raven_Tales" }
+    ],
+    keywords: "raven steals daylight sun box smokehole haida tlingit trickster pine needle birth light northwest coast"
+  },
+  {
+    id: "quetzal-topiltzin", scene: "feather", frame: "greca", era: "Toltec & Aztec tradition · codex record",
+    tint: ["#1f2e1c", "#9ab06a", "#d4a24e"],
+    name: "Topiltzin and the Promise of Return", nation: "Mexico", region: "Tula & the Gulf coast · Toltec tradition", type: "world", continent: "americas",
+    kind: "Departed King",
+    creature: "The priest-king Quetzalcoatl, who left across the eastern sea promising to return",
+    place: "Tula, city of the Toltec, and the eastern shore where he sailed on a raft of serpents",
+    theme: "A leader's exit can be more powerful than his reign",
+    summary: "Drunk on his own fallibility, the priest-king Topiltzin Quetzalcoatl burned himself on a pyre and sailed east as the morning star — leaving a promise of return that haunted every later ruler of Mexico.",
+    long: "Topiltzin ruled Tula as Quetzalcoatl, the feathered serpent's own priest: no human sacrifice, art and astronomy, the finest reign in the memory of the age. Then rivals got him drunk — he knew the taboo — and shame did what armies could not. He burned his palace, lay on a pyre, and rose as the morning star; another version has him sail east on a raft of woven serpents, promising to return in a One-Reed year. The prophecy sat heavy on Mexico for centuries: Moctezuma II met Cortés in 1519 — a One-Reed year — and hesitated, half-reading the bearded stranger as the returning king. The promise is still called a curse, and the morning star still rises in the east.",
+    source: "Source: the Toltec-Aztec tradition of Topiltzin Quetzalcoatl, retold here in brief.",
+    refs: [
+      { title: "Quetzalcoatl", note: "Wikipedia · the feathered serpent and his promised return", url: "https://en.wikipedia.org/wiki/Quetzalcoatl" }
+    ],
+    keywords: "topiltzin quetzalcoatl tula toltec morning star promise return one reed moctezuma cortes raft serpents mexico"
+  },
+  {
+    id: "sedna-fingers", scene: "princess", frame: "formline", era: "Inuit oral tradition · old telling",
+    tint: ["#16202e", "#5f8f8b", "#d4a24e"],
+    name: "Sedna, Mother of the Sea's Creatures", nation: "Canada & Greenland", region: "Inuit circumpolar tradition", type: "world", continent: "americas",
+    kind: "Sea Mother",
+    creature: "The one-eyed woman at the ocean's floor, whose severed fingers became the seal and whale",
+    place: "Adlivun, the underworld beneath the sea-ice",
+    theme: "The sea's abundance is a woman's grievance, soothed by shamans",
+    summary: "Betrayed by her father, Sedna sank to the seabed; her fingers, cut as she clung to the kayak, became the seals and whales. Shamans must still comb her tangled hair before the hunters can hunt.",
+    long: "Sedna's father took her in his kayak and abandoned her twice — first to the storm, then, when she clung to the gunwale, he cut her finger-joints off one by one so the sea could take her. From the severed fingers came the seal, the walrus, the whale. Sedna herself sank to the floor of Adlivun, one-eyed, hair tangled with the grief of the betrayed — and when hunters fail, it is because her hair is too knotted for the sea-creatures to escape it. The angakkuq must visit in trance, comb her hair with their bare hands, and carry back her terms: respect the catch, or the ocean closes.",
+    source: "Source: the Inuit Sedna tradition, retold here in brief.",
+    refs: [
+      { title: "Sedna (mythology)", note: "Wikipedia · the sea mother of the Inuit", url: "https://en.wikipedia.org/wiki/Sedna_(mythology)" }
+    ],
+    keywords: "sedna sea mother inuit fingers seal whale kayak betrayal shaman comb hair adlivun arctic"
+  },
+  {
+    id: "hiawatha-peace-tree", scene: "harvest", frame: "formline", era: "Haudenosaunee tradition · oral record",
+    tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
+    name: "The Great Tree of Peace", nation: "Canada & USA (Haudenosaunee)", region: "Onondaga · Iroquois confederacy tradition", type: "world", continent: "americas",
+    kind: "Peace Charter",
+    creature: "The uprooted Great White Pine beneath whose floor five nations buried their weapons",
+    place: "Onondaga Lake, where the confederacy's central fire was lit",
+    theme: "Peace is an architecture, built to be climbed",
+    summary: "The Peacemaker uprooted a great white pine and had the warring nations cast their weapons into the hole — the Tree of Peace whose roots spread in four directions and whose eagle watches from the top.",
+    long: "The Peacemaker — some say born across the lake, carried on white pine boards — came to a land where nation warred on nation and grief turned mothers into warriors. He united Hiawatha, broken by the loss of his daughters, into his spokesman, and together they traveled the longhouses. At Onondaga he uprooted the great white pine, had every nation throw its weapons into the hollow — 'the tree of peace shall shelter your nations' — and replanted it on top. Beneath the roots, he buried the burden of violence; in the top, he set an eagle to watch for enemies; and the branches sheltered the fifty chiefs who govern the Haudenosaunee to this day.",
+    source: "Source: Haudenosaunee tradition of the Great Law and the Tree of Peace, retold here in brief.",
+    refs: [
+      { title: "Great Law of Peace", note: "Wikipedia · the constitution-symbol of the Haudenosaunee", url: "https://en.wikipedia.org/wiki/Great_Law_of_Peace" }
+    ],
+    keywords: "tree of peace peacemaker hiawatha haudenosaunee iroquois white pine buried weapons eagle onondaga confederacy"
+  },
+  {
+    id: "curupira-two", scene: "harvest", frame: "engraving", era: "Brazilian colonial-era legend · 16th century record",
+    obscure: true,
+    tint: ["#1e2a1e", "#9ab06a", "#d4a24e"],
+    name: "The Matinta Perera's Whistle", nation: "Brazil", region: "Amazon & Pará · whistle-witch legend", type: "world", continent: "americas",
+    kind: "Whistling Hag",
+    creature: "An old witch-bird who whistles all night on roof-ridges and must be answered with tobacco",
+    place: "The eaves and ridgepoles of river towns in Pará",
+    theme: "The old powers still collect rent, in tobacco",
+    summary: "The Matinta Perera whistles all night on your roof, louder and closer each hour; the cure is simple and contractual — call her name and promise tobacco, and by morning a little old woman comes to collect.",
+    long: "Everyone in Pará knows the whistle: three notes, then two, then one, coming nearer through the night, perched somewhere on the ridge of the roof. It is the Matinta Perera — a witch who shifts into a small grey bird, or the bird who shifts into a tiny old woman, depending which end of the story you ask. The correct response is not salt, not prayer, but negotiation: call out 'Matinta, I will give you tobacco!' and in the morning a very old woman, often a known neighbour, will knock at the door to collect. The tobacco is shared, the whistling moves to the next roof, and the neighbourhood's economy of small hauntings continues.",
+    source: "Source: the Matinta Perera legend of northern Brazil, retold here as a sample adaptation.",
+    refs: [
+      { title: "Matinta Perera", note: "Wikipedia · the whistling witch of Pará", url: "https://en.wikipedia.org/wiki/Matinta_Perera" }
+    ],
+    keywords: "matinta perera whistle witch bird brazil para amazon roof tobacco old woman contract obscure night"
+  },
+  {
+    id: "patagonia-kiel-maiden", scene: "ogress", frame: "engraving", era: "Tehuelche oral tradition · old telling",
+    obscure: true,
+    tint: ["#2a2226", "#8a6fa8", "#d4a24e"],
+    name: "K'watasana, the Wind-Mother of the Pampas", nation: "Argentina & Chile", region: "Patagonia · Tehuelche wind-lore", type: "world", continent: "americas",
+    kind: "Wind Mother",
+    creature: "The giantess whose cooking fire, when stirred, becomes the Patagonian west wind",
+    place: "The western cordillera where the wind originates",
+    theme: "The land's moods are a household's moods",
+    summary: "Tehuelche tradition gives the Patagonian wind a household explanation: a giantess on the west, cooking; when her fire smokes the wrong way she blows it clear, and the whole steppe feels the gust.",
+    long: "The west wind that flattens tents and drives dust across the steppe is, in Tehuelche telling, a domestic accident of enormous scale. A giantess lives at the western edge of the world, cooking over a fire the size of a valley; when the fat smokes she blows to clear her eyes, and the steppe feels it for three days. Her calmer cooking is the steady breeze; her true anger is the willy-willy that takes roofs. Hunters in the old tales bribe her indirectly — the first bird of every hunt is left on a westward rock, so the smoke of it roasting reaches her kitchen and she stays contented.",
+    source: "Source: Tehuelche wind-mother lore of Patagonia, retold here as a sample adaptation.",
+    refs: [
+      { title: "Tehuelche people", note: "Wikipedia · the steppe world of the wind legends", url: "https://en.wikipedia.org/wiki/Tehuelche_people" }
+    ],
+    keywords: "kwatasana patagonia tehuelche wind mother giantess cooking fire steppe gale bribe obscure pampas"
+  },
+  {
+    id: "mississippian-thunder", scene: "thunderbird", frame: "formline", era: "Mississippian tradition · mound-era record",
+    obscure: true,
+    tint: ["#1e222e", "#5f8f8b", "#d4a24e"],
+    name: "The Red Horns and the Mound City Games", nation: "USA (Midwest)", region: "Cahokia & the Mississippi valley · Mississippian tradition", type: "world", continent: "americas",
+    kind: "Hero Twins",
+    creature: "Red Horn — He Who Wears Human Heads as Earrings — and his sons, the hero twins of the mounds",
+    place: "Cahokia's great plaza and the floating island city in the sky",
+    theme: "Heroes are made in contests, not battles",
+    summary: "The Red Horn cycle of the mound-builders tells of a sky-city hero won in lacrosse and footraces, of twin sons avenging their father, and of the mound games that re-enacted heaven's contests on earth.",
+    long: "Cahokia was the largest city north of Mexico, and its stories centered on Red Horn — a hero born of a sky-woman, wearing human-head earrings, who won his wife in a game of chunkey and his name in a footrace against giants. His sons, the hero twins, later raided the sky-city to recover their father's scalp and freed the world of its worst monsters, one contest at a time. The great mounds staged it: the city's fields held the games that mirrored heaven's, and the engraved shell gorgets found in the mounds show the twins' contests in exact detail — the Midwest's own epic, told in copper, shell and sport.",
+    source: "Source: Mississippian Red Horn traditions, retold here in brief.",
+    refs: [
+      { title: "Red Horn", note: "Wikipedia · the hero of the mound-builder shell engravings", url: "https://en.wikipedia.org/wiki/Red_Horn" }
+    ],
+    keywords: "red horn cahokia mounds mississippian hero twins chunkey lacrosse sky city earrings shell engraving obscure"
+  },
+  {
+    id: "quechua-wiraqocha-flood", scene: "harvest", frame: "greca", era: "Inca & pre-Inca tradition · Spanish-era record",
+    obscure: true,
+    tint: ["#26221a", "#d4a24e", "#9ab06a"],
+    name: "Wiraqucha and the Second Dawn", nation: "Peru & Bolivia", region: "Andes · Inca creation tradition", type: "world", continent: "americas",
+    kind: "World Remaker",
+    creature: "The white-robed creator who flooded a disobedient world and re-peopled it from clay",
+    place: "Lake Titicaca's Island of the Sun, where the sun was first raised",
+    theme: "Creation is revision; each world is a draft",
+    summary: "Wiraqucha made a first world of giants, drowned it when they defied him, then raised the sun from Titicaca and peopled the Andes from clay figures — walking the land in white robes until the people forgot him.",
+    long: "Wiraqucha's first attempt at humanity came out too large — giants who forgot to thank him — and he drowned the whole experiment in a black night of rain. From Lake Titicaca he tried again: he raised the sun, moon and stars from the island waters, shaped the new peoples from clay on the sacred island, and gave each nation its language, dress and songs. He walked the Andes in white robes, teaching, and departed west across the Pacific walking on the waves — promising to return. The Inca kept his image in the Coricancha's holiest chamber, and every major Inca ruler took his name as a title of reverence.",
+    source: "Source: the Andean Wiraqucha creation-flood tradition, retold here in brief.",
+    refs: [
+      { title: "Viracocha", note: "Wikipedia · the Andean creator and the second dawn", url: "https://en.wikipedia.org/wiki/Viracocha" }
+    ],
+    keywords: "wiraqucha viracocha creator flood titicaca sun clay giants second dawn andes inca white robes obscure"
+  },
+  {
+    id: "inuitt-amorak", scene: "horse", frame: "formline", era: "Northern Athabaskan oral tradition · old telling",
+    obscure: true,
+    tint: ["#1a1e2a", "#5f8f8b", "#d4a24e"],
+    name: "The Winter Wolf That Sings Down the Sky", nation: "Canada (Yukon)", region: "Yukon & Alaska interior · wolf-lore", type: "world", continent: "americas",
+    kind: "Winter Herald",
+    creature: "A great grey wolf whose howl summons the deep cold and guides the lost home",
+    place: "The Yukon flats under the January moon",
+    theme: "The harshest season has a keeper, and he is fair",
+    summary: "Yukon tradition holds that one elder wolf sings the deep winter down each year and leads the lost to shelter — kill one of his pack and the cold comes harder, and the paths home go crooked.",
+    long: "The trapper who heard the great wolf's song in January knew two things at once: the true cold was arriving, and someone was watching over the foolish. The wolf-king of the flats is winter's own herald — his howl pulls the sky down, the temperature drops that night, and the aurora runs brighter above the pack. But he is fair: men lost in whiteout tell of a grey shape circling them until they found their own trail again, and dogs that travel with the wolf-king come back well-fed. The one rule of the flats: never take more than your need from his pack, and never take a nursing mother.",
+    source: "Source: Yukon wolf-keeper traditions, retold here as a sample adaptation.",
+    refs: [
+      { title: "Wolf in folklore", note: "Wikipedia · the wolf's place in northern belief", url: "https://en.wikipedia.org/wiki/Wolves_in_folklore_and_mythology" }
+    ],
+    keywords: "winter wolf yukon howl cold aurora herald keeper trapper pack fair lost shelter obscure alaska"
+  },
+  {
+    id: "sioux-white-buffalo", scene: "horse", frame: "formline", era: "Lakota sacred tradition · 19th century record",
+    tint: ["#2a2420", "#f0c674", "#d4a24e"],
+    name: "White Buffalo Calf Woman", nation: "USA (Great Plains)", region: "Lakota country · sacred pipe tradition", type: "world", continent: "americas",
+    kind: "Sacred Teacher",
+    creature: "The holy woman who brought the sacred pipe and the seven rites, leaving as a white buffalo calf",
+    place: "The plains where two hunters met her, and the sweat lodge roads of the Lakota",
+    theme: "The sacred arrives as a stranger and leaves as a promise",
+    summary: "A beautiful woman in white buckskin appeared to two Lakota scouts; one lusted and was covered in bones, the other honored her — and she gave the people the sacred pipe and its ceremonies before leaving as a white buffalo calf.",
+    long: "Two scouts saw a woman in white buckskin coming across the prairie. One approached with lust in his heart and a cloud covered them both — when it lifted there was a heap of bones with a snake coiling through it. The other knelt and prayed, and she taught him: this bundle is the sacred pipe, smoke carries prayers to Wakan Tanka, and with it come the seven sacred rites — the sweat lodge, the vision quest, the sun dance. She walked to the edge of the camp, sat, rolled, and rose as a white buffalo calf. The white calf — rare and sacred — is still her sign, and the calf born in Wisconsin in 1994 drew pilgrims from every nation.",
+    source: "Source: the Lakota White Buffalo Calf Woman tradition, retold here in brief.",
+    refs: [
+      { title: "White Buffalo Calf Woman", note: "Wikipedia · the bringer of the sacred pipe", url: "https://en.wikipedia.org/wiki/White_Buffalo_Calf_Woman" }
+    ],
+    keywords: "white buffalo calf woman lakota sacred pipe seven rites sweat lodge vision quest sun dance plains"
+  },
+
 ];
 const THEME_TAGS = {
   serpent: "Shared Creature", water: "Shared Place", trickster: "Shared Character",
@@ -2362,7 +3558,87 @@ const REC_YEARS = {
   bawang: [1870, "Javanese folk-tale collections"],
   pontianak: [1900, "Malay folklore collections"],
   phayanaga: [1890, "Mekong river chronicles"],
-  kuti: [1900, "Sri Lankan folk-tale collections"]
+  kuti: [1900, "Sri Lankan folk-tale collections"],
+  // ---- Malaysia batch 2 ----
+  "si-tanggang": [1612, "Sulalatus Salatin (Malay Annals), Melaka"],
+  "batu-menangis": [1900, "Malay folklore collections"],
+  "puteri-ledang-well": [1612, "Sulalatus Salatin (Malay Annals), Melaka"],
+  "hantu-bisu": [1900, "Kelantan folk-medicine collections"],
+  mahsuri: [1830, "Langkawi island chronicles"],
+  "raja-donan": [1880, "Perak river boatmen's records"],
+  "hantu-jepun-kereta": [1985, "Malaysian highway urban-legend collections"],
+  "hang-tuah": [1615, "Hikayat Hang Tuah, Melaka"],
+  "puteri-bunian-wedding": [1900, "Malay folklore collections"],
+  "batu-belah": [1900, "Penang & Kedah folklore collections"],
+  // ---- Southeast Asia batch 2 ----
+  "maria-labuan": [1860, "Philippine colonial records, Mindanao"],
+  "tala-star": [1900, "Tagalog mythology transcriptions"],
+  "preah-thong": [1620, "Cambodian royal chronicles"],
+  "judge-rabbit": [1900, "Khmer & Lao temple transcriptions"],
+  "nang-tani": [1900, "Thai folklore collections"],
+  "rice-mother": [1900, "Vietnamese village-lore collections"],
+  "golden-goose-lao": [1900, "Lao Mekong folklore collections"],
+  "thirtyseven-nats": [1880, "Burmese nat-cult records"],
+  "sang-nila-bargain": [1612, "Sulalatus Salatin (Malay Annals), Melaka"],
+  "aung-nat-tree": [1900, "Shan-states folklore collections"],
+  // ---- Asia batch 2 ----
+  "moon-rabbit": [500, "Śaśa Jātaka & East Asian spread"],
+  "chang-e": [150, "Huainanzi, Han dynasty China"],
+  momotaro: [1720, "Edo-period woodblock chapbooks, Japan"],
+  "urashima-taro": [759, "Man'yōshū poems, Japan"],
+  "aravan-krishna": [1900, "Tamil temple-festival records, Koovagam"],
+  "baital-vetal": [1000, "Sanskrit Vetala Panchavimshati manuscripts"],
+  "garuda-golden-wings": [1600, "Himalayan Buddhist iconography records"],
+  "jinn-ring-solomon": [700, "Quranic commentary, Baghdad"],
+  "klementje-vila": [1850, "Slavic & Balkan folklore collections"],
+  "shahmaran-kurdish": [1900, "Kurdish-Anatolian oral epic transcriptions"],
+  // ---- Europe batch 2 ----
+  "roland-blasphemers-bell": [1130, "Chanson de Roland manuscripts"],
+  "faust-bargain": [1587, "German Faustbuch chapbook"],
+  "huldra-forest-bride": [1850, "Scandinavian folklore collections"],
+  "golem-prague": [1909, "Yudel Rosenberg's Prague golem booklet"],
+  "selkie-seal-bride": [1850, "Scottish & Faroese ballad collections"],
+  "chained-lady-andromeda": [-77, "Aratus' Phaenomena, Greece"],
+  "wandering-jew": [1228, "Bologna chronicle of the Armenian bishop"],
+  "herla-king-fairy": [1185, "Walter Map's De Nugis Curialium, England"],
+  "dempsey-witch-horse": [1666, "Leicestershire pamphlet records"],
+  "swan-knights-lake": [1280, "Lohengrin knightly romance, Bavaria"],
+  // ---- Africa batch 2 ----
+  "anansi-tiger-stories": [1880, "Akan oral transcriptions, Ghana"],
+  "mwanamuti-swan": [1900, "Swahili coast dhow-lore collections"],
+  "mami-oba-river": [1880, "Yoruba orisha records, Nigeria"],
+  "kaggen-mantis": [1870, "San rock-art & Bleek-Lloyd archive, Southern Africa"],
+  "sundiata-griot": [1350, "Ibn Khaldun's chronicle & griot recitation"],
+  "zulu-unyonkulu": [1850, "Zulu ethnographic collections"],
+  "akuj-valley": [1900, "Turkana oral-history transcriptions"],
+  "tell-el-amarna-scribe": [-1850, "Papyrus Harris 500, Egypt"],
+  "zamani-migmat": [1450, "Ethiopian church chronicles, Tigray"],
+  "mbembe-forest-queen": [1900, "Fang oral-lore collections"],
+  // ---- Oceania batch 2 ----
+  "tangaroa-canoe": [1820, "Polynesian missionary transcriptions"],
+  "tane-maui-rope": [1850, "Māori manuscript collections, Aotearoa"],
+  "hine-nui-te-po": [1850, "Māori manuscript collections, Aotearoa"],
+  "kava-ceremony-fei": [1840, "Fijian missionary records"],
+  "hawaiian-menehune": [1820, "Hawaiian missionary-era collections"],
+  "rorotua-blue-lake": [1850, "Te Arawa oral-history transcriptions"],
+  "melanesia-cargo-cult": [1945, "Vanuatu colonial & post-war records"],
+  "chatham-moriori-covenant": [1835, "Moriori covenant records, Rēkohu"],
+  "papua-tumbuna-ancestors": [1930, "Highlands PNG ethnographic fieldwork"],
+  "torres-strait-zogo": [1898, "Cambridge Torres Strait Expedition records"],
+  // ---- Americas batch 2 ----
+  "raven-steals-light": [1890, "Northwest Coast ethnographies (Boas & Swanton)"],
+  "quetzal-topiltzin": [1558, "Popol Vuh & post-conquest codices, Guatemala"],
+  "sedna-fingers": [1880, "Inuit ethnographic collections"],
+  "hiawatha-peace-tree": [1851, "Haudenosaunee records (Schoolcraft)"],
+  "curupira-two": [1930, "Pará folklore collections, Brazil"],
+  "patagonia-kiel-maiden": [1900, "Tehuelche oral-history transcriptions"],
+  "mississippian-thunder": [1880, "Shell-gorget archaeology & Caddo oral records"],
+  "quechua-wiraqocha-flood": [1609, "El Inca Garcilaso's Comentarios, Peru"],
+  "inuitt-amorak": [1900, "Yukon trapper-lore collections"],
+  "sioux-white-buffalo": [1880, "Lakota ethnographic records (Walker)"],
+  // pre-existing entries that lacked dates
+  nezha: [1520, "Fengshen Yanyi, Ming dynasty China"],
+  elal: [1910, "Yaghan & Selk'nam ethnographic records, Tierra del Fuego"]
 };
 
 // When the cultures behind these legends historically met one another — first
