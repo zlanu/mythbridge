@@ -3537,7 +3537,7 @@ document.getElementById("reco-box").addEventListener("click", e => {
 
 // ---------- Bridges view: legends linked by shared themes ----------
 const BRIDGE_W = 1180, BRIDGE_H = 560;
-const NODE_W = 148, NODE_H = 52;
+const NODE_W = 128, NODE_H = 40;
 const THEME_COLOR = {
   serpent: "#5f8f8b", water: "#3e6e8a", trickster: "#b3892f", riddle: "#8a6fa8",
   guardian: "#9ab06a", giant: "#b3492f", hero: "#d4a24e", mountain: "#8a7a68",
@@ -3637,9 +3637,9 @@ function paintBridges() {
     const lit = n.lit ? " lit" : "";
     const onShelf = picks.includes(n.id) ? " on-shelf" : "";
     nodes += '<g class="bridge-node' + lit + onShelf + '" data-node="' + n.id + '" transform="translate(' + n.x.toFixed(1) + ',' + n.y.toFixed(1) + ')">'
-      + '<rect class="body" width="' + NODE_W + '" height="' + NODE_H + '" rx="10"/>'
-      + '<text class="nm" x="' + (NODE_W / 2) + '" y="21" text-anchor="middle" font-size="11">' + escapeHtml(tlShort(n.name, 22)) + '</text>'
-      + '<text class="rg" x="' + (NODE_W / 2) + '" y="36" text-anchor="middle">' + escapeHtml(tlShort(n.nation, 24)) + '</text>'
+      + '<rect class="body" width="' + NODE_W + '" height="' + NODE_H + '" rx="8"/>'
+      + '<text class="nm" x="' + (NODE_W / 2) + '" y="20" text-anchor="middle" font-size="10.5">' + escapeHtml(tlShort(n.name, 26)) + '</text>'
+      + '<text class="rg" x="' + (NODE_W / 2) + '" y="34" text-anchor="middle">' + escapeHtml(tlShort(n.nation, 30)) + '</text>'
       + '</g>';
   });
   svg.innerHTML = spans + nodes;
