@@ -228,6 +228,19 @@
   .wiki-ask .wiki-suggest button:hover { border-color: var(--gold); color: var(--gold-bright); }
   .wiki-ask .wiki-loading { color: #8f7d63; font-size: 0.85rem; font-style: italic; }
 
+  /* ===== From the Local Archive panel ===== */
+  .local-archive { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
+  .local-archive h4 { font-family: "Cinzel", Georgia, serif; font-size: 0.85rem; letter-spacing: 2px; color: var(--purple); margin: 0 0 8px; }
+  .local-archive .la-body {
+    background: rgba(138,111,168,0.08); border: 1px solid rgba(138,111,168,0.4);
+    border-left: 3px solid var(--purple); border-radius: 0 10px 10px 0;
+    padding: 12px 14px; font-size: 0.95rem; color: var(--ink-soft);
+  }
+  .local-archive .la-trans { margin: 0 0 8px; color: var(--ink); }
+  .local-archive .la-orig { margin: 0; font-style: italic; opacity: 0.85; }
+  .local-archive .wiki-src { color: #9db3cf; font-size: 0.86rem; text-decoration: none; display: inline-block; margin-top: 8px; }
+  .local-archive .wiki-src:hover { color: var(--gold-bright); }
+
   /* Compare view */
   .compare-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
   .compare-header .tl-btn { margin-top: 6px; flex-shrink: 0; border-color: var(--crimson); color: #e8b0a0; }
@@ -3710,6 +3723,7 @@ function openModal(id) {
         + escapeHtml(r.title) + '<br><span class="src-note">' + escapeHtml(r.note) + '</span></a>'
       ).join("")
     + '</div>'
+    + localArchiveHTML(m)
     + wikiAskHTML(m)
     + '<div class="modal-actions">'
     + '<button class="btn" data-modal-compare="' + m.id + '">' + (onShelf ? "On the Compare Shelf ✔" : "Add to Compare Shelf") + '</button>'
@@ -3717,8 +3731,73 @@ function openModal(id) {
     + '</div></div>';
   backdrop.classList.add("open");
   document.body.style.overflow = "hidden";
+  const la = document.getElementById("local-archive");
+  if (la) loadLocalArchive(m, la.getAttribute("data-lang"), la.getAttribute("data-title"));
 }
 function closeModal() { backdrop.classList.remove("open"); document.body.style.overflow = ""; }
+
+// ---------- From the Local Archive: home-language Wikipedia context ----------
+// For legends whose local-language Wikipedia has context the English article
+// lacks, fetch the local lead paragraph and an English translation on open.
+const LOCAL_CACHE = {};
+function localArchiveHTML(m) {
+  const lw = LOCAL_WIKI[m.id];
+  if (!lw) return "";
+  return '<div class="local-archive" id="local-archive" data-myth="' + m.id + '" data-lang="' + lw.lang + '" data-title="' + escapeHtml(lw.title) + '">'
+    + '<h4>From the ' + (LOCAL_WIKI_NAMES[lw.lang] || lw.lang) + ' Archive</h4>'
+    + '<div class="la-body"><span class="wiki-loading">Consulting the ' + (LOCAL_WIKI_NAMES[lw.lang] || lw.lang) + '-language Wikipedia…</span></div>'
+    + '</div>';
+}
+
+async function loadLocalArchive(m, lang, title) {
+  const body = document.querySelector('.local-archive[data-myth="' + m.id + '"] .la-body');
+  if (!body) return;
+  if (LOCAL_CACHE[m.id]) { body.innerHTML = LOCAL_CACHE[m.id]; return; }
+  try {
+    // 1) the local-language lead paragraph
+    const api = "https://" + lang + ".wikipedia.org/w/api.php?action=query&prop=extracts|pageprops&ppprop=wikibase_item&explaintext=1&exintro=1&format=json&origin=*&redirects=1&titles="
+      + encodeURIComponent(title);
+    const res = await fetch(api);
+    const data = await res.json();
+    const pages = data.query.pages;
+    const pid = Object.keys(pages)[0];
+    if (pid === "-1" || !pages[pid].extract) {
+      body.innerHTML = '<span class="wiki-loading">No home-language article found.</span>';
+      return;
+    }
+    const localExtract = pages[pid].extract;
+    const localTitle = pages[pid].title || title;
+    const localUrl = "https://" + lang + ".wikipedia.org/wiki/" + encodeURIComponent(localTitle.replace(/ /g, "_"));
+    const langName = LOCAL_WIKI_NAMES[lang] || lang;
+    // 2) English rendering: the subject's wikidata item often has an English sitelink
+    //    with its own lead — fetch it via the wikibase item id.
+    let translated = "";
+    const wbItem = pages[pid].pageprops && pages[pid].pageprops.wikibase_item;
+    if (wbItem) {
+      try {
+        const enRes = await fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&ids=" + wbItem
+          + "&props=sitelinks&sitefilter=enwiki&format=json&origin=*");
+        const enData = await enRes.json();
+        const enTitle = enData.entities && enData.entities[wbItem] && enData.entities[wbItem].sitelinks
+          && enData.entities[wbItem].sitelinks.enwiki && enData.entities[wbItem].sitelinks.enwiki.title;
+        if (enTitle) {
+          const enSum = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(enTitle));
+          if (enSum.ok) { const enData2 = await enSum.json(); if (enData2.extract) translated = enData2.extract; }
+        }
+      } catch (e2) { /* translation optional */ }
+    }
+    let html = "";
+    if (translated) {
+      html += '<p class="la-trans">' + escapeHtml(translated.length > 560 ? translated.slice(0, 560).replace(/\s+\S*$/, "") + "…" : translated) + '</p>';
+    }
+    html += '<p class="la-orig" lang="' + lang + '">' + escapeHtml(localExtract.length > 560 ? localExtract.slice(0, 560).replace(/\s+\S*$/, "") + "…" : localExtract) + '</p>'
+      + '<a class="wiki-src" href="' + localUrl + '" target="_blank" rel="noopener noreferrer">Read the ' + langName + ' article →</a>';
+    LOCAL_CACHE[m.id] = html;
+    body.innerHTML = html;
+  } catch (err) {
+    body.innerHTML = '<span class="wiki-loading">The home-language archive could not be reached just now.</span>';
+  }
+}
 document.getElementById("modal-close").addEventListener("click", closeModal);
 backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
@@ -3934,6 +4013,33 @@ document.getElementById("modal-content").addEventListener("click", e => {
     if (panel && input) askWiki(panel.getAttribute("data-wiki-title"), input.value);
   }
 });
+
+// ---------- Local-language archive ----------
+// Legends whose home-language Wikipedia holds context the English article lacks.
+// lang = MediaWiki language code; title = local article title (verified to exist).
+const LOCAL_WIKI = {
+  naga:        { lang: "ms", title: "Naga Seri Gumum" },
+  lembayang:   { lang: "ms", title: "Puteri Gunung Ledang" },
+  bunian:      { lang: "ms", title: "Orang bunian" },
+  pontianak:   { lang: "ms", title: "Pontianak" },
+  mahsuri:     { lang: "ms", title: "Mahsuri" },
+  nyai:        { lang: "id", title: "Nyi Roro Kidul" },
+  bawang:      { lang: "id", title: "Bawang Putih Bawang Merah" },
+  yamata:      { lang: "ja", title: "ヤマタノオロチ" },
+  amaterasu:   { lang: "ja", title: "天照大神" },
+  kaguya:      { lang: "ja", title: "竹取物語" },
+  momotaro:    { lang: "ja", title: "桃太郎" },
+  urashima:    { lang: "ja", title: "浦島太郎" },
+  laclong:     { lang: "vi", title: "Lạc Long Quân" },
+  bakunawa:    { lang: "tl", title: "Bakunawa" },
+  garuda:      { lang: "zh", title: "迦楼罗" },
+  kraithong:   { lang: "th", title: "ครุธง" },
+  manohara:    { lang: "th", title: "มโนห์รา" },
+  reamker:     { lang: "km", title: "រាមកេរ្តិ៍" },
+  "hang-tuah": { lang: "ms", title: "Hang Tuah" },
+  "si-tanggang": { lang: "ms", title: "Si Tanggang" }
+};
+const LOCAL_WIKI_NAMES = { ms: "Malay", id: "Indonesian", ja: "Japanese", vi: "Vietnamese", tl: "Filipino", zh: "Chinese", th: "Thai", km: "Khmer" };
 
 // ---------- Timeline view ----------
 // Year each legend was first written down (negative = BCE), plus the source note.
