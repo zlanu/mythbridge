@@ -185,6 +185,48 @@
   .btn.secondary { background: transparent; color: var(--gold-bright); }
   .btn.secondary:hover { background: rgba(212,162,78,0.15); }
 
+  /* ===== Wiki-ask panel (in-card chat) ===== */
+  .wiki-ask { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
+  .wiki-ask h4 { font-family: "Cinzel", Georgia, serif; font-size: 0.85rem; letter-spacing: 2px; color: var(--gold); margin: 0 0 8px; }
+  .wiki-ask .wiki-log {
+    display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto;
+    background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .wiki-ask .wiki-log:empty { display: none; }
+  .wiki-msg { font-size: 0.97rem; line-height: 1.5; }
+  .wiki-msg .who {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.64rem; letter-spacing: 2px;
+    text-transform: uppercase; display: block; margin-bottom: 3px;
+  }
+  .wiki-msg.q { color: var(--ink); text-align: right; }
+  .wiki-msg.q .who { color: #9ab06a; }
+  .wiki-msg.a { color: var(--ink-soft); border-left: 3px solid var(--teal); padding-left: 10px; }
+  .wiki-msg.a .who { color: var(--teal); }
+  .wiki-msg.a .wiki-src { display: inline-block; margin-top: 6px; color: #9db3cf; font-size: 0.86rem; text-decoration: none; }
+  .wiki-msg.a .wiki-src:hover { color: var(--gold-bright); }
+  .wiki-msg.err { color: #e8b0a0; border-left-color: var(--crimson); }
+  .wiki-ask .wiki-bar { display: flex; gap: 8px; }
+  .wiki-ask input {
+    flex: 1; background: #1a130d; border: 1.5px solid var(--line); border-radius: 999px;
+    color: var(--ink); font-family: inherit; font-size: 0.95rem; padding: 9px 16px; outline: none;
+  }
+  .wiki-ask input:focus { border-color: var(--gold); }
+  .wiki-ask .wiki-send {
+    flex-shrink: 0; font-family: "Cinzel", Georgia, serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px;
+    padding: 8px 18px; border-radius: 999px; border: 1.5px solid var(--gold);
+    background: linear-gradient(180deg, var(--gold) 0%, #a9762f 100%); color: #1c1410; cursor: pointer;
+  }
+  .wiki-ask .wiki-send:hover { filter: brightness(1.1); }
+  .wiki-ask .wiki-note { color: #8f7d63; font-size: 0.82rem; font-style: italic; margin-top: 7px; }
+  .wiki-ask .wiki-suggest { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .wiki-ask .wiki-suggest button {
+    font-family: "Cormorant Garamond", Georgia, serif; font-size: 0.85rem; font-style: italic;
+    padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line);
+    background: transparent; color: var(--ink-soft); cursor: pointer;
+  }
+  .wiki-ask .wiki-suggest button:hover { border-color: var(--gold); color: var(--gold-bright); }
+
   /* Compare view */
   .compare-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
   .compare-header .tl-btn { margin-top: 6px; flex-shrink: 0; border-color: var(--crimson); color: #e8b0a0; }
@@ -3645,6 +3687,7 @@ function openModal(id) {
         + escapeHtml(r.title) + '<br><span class="src-note">' + escapeHtml(r.note) + '</span></a>'
       ).join("")
     + '</div>'
+    + wikiAskHTML(m)
     + '<div class="modal-actions">'
     + '<button class="btn" data-modal-compare="' + m.id + '">' + (onShelf ? "On the Compare Shelf ✔" : "Add to Compare Shelf") + '</button>'
     + '<button class="btn secondary" data-modal-open-list="1">Browse the Shelf in Compare View</button>'
@@ -3661,6 +3704,123 @@ document.getElementById("modal-content").addEventListener("click", e => {
   if (cmp) { togglePick(cmp.getAttribute("data-modal-compare")); openModal(cmp.getAttribute("data-modal-compare")); return; }
   const go = e.target.closest("[data-modal-open-list]");
   if (go) { closeModal(); switchTab("compare"); }
+  const sug = e.target.closest("[data-wiki-suggest]");
+  if (sug) {
+    const input = document.getElementById("wiki-input");
+    if (input) { input.value = sug.textContent; askWiki(sug.getAttribute("data-wiki-suggest"), sug.textContent); }
+  }
+});
+
+// ---------- Wiki-ask: ask questions about a legend, answered from Wikipedia ----------
+// Each card's first Wikipedia ref anchors the chat; the API (free, no key, CORS-enabled)
+// supplies the article text, and questions are matched against it.
+const STOP_WORDS = new Set(["the","a","an","is","are","was","were","do","does","did","what","who","how","why","when","where","tell","me","about","of","in","on","and","or","to","it","this","that","there","isnt","arent","can","could","would","should","i","you","they","we","my","your","with","for","from","at","by","as","be","been","has","have","had","if","then","so","its"]);
+function wikiAskHTML(m) {
+  const wikiRef = m.refs.find(r => /en\.wikipedia\.org\/wiki\//.test(r.url));
+  if (!wikiRef) return "";
+  const title = decodeURIComponent(wikiRef.url.split("/wiki/")[1]).replace(/_/g, " ");
+  const suggests = [
+    "What is the origin of this legend?",
+    "Where is " + (m.region.split("·")[0] || m.region).trim() + "?",
+    "Are there similar legends elsewhere?"
+  ];
+  return '<div class="wiki-ask" data-wiki-title="' + escapeHtml(title) + '">'
+    + '<h4>Ask the Archive</h4>'
+    + '<div class="wiki-suggest">' + suggests.map(s => '<button type="button" data-wiki-suggest="' + escapeHtml(title) + '">' + escapeHtml(s) + '</button>').join("") + '</div>'
+    + '<div class="wiki-log" id="wiki-log"></div>'
+    + '<div class="wiki-bar">'
+    + '<input type="text" id="wiki-input" placeholder="Ask about this legend — answers come from Wikipedia…" aria-label="Ask a question about this legend">'
+    + '<button class="wiki-send" id="wiki-send" type="button">Ask</button>'
+    + '</div>'
+    + '<div class="wiki-note">Answers are drawn from the Wikipedia article "' + escapeHtml(title) + '" — not a live conversation, and not part of the app\'s own retelling.</div>'
+    + '</div>';
+}
+
+function wikiTokenize(q) {
+  return q.toLowerCase().split(/[^a-z0-9āēīōū'’-]+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+}
+
+async function askWiki(articleTitle, question) {
+  const log = document.getElementById("wiki-log");
+  const input = document.getElementById("wiki-input");
+  const sendBtn = document.getElementById("wiki-send");
+  if (!log || !question.trim()) return;
+  if (input) input.value = "";
+  if (sendBtn) sendBtn.disabled = true;
+  // echo the question
+  const qEl = document.createElement("div");
+  qEl.className = "wiki-msg q";
+  qEl.innerHTML = '<span class="who">You ask</span>' + escapeHtml(question);
+  log.appendChild(qEl);
+  // thinking placeholder
+  const aEl = document.createElement("div");
+  aEl.className = "wiki-msg a";
+  aEl.innerHTML = '<span class="who">The Archive</span><em>Turning the pages…</em>';
+  log.appendChild(aEl);
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    const api = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&redirects=1&titles="
+      + encodeURIComponent(articleTitle.replace(/ /g, "_"));
+    const res = await fetch(api);
+    const data = await res.json();
+    const pages = data.query.pages;
+    const pageId = Object.keys(pages)[0];
+    if (pageId === "-1" || !pages[pageId].extract) {
+      aEl.className = "wiki-msg a err";
+      aEl.innerHTML = '<span class="who">The Archive</span>That article could not be found on Wikipedia. Try the source links below the card.';
+      return;
+    }
+    const article = pages[pageId].extract;
+    const tokens = wikiTokenize(question);
+    // score paragraphs: token hits weighted, prefer paragraphs with several distinct hits
+    const paras = article.split(/\n+/).filter(p => p.length > 120);
+    let best = null, bestScore = 0, second = null, secondScore = 0;
+    paras.forEach(p => {
+      const lower = p.toLowerCase();
+      let score = 0;
+      tokens.forEach(t => {
+        const hits = lower.split(t).length - 1;
+        score += hits > 0 ? 1 + Math.min(2, hits - 1) : 0;
+      });
+      if (score > bestScore) { second = best; secondScore = bestScore; best = p; bestScore = score; }
+      else if (score > secondScore) { second = p; secondScore = score; }
+    });
+    if (!best || bestScore === 0) {
+      aEl.className = "wiki-msg a err";
+      aEl.innerHTML = '<span class="who">The Archive</span>The article doesn\'t speak to that directly. Try a different wording, or read the full entry: '
+        + '<a class="wiki-src" href="https://en.wikipedia.org/wiki/' + encodeURIComponent(articleTitle.replace(/ /g, "_")) + '" target="_blank" rel="noopener noreferrer">Wikipedia: ' + escapeHtml(articleTitle) + ' →</a>';
+      return;
+    }
+    let answer = best.length > 640 ? best.slice(0, 640).replace(/\s+\S*$/, "") + "…" : best;
+    if (second && secondScore >= Math.max(2, bestScore * 0.6)) {
+      const s2 = second.length > 320 ? second.slice(0, 320).replace(/\s+\S*$/, "") + "…" : second;
+      answer += "<br><br>" + s2;
+    }
+    aEl.innerHTML = '<span class="who">The Archive</span>' + answer
+      + '<br><a class="wiki-src" href="https://en.wikipedia.org/wiki/' + encodeURIComponent(articleTitle.replace(/ /g, "_")) + '" target="_blank" rel="noopener noreferrer">Read more on Wikipedia →</a>';
+  } catch (err) {
+    aEl.className = "wiki-msg a err";
+    aEl.innerHTML = '<span class="who">The Archive</span>The archive could not be reached just now (network or offline). The source links below still work.';
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+// wire ask input/send per opened card (delegated: modal content is rebuilt per card)
+document.getElementById("modal-content").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.id === "wiki-input") {
+    const panel = e.target.closest(".wiki-ask");
+    askWiki(panel.getAttribute("data-wiki-title"), e.target.value);
+  }
+});
+document.getElementById("modal-content").addEventListener("click", e => {
+  if (e.target.id === "wiki-send") {
+    const panel = e.target.closest(".wiki-ask");
+    const input = document.getElementById("wiki-input");
+    if (panel && input) askWiki(panel.getAttribute("data-wiki-title"), input.value);
+  }
 });
 
 // ---------- Timeline view ----------
