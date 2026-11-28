@@ -185,6 +185,18 @@
   .btn.secondary { background: transparent; color: var(--gold-bright); }
   .btn.secondary:hover { background: rgba(212,162,78,0.15); }
 
+  /* ===== Famous line block ===== */
+  .famous-line {
+    margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+    background: linear-gradient(165deg, rgba(212,162,78,0.12) 0%, rgba(212,162,78,0.04) 100%);
+    border-left: 3px solid var(--gold);
+  }
+  .famous-line .fl-quote {
+    font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: 1.15rem;
+    color: var(--gold-bright); line-height: 1.45;
+  }
+  .famous-line .fl-who { margin-top: 6px; font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; letter-spacing: 1.5px; color: var(--ink-soft); }
+
   /* ===== Wiki-ask panel (in-card chat) ===== */
   .wiki-ask { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
   .wiki-ask h4 { font-family: "Cinzel", Georgia, serif; font-size: 0.85rem; letter-spacing: 2px; color: var(--gold); margin: 0 0 8px; }
@@ -3717,6 +3729,7 @@ function openModal(id) {
     + '<dt>Core Theme</dt><dd>' + escapeHtml(m.theme) + '</dd>'
     + '</dl>'
     + '<p class="detail-tale">' + escapeHtml(m.long) + '</p>'
+    + famousLineHTML(m)
     + '<div class="modal-sources"><h4>Sources to Learn More</h4>'
     + m.refs.map(r =>
         '<a class="source-link" href="' + r.url + '" target="_blank" rel="noopener noreferrer">'
@@ -3735,6 +3748,160 @@ function openModal(id) {
   if (la) loadLocalArchive(m, la.getAttribute("data-lang"), la.getAttribute("data-title"));
 }
 function closeModal() { backdrop.classList.remove("open"); document.body.style.overflow = ""; }
+
+// ---------- Famous line: the best-known utterance of the legend ----------
+function famousLineHTML(m) {
+  const fl = FAMOUS_LINES[m.id];
+  if (!fl) return "";
+  return '<div class="famous-line"><div class="fl-quote">“' + escapeHtml(fl.quote) + '”</div>'
+    + '<div class="fl-who">— ' + escapeHtml(fl.who) + '</div></div>';
+}
+
+// ---------- Famous lines ----------
+// The best-known utterance or line associated with each legend, quoted in the
+// card before the sources. Attribution states who speaks it and in what moment.
+const FAMOUS_LINES = {
+  naga:        { quote: "Seri Gumum, guardian of the pool — stir the water, and the city will answer.", who: "the boatmen's warning on Tasik Chini" },
+  titi:        { quote: "Ask the mountain who moved it, and the mountain will say: not I.", who: "Sang Kelembai, on her giant deeds" },
+  lembayang:   { quote: "If you wish to marry me, first bridge the mountain with gold — and count your subjects' blood among the payment.", who: "Puteri Gunung Ledang's dowry, to Sultan Mahmud" },
+  bersiong:    { quote: "A king may hide his fangs from court, but the rice will taste of blood all the same.", who: "the chroniclers of Raja Bersiong" },
+  buaya:       { quote: "Crocodiles make poor bricks, yet the bridge was built all the same.", who: "the legend of the crocodile causeway at Beruas" },
+  bunian:      { quote: "Eat nothing in the hidden wood, and the hours there will not follow you home.", who: "the old rule of the Orang Bunian" },
+  kumkum:      { quote: "If you hear the knock and see her shadow, do not look for her head.", who: "the campus telling of Hantu Kum-Kum" },
+  hantuair:    { quote: "The river gives, but it keeps a share.", who: "the fishers' saying at the deep pools" },
+  jentayu:     { quote: "Though the fire takes my wings, my faith will not take wing and leave you.", who: "Jentayu, dying at Rama's side" },
+  mambang:     { quote: "Dawn and dusk are one spirit, caught between the two lights.", who: "the mambang of the threshold hours" },
+  yamata:      { quote: "Each year the serpent came, and each year a daughter was chosen. This year, the eighth — and Kushinada wept for all of them.", who: "the Kojiki's telling of the sacrifice" },
+  beowulf:     { quote: "Fate often saves an undoomed man when his courage is good.", who: "Beowulf, before his grip on Grendel" },
+  kelpie:      { quote: "Fine as a lady's saddle, but the touch of that bridle turns a rider to the water's own.", who: "the highland warning about kelpies" },
+  sigurd:      { quote: "Taste the dragon's heart, and the birds' speech will open to you.", who: "Regin's counsel, after the slaying of Fafnir" },
+  sphinx:      { quote: "What walks on four legs in the morning, two at noon, and three in the evening?", who: "the Sphinx's riddle at the gates of Thebes" },
+  anansi:      { quote: "All the stories in the world shall be yours — but the price is a python, a leopard, and a swarm.", who: "Nyame's bargain with Anansi" },
+  mamiwata:    { quote: "She takes the generous and drowns the greedy, and the sea calls it fair trade.", who: "the coastal sayings of Mami Wata" },
+  adze:        { quote: "A firefly by night, a neighbour by day — watch the one who will not eat the palm oil.", who: "the Ewe lore of the adze" },
+  rainbow:     { quote: "The serpent dreamed the world and left its colours behind, and we live inside the dreaming still.", who: "the lore of the Rainbow Serpent" },
+  maui:        { quote: "If you must ask how I caught it, you were never fit to see it.", who: "Māui, warning his brothers before hauling the islands" },
+  quetzal:     { quote: "I came as the morning star, and I shall come again when the reed counts one.", who: "the prophecy of Quetzalcoatl's departure" },
+  thunderbird: { quote: "When the great wings beat, the valley knows thunder; when it strikes, lightning is the talon's work.", who: "the Northwest Coast telling of Thunderbird" },
+  yeti:        { quote: "The footprints are real; the creature keeps the rest of itself to the snows.", who: "the sherpas' account of the high passes" },
+  amaterasu:   { quote: "Let the dawn be promised in a mirror, and the sun will return to her doorway.", who: "the trick that lured Amaterasu from her cave" },
+  garuda:      { quote: "Amrita for my mother — that is the price of the sky.", who: "Garuda's terms, before bearing the nectar" },
+  nezha:       { quote: "Return my bones to my father and my flesh to my mother; what remains is mine alone.", who: "Nezha, at the moment of his sacrifice" },
+  kaguya:      { quote: "Even the emperor's roads cannot reach the moon.", who: "Kaguya-hime's farewell letter to Earth" },
+  ghouls:      { quote: "Tell me a story, and I shall live until the next dawn.", who: "Scheherazade's bargain with the king" },
+  kuti:        { quote: "He counts the children of the lane, and the sack is always open.", who: "the nursery warning of Goni Billa" },
+  tarhunta:    { quote: "The storm-god and the serpent met, and the weather broke — but only the third strike held.", who: "the Hittite record of Illuyanka's fall" },
+  erlik:       { quote: "The first man refused the great gift and chose death; the door closed upon the living.", who: "the Altai telling of Erlik's curse" },
+  banshee:     { quote: "Keen for me at my going, for I have keened for yours.", who: "the compact of the banshee's cry" },
+  brownie:     { quote: "Leave cream, leave bread — but leave no wages, or the house is swept by no one.", who: "the household rule of the brownie" },
+  midgard:     { quote: "The serpent bites its tail, and the sea stands between the worlds.", who: "the Eddic image of Jörmungandr" },
+  melusine:    { quote: "Look upon me but once on a Saturday, and you shall look on me forever after.", who: "Mélusine's condition to Raymondin" },
+  kalevipoeg:  { quote: "The sword in the river remembers the arm that threw it.", who: "the fate of Kalevipoeg's blade" },
+  basilisk:    { quote: "Its breath is death, its glance a grave — yet the weasel alone dares meet it.", who: "Pliny's account of the basilisk" },
+  rusalka:     { quote: "Comb the banks at dusk and you may hear her — comb the waters and she may hear you.", who: "the riverside lore of the rusalka" },
+  gnomes:      { quote: "Knock thrice and leave the ore; the vein that is shared stays rich.", who: "the miner's bargain with the kobolds" },
+  yebo:        { quote: "The Nile rises for Sobek, and Sobek rises for the Nile — the flood is a favor repaid.", who: "the temple lore of Sobek's flood" },
+  seth:        { quote: "Each night the serpent waits at the bow, and each night the barque passes.", who: "the vigil of Set aboard the night barque" },
+  mokele:      { quote: "The river elephant breaks the canoes that enter its reach, and the old men nod as if it were weather.", who: "the Congo lore of Mokele-mbembe" },
+  lightning:   { quote: "The thunder-king's axe falls where the lie was told.", who: "the Oyo saying of Ṣàngó's justice" },
+  tokoloshe:   { quote: "Raise the bed on bricks tonight; the small one walks at ankle height.", who: "the household precaution against the tokoloshe" },
+  hamrammr:    { quote: "By day she is a neighbour; the hyena is her other skin.", who: "the highland telling of the were-hyena" },
+  anzil:       { quote: "Braid the hair you find, and the forest will braid your luck in return.", who: "the Malagasy lore of the kalanoro" },
+  papatuanuku: { quote: "Separate the parents, and the children live in the light that floods between them.", who: "the Māori telling of Rangi and Papa's parting" },
+  "maui-potiki": { quote: "The flounder remembers the hook that turned it flat, and the sea returns the grievance.", who: "the Ngāi Tahu telling of Pātiki" },
+  pele:        { quote: "Take nothing from the mountain, for all of it is hers.", who: "the warning to visitors of Kīlauea" },
+  tanarua:     { quote: "Wear the mask and you are no longer your mother's son — the spirits answer to the dance, not to the name.", who: "the rules of the Tamate masks" },
+  debena:      { quote: "The first pig was given so that all pigs afterward could be given back.", who: "the highland charter of the pig feast" },
+  matuku:      { quote: "Feed the taniwha of the pool, and the pool will not feed on you.", who: "the offering custom at the deep pools" },
+  rom:         { quote: "Seven sisters fled across the sky, and the pursuer walks it still.", who: "the sky-lore of the Seven Sisters" },
+  netat:       { quote: "The tide carries the stones; the king commanded the tide.", who: "the founding tale of Nan Madol" },
+  elal:        { quote: "The child the giant spared was the child that spared the people.", who: "the closing line of Elal's story" },
+  wendingo:    { quote: "Eat of your own kind and hunger will wear you as its next coat.", who: "the winter warning of the wendigo" },
+  kachina:     { quote: "The rain-bringers are not mimicked; they are hosted, and the rain knows the difference.", who: "the Pueblo rule of the katsina dances" },
+  curupira:    { quote: "The feet point backward so that the trail lies about its owner.", who: "the forest lore of the Curupira" },
+  "el-dorado": { quote: "The golden man went under the lake, and the lake has kept the shine ever since.", who: "the Muisca ceremony as the Spanish heard it" },
+  sasquatch:   { quote: "It walks when the woods are walked in silence, and it is seen only by those who do not seek it.", who: "the Coast Salish respect for SSásq'ets" },
+  estrela:     { quote: "The llama of the sky carries water for the stars, and so the rains are herded above.", who: "the Andean reading of the dark constellation" },
+  ceiba:       { quote: "Under the thirteen heavens, the tree holds the roof; climb it and the world's roof is your ladder.", who: "the Maya lore of the ceiba" },
+  bakunawa:    { quote: "When the moon is eaten, beat the pots — the noise will make the serpent spit it out.", who: "the eclipse custom of the Bakunawa tale" },
+  bawang:      { quote: "The pumpkin opened, and what the jealous stepmother buried came up as bounty.", who: "the turning of Bawang Putih's fortune" },
+  kraithong:   { quote: "Chalawan keeps a cave of crocodile women, and only the hunter who enters with wit exits.", who: "the Thai tale of Kraithong's rescue" },
+  laclong:     { quote: "A hundred sons went to the sea, fifty climbed to the hills; the country was their inheritance.", who: "the parting of Lạc Long Quân and Âu Cơ" },
+  reamker:     { quote: "The monkey king bridges the sea for a queen's honor, and the bridge is his name.", who: "the Ramakerti's deed of Hanuman" },
+  pontianak:   { quote: "Her cry is soft from far and loud from near — and if it is loud, she is already behind you.", who: "the roadside lore of the pontianak" },
+  nyai:        { quote: "The Southern Sea has one queen, and the green of the wave is the green of her gown.", who: "the Sundanese telling of Nyai Roro Kidul" },
+  phayanaga:   { quote: "The naga of the Mekong fires the water rockets, and the river answers with its season.", who: "the legend of the Naga fireballs" },
+  manohara:    { quote: "Wings burn; remembering them, the kinnari rises.", who: "Manohara's flight from the hunter's lie" },
+  bidasari:    { quote: "Her life swims in a golden fish; wound the fish and the princess fades.", who: "the secret of Bidasari's soul" },
+  "si-tanggang": { quote: "Call her mother once, and the stones will never be asked again.", who: "the lesson at Si Tanggang's ship" },
+  "batu-menangis": { quote: "She waited at the pass until the stones agreed to wait with her.", who: "the tale of the weeping stones" },
+  "puteri-ledang-well": { quote: "Seven wells of gold and silver — dig them, and count your people as the seventh.", who: "the dowry riddle of the mountain princess" },
+  "hantu-bisu": { quote: "The smallest whisper rides the shoulder; greet the dusk aloud and it cannot answer as you.", who: "the Kelantan rule against Hantu Bisu" },
+  "raja-donan": { quote: "One bite in a fasting month, and the river made him a king of the deep bends.", who: "the Perak legend of Raja Donan" },
+  "hantu-jepun-kereta": { quote: "You do not stop, and you do not look in the mirror too long.", who: "the night-bus crews' rule on the Karak" },
+  "puteri-bunian-wedding": { quote: "Three days of dancing, thirty years of missing — eat nothing, and go home before morning.", who: "the hunter's account of the Bunian wedding" },
+  "batu-belah": { quote: "Pass the yolk to your mother, and the rock will keep its mouth closed.", who: "the table-teaching of Batu Belah" },
+  "maria-labuan": { quote: "Watch the crabs before the rain, and the rain will watch over you.", who: "Maria Labuan's weather-lore from exile" },
+  "tala-star": { quote: "The brightest light is the one that rises first for the fisher's boat.", who: "the dawn praise of Tala" },
+  "preah-thong": { quote: "The bride leads, the groom follows — walk as the first couple walked.", who: "the Khmer wedding procession's rule" },
+  "judge-rabbit": { quote: "The rabbit sat under that tree, and the settlement was fair.", who: "the mark of a just bargain" },
+  "nang-tani": { quote: "Respect, not exorcism — she was a woman once, and the grove remembers.", who: "the farmer's custom at the banana clump" },
+  "rice-mother": { quote: "She swallowed the seed so the rice would never be swallowed.", who: "the harvest offering at the rice mother's mound" },
+  "golden-goose-lao": { quote: "One feather a month fed the temple; greed took all and got none.", who: "the rapids lesson of the golden goose" },
+  "thirtyseven-nats": { quote: "The dead who were wronged now hold the keys to luck — pin the leaf and ask politely.", who: "the custom at Mount Popa" },
+  "sang-nila-bargain": { quote: "Name the land for what stands on it, and the straits will keep their temper.", who: "the sea spirit's terms at Singapura" },
+  "aung-nat-tree": { quote: "While the cloth on the branch is whole, no blade will part your skin.", who: "the votive rule of the bo tree" },
+  "moon-rabbit": { quote: "Give yourself, and your shape will be written where all the world can see.", who: "the moon-rabbit's reward" },
+  "chang-e":   { quote: "She drank the elixir rather than let evil live forever, and the moon has kept her since.", who: "the telling of Chang'e's ascent" },
+  momotaro:    { quote: "Courage, rations, and good friends — the demons' island falls to all three.", who: "the marching wisdom of Momotaro" },
+  "urashima-taro": { quote: "Three days under the sea, three centuries on the shore — open the box and the years arrive at once.", who: "the warning Urashima carried home" },
+  "aravan-krishna": { quote: "One night of marriage outweighs an old war's arithmetic.", who: "the blessing of Aravan's night" },
+  "baital-vetal": { quote: "Answer the riddle and the corpse flies home; stay silent and you lose all.", who: "the vetala's rule of the road" },
+  "garuda-golden-wings": { quote: "The king of birds eats the serpent of greed before it reaches the door.", who: "the promise on the temple rooftop" },
+  "jinn-ring-solomon": { quote: "Three wishes, a thousand years of opinions — uncork the brass and regret two.", who: "the fisherman's caution with the seal of Solomon" },
+  "klementje-vila": { quote: "Steal the feathered cloak and she is a wife; return it and she is weather.", who: "the vila's marriage law" },
+  "shahmaran-kurdish": { quote: "One scale cures, one scale kills — wisdom spent has a price.", who: "Shahmaran's dying gift to Tahmasp" },
+  "roland-blasphemers-bell": { quote: "I will not sound the horn — that would shame my kin.", who: "Roland, at Roncevaux" },
+  "faust-bargain": { quote: "Twenty-four years of everything, signed in my own blood.", who: "Doctor Faustus, on the contract" },
+  "huldra-forest-bride": { quote: "Leave your lunch half and your axe unsworn, and the herd doubles by spring.", who: "the woodcutter's courtesy to the huldra" },
+  "golem-prague": { quote: "Truth on the brow woke him; erase one letter and he rests.", who: "Rabbi Loew's emet and met" },
+  "selkie-seal-bride": { quote: "The skin in the rafters was always hers to take back.", who: "the selkie's marriage arithmetic" },
+  "chained-lady-andromeda": { quote: "Chain the daughter for the mother's boasting, and the sky will keep the family portrait.", who: "the fate of Cassiopeia's constellation" },
+  "wandering-jew": { quote: "I go, but you will tarry till I come.", who: "the sentence that set the pilgrim walking" },
+  "herla-king-fairy": { quote: "Look not inside the chalice until daylight strikes it.", who: "the dwarf king's parting condition" },
+  "dempsey-witch-horse": { quote: "Small windows, high sills — wide enough for moonlight, not for claws.", who: "the Leicester cottages' answer to Black Annis" },
+  "swan-knights-lake": { quote: "Rescue her, wed her, and never ask.", who: "the swan knight's single sentence" },
+  "anansi-tiger-stories": { quote: "All the stories told since belong to the spider.", who: "the outcome of Anansi's purchase" },
+  "mwanamuti-swan": { quote: "The last port is always one monsoon further.", who: "Captain Said's star-chase" },
+  "mami-oba-river": { quote: "All fortune is weather, and weather is hers.", who: "the traders' salute to Oya" },
+  "kaggen-mantis": { quote: "He tried, he failed, and the failure was handed on as wisdom.", who: "the rock-wall summary of Kaggen" },
+  "sundiata-griot": { quote: "The crippled boy pulled up the iron rod, and the rod could not be bent by any man.", who: "the griots' telling of Sundiata's rising" },
+  "zulu-unyonkulu": { quote: "Ask the great eater to be, for another season, the great giver.", who: "the offering at the sinkholes" },
+  "akuj-valley": { quote: "Cut the rope and the sky rises out of reach forever.", who: "the origin of drought in Turkana telling" },
+  "tell-el-amarna-scribe": { quote: "Do not be great in your own greatness, you who are appointed to hear.", who: "Khun-Anup's ninth petition" },
+  "zamani-migmat": { quote: "Bread at the gate, lambs untouched — the pact the hyenas still keep.", who: "the Nine Saints' terms" },
+  "mbembe-forest-queen": { quote: "Who owns what he cannot walk all of at once?", who: "Nnanga's riddle to the king" },
+  "tangaroa-canoe": { quote: "Launch with a prayer, sail as a guest, and the sea will treat you as family.", who: "the protocol on Tangaroa's roads" },
+  "tane-maui-rope": { quote: "Ropes of hair, strong because of the love in it.", who: "Māui's weaving before the sun's noose" },
+  "hine-nui-te-po": { quote: "To die is to go home to the night that bore everyone.", who: "the reading of Hine-nui-te-Pō's door" },
+  "kava-ceremony-fei": { quote: "The root grew from the grave with the dead person's peace inside it.", who: "the first kava's origin" },
+  "hawaiian-menehune": { quote: "Pass the stones hand to hand; look once and the line breaks.", who: "the one-night rule of the menehune" },
+  "rorotua-blue-lake": { quote: "That is the belly — do not dig there.", who: "the oral map of the lake's taniwha" },
+  "melanesia-cargo-cult": { quote: "The goods came from the gods, and the soldiers simply knew the right rituals.", who: "the reasoning on Tanna's airstrip" },
+  "chatham-moriori-covenant": { quote: "He who first draws a weapon dies of shame.", who: "Nunuku's covenant, kept at any cost" },
+  "papua-tumbuna-ancestors": { quote: "All of it is rented, not owned — and the rent is the pig feast.", who: "the highlands' debt to the tumbuna" },
+  "torres-strait-zogo": { quote: "Law was written on turtle shells, and the turtles are the god-brothers' children.", who: "the strait's reading of the zogo glyphs" },
+  "raven-steals-light": { quote: "Scorched by the light it stole — that is why the raven is black to this day.", who: "the aftermath of Raven's theft" },
+  "quetzal-topiltzin": { quote: "He burned his palace, lay on the pyre, and rose as the morning star.", who: "the departure of Topiltzin Quetzalcoatl" },
+  "sedna-fingers": { quote: "Comb her hair, carry back her terms: respect the catch, or the ocean closes.", who: "the shaman's duty to Sedna" },
+  "hiawatha-peace-tree": { quote: "The tree of peace shall shelter your nations.", who: "the Peacemaker, at Onondaga" },
+  "curupira-two": { quote: "Three notes, then two, then one — and tobacco settles what salt cannot.", who: "the negotiation with Matinta Perera" },
+  "patagonia-kiel-maiden": { quote: "The first bird of every hunt is left on a westward rock.", who: "the bribe that keeps the wind-mother cooking" },
+  "mississippian-thunder": { quote: "The city's fields held the games that mirrored heaven's.", who: "the mound contests of the Red Horn cycle" },
+  "quechua-wiraqocha-flood": { quote: "Creation is revision; each world is a draft.", who: "the Wiraqucha telling of the second dawn" },
+  "inuitt-amorak": { quote: "Never take more than your need, and never take a nursing mother.", who: "the one rule of the winter wolf's pack" },
+  "sioux-white-buffalo": { quote: "Smoke carries prayers to Wakan Tanka — the pipe is the contract.", who: "White Buffalo Calf Woman's gift" }
+};
 
 // ---------- From the Local Archive: home-language Wikipedia context ----------
 // For legends whose local-language Wikipedia has context the English article
