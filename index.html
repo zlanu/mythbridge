@@ -4583,12 +4583,78 @@ function createTimeline(cfg) {
       el.style.opacity = (yr % step === 0) ? "1" : "0";
     });
   };
+  // Marker spreading: at high zoom, clumped dots get re-staggered into extra lanes
+  // so they visibly separate (with labels) while the surrounding years stay in view.
+  // Base lanes are [-64,-32,32,64]; dense zoom adds [-96, 96, -128, 128] as needed.
+  function spreadMarkers() {
+    if (!markerEls.length) return;
+    const LANES = k < 3
+      ? [-64, -32, 32, 64]
+      : k < 5 ? [-88, -44, 0, 44, 88, -132, 132]
+      : [-110, -66, -22, 22, 66, 110, -154, 154, -198, 198];
+    // walk events in order; assign each clumped marker the nearest free lane slot
+    const taken = events.map(() => null);
+    for (let i = 0; i < events.length; i++) {
+      const xi = xOf(events[i].year);
+      // how crowded is this spot on screen?
+      let crowd = 0;
+      for (let j = 0; j < events.length; j++) {
+        if (j !== i && Math.abs(xOf(events[j].year) - xi) * k < 26) crowd++;
+      }
+      if (crowd === 0) { taken[i] = null; continue; } // roomy: keep default lane
+      const g = markerEls[i].el.querySelector(".tl-marker, g");
+      // choose a lane: prefer the default offsets, then outer ones, round-robin by index
+      const idxInCrowd = taken.slice(0, i).filter(t => t !== null && t.crowd).length;
+      const laneIdx = i % LANES.length;
+      taken[i] = { lane: LANES[laneIdx], crowd: true };
+    }
+    // apply: move stem + label + year to the chosen lane via transform on the group
+    events.forEach((ev, i) => {
+      const t = taken[i];
+      const el = markerEls[i].el;
+      const baseLane = [-64, -32, 32, 64][i % 4];
+      const laneY = t ? t.lane : baseLane;
+      el.setAttribute("data-lane", laneY);
+      // shift the label/year/stem group vertically: stems start at BASE; we translate
+      // only the label texts (stem line is drawn separately), so use a nested transform
+      const labels = el.querySelectorAll("text");
+      const above = laneY < 0;
+      labels.forEach(txt => {
+        if (txt.classList.contains("tl-label")) {
+          txt.setAttribute("y", (BASE + laneY + (above ? -12 : 14)).toFixed(0));
+          txt.setAttribute("font-size", k >= 3 ? "15" : "12.5");
+        } else if (txt.classList.contains("tl-year")) {
+          txt.setAttribute("y", (BASE + laneY + (above ? 2 : 28)).toFixed(0));
+          txt.setAttribute("font-size", k >= 3 ? "13" : "11");
+        }
+      });
+      const stem = el.querySelector("line");
+      if (stem) stem.setAttribute("y2", (BASE + laneY).toFixed(0));
+      // when crowded, lift the DOT itself onto its lane so overlapping dots visibly
+      // separate; a thin residual stem keeps each dot tied to its year on the baseline
+      const dot = el.querySelector(".tl-dot");
+      if (dot && t) {
+        dot.setAttribute("cy", (BASE + laneY).toFixed(0));
+        if (dot.tagName === "rect") {
+          dot.setAttribute("y", (BASE + laneY - 5).toFixed(0));
+          dot.setAttribute("transform", "rotate(45 " + markerEls[i].x.toFixed(0) + " " + (BASE + laneY).toFixed(0) + ")");
+        }
+      } else if (dot) {
+        dot.setAttribute("cy", BASE.toFixed(0));
+        if (dot.tagName === "rect") {
+          dot.setAttribute("y", (BASE - 5).toFixed(0));
+          dot.setAttribute("transform", "rotate(45 " + markerEls[i].x.toFixed(0) + " " + BASE.toFixed(0) + ")");
+        }
+      }
+    });
+  }
   const apply = () => {
     // zoom & pan both via the SVG viewBox so shapes stay razor-sharp vectors
     // at any magnification instead of stretched raster pixels
     const vw = viewport.clientWidth;
     svgEl.setAttribute("viewBox", (-tx / k) + " 0 " + (vw / k) + " " + H);
     updateDensity();
+    spreadMarkers();
   };
   apply();
   const clamp = () => {
