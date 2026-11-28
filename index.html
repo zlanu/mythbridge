@@ -302,43 +302,47 @@
   .bridge-key-chip {
     display: inline-block; font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; letter-spacing: 1px;
     padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line); background: #1a130d; color: var(--ink-soft);
+    cursor: pointer; transition: all 0.18s;
+  }
+  .bridge-key-chip:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .bridge-key-chip.active {
+    border-color: var(--gold-bright); color: #1c1410;
+    background: linear-gradient(180deg, var(--gold) 0%, #a9762f 100%);
   }
   .bridge-key-chip b { font-weight: 700; }
-  .bridge-viewport {
-    position: relative; height: 560px; border-radius: 14px; overflow: hidden;
-    background: linear-gradient(180deg, #14100c 0%, #1a130d 60%, #241a13 100%);
-    border: 1px solid var(--line); outline: none;
-    /* water hint under the bridge deck */
+  .bridge-theme-header {
+    font-family: "Cinzel", Georgia, serif; font-size: 1.05rem; font-weight: 800; letter-spacing: 2px;
+    color: var(--gold-bright); margin: 14px 0 4px;
   }
-  .bridge-viewport::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
-    background: linear-gradient(180deg, transparent 0%, rgba(30,58,70,0.35) 55%, rgba(30,58,70,0.6) 100%);
-    pointer-events: none;
+  .bridge-theme-count { color: var(--ink-soft); font-size: 0.9rem; font-style: italic; font-weight: 400; letter-spacing: 1px; }
+  .bridge-cluster {
+    margin-top: 18px; border: 1px solid var(--line); border-radius: 14px;
+    background: linear-gradient(165deg, var(--card) 0%, var(--card2) 100%);
+    padding: 16px 18px;
   }
-  .bridge-viewport svg { width: 100%; height: 100%; display: block; }
-  .bridge-node { cursor: grab; }
-  .bridge-node:active { cursor: grabbing; }
-  .bridge-node rect.body {
-    fill: #2b2018; stroke: var(--line); stroke-width: 1.4; rx: 10;
-    transition: stroke 0.2s ease, filter 0.2s ease;
+  .bridge-cluster-title {
+    font-family: "Cinzel", Georgia, serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 2px;
+    color: var(--gold); margin: 0 0 12px; text-transform: uppercase;
   }
-  .bridge-node text { pointer-events: none; }
-  .bridge-node .nm { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; fill: var(--ink); }
-  .bridge-node .rg { font-family: "Cinzel", Georgia, serif; font-size: 8.5px; letter-spacing: 1px; fill: #8f7d63; }
-  .bridge-node:hover rect.body, .bridge-node.lit rect.body { stroke: var(--gold-bright); filter: drop-shadow(0 0 8px rgba(240,198,116,0.55)); }
-  .bridge-node.on-shelf rect.body { stroke: var(--myth-green); stroke-width: 2; }
-  .bridge-span { stroke-linecap: round; fill: none; opacity: 0.5; transition: opacity 0.2s ease; }
-  .bridge-span.hot { opacity: 1; filter: drop-shadow(0 0 5px rgba(240,198,116,0.7)); }
-  .bridge-span-label {
-    font-family: "Cinzel", Georgia, serif; font-size: 8px; letter-spacing: 1px;
-    fill: #c9b494; opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+  .bridge-cluster-title::before { content: "❖ "; }
+  .bridge-card-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .bridge-legend {
+    display: flex; flex-direction: column; gap: 3px; width: 224px;
+    border: 1.4px solid var(--line); border-radius: 10px; background: #241b13;
+    padding: 10px 12px; cursor: pointer; transition: all 0.18s;
   }
-  .bridge-span-label.hot { opacity: 1; }
-  .bridge-add-btn { cursor: pointer; }
-  .bridge-add-btn rect { fill: rgba(154,176,106,0.16); stroke: var(--myth-green); stroke-width: 1.2; }
-  .bridge-add-btn text { font-family: "Cinzel", Georgia, serif; font-size: 8.5px; letter-spacing: 1px; fill: var(--myth-green); pointer-events: none; }
-  .bridge-add-btn:hover rect { fill: rgba(154,176,106,0.35); }
-  @media (max-width: 560px) { .bridge-viewport { height: 420px; } }
+  .bridge-legend:hover { border-color: var(--gold-bright); background: #2b2018; transform: translateY(-1px); }
+  .bridge-legend.on-shelf { border-color: var(--myth-green); }
+  .bridge-legend .bl-name { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; font-size: 1rem; color: var(--ink); line-height: 1.25; }
+  .bridge-legend .bl-region { font-family: "Cinzel", Georgia, serif; font-size: 0.68rem; letter-spacing: 1px; color: #8f7d63; }
+  .bridge-legend .bl-add {
+    align-self: flex-start; margin-top: 4px; font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 999px; border: 1.2px solid var(--myth-green); background: rgba(154,176,106,0.12);
+    color: var(--myth-green); cursor: pointer; transition: all 0.15s;
+  }
+  .bridge-legend .bl-add:hover { background: rgba(154,176,106,0.3); }
+  .bridge-legend .bl-add.on { border-color: var(--gold); color: var(--gold-bright); background: rgba(212,162,78,0.12); }
+  @media (max-width: 560px) { .bridge-legend { width: 100%; } }
   @media (max-width: 560px) { .tl-viewport { height: 260px; } .tl-hint { display: none; } }
 </style>
 </head>
@@ -454,17 +458,14 @@
   <div class="view" id="view-bridges">
     <section id="bridges-section">
       <h2>Bridges Between Legends</h2>
-      <p class="section-sub">Every span is a shared theme carrying one legend across to another — the bridge deck of the world's myths. Drag legends to arrange them, hover a span to light it, click a legend to open its card, or use the span buttons to send a pair to the Compare shelf.</p>
+      <p class="section-sub">Pick a shared theme to cross the bridge: every legend that carries it gathers below, clustered by the region it comes from. Add any of them to the Compare shelf to read the similarities side by side.</p>
       <div class="bridge-legend-bar">
         <span class="bridge-key-title">Shared themes:</span>
         <span id="bridge-key"></span>
       </div>
-      <div class="bridge-viewport" id="bridge-viewport" tabindex="0" aria-label="Legend bridge network. Drag legends to arrange, click a legend to open its card.">
-        <svg id="bridge-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-      </div>
-      <div class="tl-stepbar">
-        <span class="tl-hint" id="bridge-hint">click a legend to open its card · drag to arrange · spans show shared themes</span>
-        <button class="tl-btn" id="bridge-shuffle" aria-label="Rearrange the bridge layout">⟲ Rearrange</button>
+      <div id="bridge-board" hidden>
+        <div class="bridge-theme-header" id="bridge-theme-header"></div>
+        <div id="bridge-clusters"></div>
       </div>
     </section>
   </div>
@@ -3535,9 +3536,7 @@ document.getElementById("reco-box").addEventListener("click", e => {
   if (btn) togglePick(btn.getAttribute("data-compare-reco"));
 });
 
-// ---------- Bridges view: legends linked by shared themes ----------
-const BRIDGE_W = 1180, BRIDGE_H = 560;
-const NODE_W = 128, NODE_H = 40;
+// ---------- Bridges view: legends gathered by shared theme ----------
 const THEME_COLOR = {
   serpent: "#5f8f8b", water: "#3e6e8a", trickster: "#b3892f", riddle: "#8a6fa8",
   guardian: "#9ab06a", giant: "#b3492f", hero: "#d4a24e", mountain: "#8a7a68",
@@ -3546,168 +3545,75 @@ const THEME_COLOR = {
   hospitality: "#7a9a6a", transformation: "#9a6a9a", treasure: "#d4a24e", underdog: "#6aa06a"
 };
 const BRIDGE_THEME_LABEL = { serpent: "Serpent", water: "Water", trickster: "Trickster", riddle: "Riddle", guardian: "Guardian", giant: "Giant", hero: "Hero", mountain: "Mountain", sacred: "Sacred", storm: "Storm", creator: "Creator", moon: "Moon", flood: "Flood", curse: "Curse", devotion: "Devotion", origin: "Origin", hospitality: "Hospitality", transformation: "Transformation", treasure: "Treasure", underdog: "Underdog" };
-let bridgeBuilt = false;
-const bridgeNodes = []; // { id, x, y, el }
-const bridgeSpans = []; // { a, b, themes[] }
+const BRIDGE_ORDER = ["malaysia", "southeast-asia", "asia", "europe", "africa", "oceania", "americas"];
+let bridgeActiveTheme = null;
 
-function buildBridges() {
-  if (bridgeBuilt) { paintBridges(); return; }
-  bridgeBuilt = true;
-  // tags per myth
-  const tagMap = {};
-  MYTHS.forEach(m => { tagMap[m.id] = tagFor(m); });
-  // pair spans: two legends share a theme. Keep only the stronger bridges
-  // (2+ shared themes) so the deck reads as a network, not a hairball.
-  for (let i = 0; i < MYTHS.length; i++) {
-    for (let j = i + 1; j < MYTHS.length; j++) {
-      const a = MYTHS[i], b = MYTHS[j];
-      const shared = tagMap[a.id].filter(t => tagMap[b.id].includes(t));
-      if (shared.length >= 2) bridgeSpans.push({ a: a.id, b: b.id, themes: shared });
-    }
-  }
-  // nodes: group by continent into deck rows (a "bridge" of legends across the water)
-  const groups = { malaysia: [], "southeast-asia": [], asia: [], europe: [], africa: [], oceania: [], americas: [] };
-  MYTHS.forEach(m => {
-    const g = m.type === "malaysia" ? "malaysia" : (m.continent || "asia");
-    (groups[g] || groups.asia).push(m);
-  });
-  const order = ["malaysia", "southeast-asia", "asia", "europe", "africa", "oceania", "americas"];
-  const cols = 6;
-  let gi = 0;
-  order.forEach(g => {
-    const list = groups[g];
-    list.forEach((m, idx) => {
-      const row = gi % 7, col = Math.floor(gi / 7) % cols;
-      bridgeNodes.push({
-        id: m.id, name: m.name, nation: m.nation,
-        homeX: 0, homeY: 0, x: 0, y: 0,
-        row: gi % 7, col: Math.floor(gi / 7)
-      });
-      gi++;
-    });
-  });
-  layoutBridges(true);
-  // theme legend key
-  const used = [...new Set(bridgeSpans.flatMap(s => s.themes))].sort();
-  document.getElementById("bridge-key").innerHTML = used.map(t =>
-    '<span class="bridge-key-chip"><b style="color:' + (THEME_COLOR[t] || "#d4a24e") + '">●</b> ' + (BRIDGE_THEME_LABEL[t] || t) + '</span>'
-  ).join(" ");
-}
-
-function layoutBridges(randomize) {
-  const cols = 6, rows = Math.ceil(bridgeNodes.length / cols);
-  const gapX = (BRIDGE_W - NODE_W - 40) / (cols - 1);
-  const gapY = (BRIDGE_H - NODE_H - 90) / Math.max(1, rows - 1);
-  bridgeNodes.forEach((n, i) => {
-    const col = i % cols, row = Math.floor(i / cols);
-    n.homeX = 20 + col * gapX + (randomize ? (Math.random() - 0.5) * 14 : 0);
-    n.homeY = 60 + row * gapY + (randomize ? (Math.random() - 0.5) * 10 : 0);
-    n.x = n.homeX; n.y = n.homeY;
-  });
-}
-
-function paintBridges() {
-  const svg = document.getElementById("bridge-svg");
-  const pos = {}; bridgeNodes.forEach(n => pos[n.id] = n);
-  let spans = "";
-  bridgeSpans.forEach((s, i) => {
-    const A = pos[s.a], B = pos[s.b];
-    if (!A || !B) return;
-    const x1 = A.x + NODE_W / 2, y1 = A.y + NODE_H / 2;
-    const x2 = B.x + NODE_W / 2, y2 = B.y + NODE_H / 2;
-    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.18 - 14;
-    const col = THEME_COLOR[s.themes[0]] || "#d4a24e";
-    const hot = A.lit || B.lit || s.lit ? " hot" : "";
-    spans += '<path class="bridge-span' + hot + '" data-span="' + i + '" d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '" stroke="' + col + '" stroke-width="' + Math.min(4, 1 + s.themes.length) + '"/>';
-    if (A.lit || B.lit) {
-      const label = s.themes.map(t => BRIDGE_THEME_LABEL[t] || t).join(" · ");
-      spans += '<text class="bridge-span-label hot" x="' + mx.toFixed(1) + '" y="' + (my - 4).toFixed(1) + '" text-anchor="middle">' + escapeHtml(label) + '</text>';
-      // add-both-to-compare button floats under the span label
-      const onA = picks.includes(s.a), onB = picks.includes(s.b);
-      const btnText = onA && onB ? "On the Shelf ✓" : "Add Pair to Compare ⇄";
-      const btnW = onA && onB ? 92 : 132;
-      spans += '<g class="bridge-add-btn" data-pair="' + s.a + '|' + s.b + '">'
-        + '<rect x="' + (mx - btnW / 2).toFixed(1) + '" y="' + (my + 4).toFixed(1) + '" width="' + btnW + '" height="20" rx="10"/>'
-        + '<text x="' + mx.toFixed(1) + '" y="' + (my + 17).toFixed(1) + '" text-anchor="middle">' + btnText + '</text>'
-        + '</g>';
-    }
-  });
-  let nodes = "";
-  bridgeNodes.forEach((n, i) => {
-    const lit = n.lit ? " lit" : "";
-    const onShelf = picks.includes(n.id) ? " on-shelf" : "";
-    nodes += '<g class="bridge-node' + lit + onShelf + '" data-node="' + n.id + '" transform="translate(' + n.x.toFixed(1) + ',' + n.y.toFixed(1) + ')">'
-      + '<rect class="body" width="' + NODE_W + '" height="' + NODE_H + '" rx="8"/>'
-      + '<text class="nm" x="' + (NODE_W / 2) + '" y="20" text-anchor="middle" font-size="10.5">' + escapeHtml(tlShort(n.name, 26)) + '</text>'
-      + '<text class="rg" x="' + (NODE_W / 2) + '" y="34" text-anchor="middle">' + escapeHtml(tlShort(n.nation, 30)) + '</text>'
-      + '</g>';
-  });
-  svg.innerHTML = spans + nodes;
-}
-
-function bridgeInteract() {
-  const svg = document.getElementById("bridge-svg");
-  let dragNode = null, moved = 0, lastX = 0, lastY = 0, hotId = null;
-
-  function refreshLit(id) {
-    bridgeNodes.forEach(n => n.lit = (n.id === id));
-    bridgeSpans.forEach(s => { s.lit = (s.a === id || s.b === id); });
-    paintBridges();
-  }
-
-  svg.addEventListener("pointerdown", e => {
-    const g = e.target.closest(".bridge-node");
-    if (!g) return;
-    dragNode = bridgeNodes.find(n => n.id === g.getAttribute("data-node"));
-    if (!dragNode) return;
-    moved = 0; lastX = e.clientX; lastY = e.clientY;
-    svg.setPointerCapture(e.pointerId);
-  });
-  svg.addEventListener("pointermove", e => {
-    if (dragNode) {
-      const dx = e.clientX - lastX, dy = e.clientY - lastY;
-      moved += Math.abs(dx) + Math.abs(dy);
-      lastX = e.clientX; lastY = e.clientY;
-      dragNode.x = Math.max(4, Math.min(BRIDGE_W - NODE_W - 4, dragNode.x + dx));
-      dragNode.y = Math.max(4, Math.min(BRIDGE_H - NODE_H - 4, dragNode.y + dy));
-      paintBridges();
-    } else {
-      const g = e.target.closest(".bridge-node");
-      const id = g ? g.getAttribute("data-node") : null;
-      // sticky highlight: stays on the last hovered node (and its spans) so the
-      // pointer can travel to the add-pair buttons without them vanishing
-      if (id && id !== hotId) { hotId = id; refreshLit(id); }
-    }
-  });
-  svg.addEventListener("pointerup", e => {
-    const pair = e.target.closest(".bridge-add-btn");
-    if (pair) {
-      const ids = pair.getAttribute("data-pair").split("|");
-      ids.forEach(id => { if (!picks.includes(id) && picks.length < MAX_PICKS) picks.push(id); });
-      renderAll();
-      paintBridges();
-      return;
-    }
-    // clicking empty water clears the sticky highlight
-    if (!dragNode && !e.target.closest(".bridge-node") && moved <= 6) {
-      hotId = null; refreshLit(null);
-    }
-    if (dragNode && moved <= 6) openModal(dragNode.id);
-    dragNode = null;
-  });
-  svg.addEventListener("pointerleave", () => { if (!dragNode && hotId) { hotId = null; refreshLit(null); } });
-}
-
+// Build the theme chips; each carries a count so the user sees the size of the gathering.
 function ensureBridges() {
-  if (!bridgeInteract._wired) {
-    bridgeInteract._wired = true;
-    bridgeInteract();
-    document.getElementById("bridge-shuffle").addEventListener("click", () => { layoutBridges(true); paintBridges(); });
-  }
-  buildBridges();
-  paintBridges();
+  const keyEl = document.getElementById("bridge-key");
+  const counts = {};
+  MYTHS.forEach(m => tagFor(m).forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
+  const used = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  keyEl.innerHTML = used.map(t =>
+    '<span class="bridge-key-chip' + (bridgeActiveTheme === t ? ' active' : '') + '" data-theme="' + t + '">'
+    + '<b style="color:' + (THEME_COLOR[t] || "#d4a24e") + '">â—</b> '
+    + (BRIDGE_THEME_LABEL[t] || t) + ' <span style="opacity:0.65">' + counts[t] + '</span></span>'
+  ).join(" ");
+  if (bridgeActiveTheme) renderBridgeBoard(bridgeActiveTheme);
 }
 
+function renderBridgeBoard(theme) {
+  bridgeActiveTheme = theme;
+  const board = document.getElementById("bridge-board");
+  const header = document.getElementById("bridge-theme-header");
+  const clustersEl = document.getElementById("bridge-clusters");
+  board.hidden = false;
+  header.innerHTML = 'The <span style="color:' + (THEME_COLOR[theme] || '#d4a24e') + '">' + (BRIDGE_THEME_LABEL[theme] || theme) + '</span> Bridge '
+    + '<span class="bridge-theme-count">â€” every legend that carries the ' + (BRIDGE_THEME_LABEL[theme] || theme).toLowerCase() + ' theme, gathered by region</span>';
+  const groups = {};
+  MYTHS.forEach(m => {
+    if (!tagFor(m).includes(theme)) return;
+    const g = m.type === "malaysia" ? "malaysia" : (m.continent || "asia");
+    (groups[g] = groups[g] || []).push(m);
+  });
+  let html = "";
+  BRIDGE_ORDER.forEach(g => {
+    const list = groups[g];
+    if (!list || !list.length) return;
+    html += '<div class="bridge-cluster"><p class="bridge-cluster-title">' + (CONTINENT_LABEL[g] || g) + ' Â· ' + list.length + ' legends</p><div class="bridge-card-grid">';
+    list.forEach(m => {
+      const onShelf = picks.includes(m.id);
+      html += '<div class="bridge-legend' + (onShelf ? ' on-shelf' : '') + '" data-legend="' + m.id + '">'
+        + '<span class="bl-name">' + escapeHtml(tlShort(m.name, 34)) + '</span>'
+        + '<span class="bl-region">' + escapeHtml(tlShort(m.nation, 30)) + '</span>'
+        + '<button class="bl-add' + (onShelf ? ' on' : '') + '" data-bridge-add="' + m.id + '">' + (onShelf ? 'On the Shelf â¤¢' : 'Add to Compare') + '</button>'
+        + '</div>';
+    });
+    html += '</div></div>';
+  });
+  clustersEl.innerHTML = html;
+}
+
+document.getElementById("bridge-key").addEventListener("click", e => {
+  const chip = e.target.closest(".bridge-key-chip");
+  if (!chip) return;
+  const theme = chip.getAttribute("data-theme");
+  document.querySelectorAll(".bridge-key-chip").forEach(c => c.classList.toggle("active", c === chip));
+  renderBridgeBoard(theme);
+  document.getElementById("bridge-board").scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+document.getElementById("bridge-clusters").addEventListener("click", e => {
+  const addBtn = e.target.closest("[data-bridge-add]");
+  if (addBtn) {
+    e.stopPropagation();
+    togglePick(addBtn.getAttribute("data-bridge-add"));
+    renderBridgeBoard(bridgeActiveTheme);
+    return;
+  }
+  const card = e.target.closest(".bridge-legend");
+  if (card) openModal(card.getAttribute("data-legend"));
+});
 // ---------- Clear-all button for the compare shelf ----------
 document.getElementById("clear-all-btn").addEventListener("click", () => {
   picks = [];
