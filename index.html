@@ -368,7 +368,68 @@
   .tl-stepbar .tl-open-btn:disabled { color: #8f7d63; border-color: var(--line); font-style: italic; }
   .tl-stepbar .tl-open-btn:not(:disabled):hover { background: rgba(212,162,78,0.15); }
 
-  /* ===== Bridges view ===== */
+  /* ===== Mobile & small screens ===== */
+  @media (max-width: 700px) {
+    header h1 { font-size: 2rem; }
+    header { padding: 30px 14px 8px; }
+    header p { font-size: 1rem; padding: 0 8px; }
+    nav { gap: 8px; margin: 16px 8px 18px; }
+    nav.nav-row2 { margin: -6px 8px 18px; }
+    .nav-tab { padding: 10px 16px; font-size: 0.82rem; letter-spacing: 1px; }
+    main { padding: 0 10px 40px; }
+    section { padding: 16px 14px; border-radius: 12px; }
+    h2 { font-size: 1.2rem; letter-spacing: 1px; }
+    .section-sub { font-size: 0.9rem; }
+
+    /* larger tap targets everywhere */
+    .tl-btn, .nav-tab, .chip, .bl-add, .wiki-send, .btn, .bridge-key-chip {
+      min-height: 40px;
+    }
+    .tl-btn { padding: 9px 16px; font-size: 0.85rem; letter-spacing: 1px; flex: 0 1 auto; }
+    .tl-controls { gap: 8px; }
+    /* step bar: stack into two rows so buttons never squeeze to nothing */
+    .tl-stepbar { flex-wrap: wrap; }
+    .tl-stepbar .tl-btn { flex: 1 1 40%; min-width: 140px; }
+    .tl-stepbar .tl-open-btn { flex: 1 1 100%; order: -1; max-width: none; margin: 0 0 8px; }
+    /* timeline viewport: taller and easier to touch; marker dots enlarged via CSS */
+    .tl-viewport { height: 300px; border-radius: 12px; }
+    .tl-viewport.tl-short { height: 240px; }
+    .tl-marker .tl-dot { r: 11; }
+    .tl-marker rect.tl-dot { width: 16px; height: 16px; x: -8; }
+    /* zoom buttons bigger */
+    #tl-zoom-in, #tl-zoom-out, #tl-reset { min-width: 0; padding: 9px 14px; }
+
+    /* wiki chat: stack input above send button */
+    .wiki-ask .wiki-bar { flex-direction: column; }
+    .wiki-ask input { width: 100%; padding: 11px 16px; font-size: 1rem; }
+    .wiki-ask .wiki-send { width: 100%; padding: 11px; }
+    .wiki-ask .wiki-suggest button { padding: 8px 14px; font-size: 0.95rem; }
+
+    /* compare: single column with roomy slots */
+    .compare-header { flex-direction: column; }
+    .compare-header .tl-btn { margin-top: 0; }
+
+    /* bridges: full-width cards */
+    .bridge-legend { width: 100%; }
+    .bridge-legend .bl-add { padding: 9px 16px; }
+    .bridge-key-chip { padding: 7px 14px; font-size: 0.8rem; }
+
+    /* modal fits small screens */
+    .modal { max-width: 100%; }
+    .modal-body { padding: 14px 14px 20px; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions .btn { width: 100%; text-align: center; }
+    .detail-grid dt { margin-top: 10px; }
+
+    /* myth grid: single column handled by existing rules; ensure cards touch-friendly */
+    .myth-card .btn { padding: 10px 18px; }
+    #search { padding: 12px 16px; font-size: 1rem; }
+    .chip { padding: 8px 14px; font-size: 0.85rem; }
+  }
+  @media (max-width: 400px) {
+    .tl-stepbar .tl-btn { min-width: 120px; font-size: 0.78rem; }
+    .nav-tab { padding: 9px 12px; }
+  }
   .bridge-legend-bar { margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .bridge-key-title { font-family: "Cinzel", Georgia, serif; font-size: 0.75rem; letter-spacing: 2px; color: var(--ink-soft); }
   .bridge-key-chip {
