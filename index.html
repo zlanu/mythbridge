@@ -290,6 +290,10 @@
     border-radius: 0 12px 12px 0; padding: 14px 18px;
   }
   .pattern-note h4 { margin: 0 0 4px; font-family: "Cinzel", Georgia, serif; font-size: 1.02rem; font-weight: 600; letter-spacing: 1px; color: var(--teal); }
+  .pattern-bridges { margin-top: 10px; border-top: 1px dashed rgba(95,143,139,0.4); padding-top: 10px; }
+  .pattern-bridges h5 { margin: 0 0 6px; font-family: "Cinzel", Georgia, serif; font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--myth-green); }
+  .pattern-bridges .pattern-bridge { margin: 0 0 6px; font-size: 0.93rem; color: var(--ink-soft); }
+  .pattern-bridges .pattern-bridge:last-child { margin-bottom: 0; }
   .pattern-note p { margin: 0; font-size: 1rem; }
   .pattern-note p em { color: var(--ink-soft); }
   .patterns-empty, .reco-empty { text-align: center; color: var(--ink-soft); font-style: italic; padding: 16px; }
@@ -3564,6 +3568,36 @@ document.getElementById("compare-slots").addEventListener("click", e => {
 });
 
 // ---------- Pattern notes ----------
+// Pairwise bridge text: how a shared theme specifically connects two picked cards.
+function bridgeExplanation(theme, a, b) {
+  const A = a.name, B = b.name;
+  // sentence-case helper for embedded card fields ("tasik chini" → "Tasik chini")
+  const sc = s => { const t = String(s).toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); };
+  const lines = {
+    serpent: `In ${A} the serpent holds its role ${sc(a.creature)}; in ${B} the same coiling figure appears as ${sc(b.creature)}. Both treat the serpent as a power to be reckoned with rather than slain outright.`,
+    water: `${A} anchors its story in ${sc(a.place)}, while ${B} turns on ${sc(b.place)} — in each, the water decides who may pass and what is hidden.`,
+    trickster: `${A} and ${B} both reward wit over force: the smaller figure wins by outsmarting a stronger opponent.`,
+    guardian: `Both stories post a guardian — ${sc(a.creature)} in ${A}, ${sc(b.creature)} in ${B} — and the test is not strength but whether the visitor crosses with respect.`,
+    giant: `${A} and ${B} each mark the wild edge of the human world with an oversized being: ${sc(a.creature)} and ${sc(b.creature)}.`,
+    hero: `${A} and ${B} each send a lone figure against what the community cannot face, and both return changed.`,
+    mountain: `High ground shapes both: ${A} keeps its power at ${sc(a.place)}, ${B} at ${sc(b.place)} — paths past them demand humility.`,
+    sacred: `In ${A} the hidden sacred thing waits at ${sc(a.place)}; in ${B} at ${sc(b.place)} — both visible only to the respectful.`,
+    riddle: `${A} and ${B} both make a question the weapon: what defeats the powerful in ${A} is the same kind of answer that decides ${B}.`,
+    storm: `${A} and ${B} both treat the sky as a living power — thunder and wind are a being's will, not weather.`,
+    creator: `${A} and ${B} both reach back to the making of the world, explaining how land, water, or law was set in place.`,
+    moon: `In ${A} the moon's fate drives the story; in ${B} the sky's drama likewise explains what people see overhead.`,
+    flood: `${A} remembers drowning at ${sc(a.place)}; ${B} at ${sc(b.place)} — both are memories of water's power.`,
+    curse: `A doom runs its course in both stories, and neither prayer nor strength can hurry it.`,
+    devotion: `Loyalty decides both stories: what is promised in ${A} is answered in ${B}, and both cost the keeper dearly.`,
+    origin: `${A} and ${B} are both charters — they explain where a people, place, or practice came from.`,
+    hospitality: `Courtesy decides both: what is offered or refused in ${A} mirrors the welcome tested in ${B}.`,
+    transformation: `Shape-changing runs through both tales — forms shift, and neither story's world is quite as fixed as it seems.`,
+    treasure: `A gift with conditions appears in both — each tests whether the claimant is worthy of holding it.`,
+    underdog: `The underestimated win in both stories — humility and low status turn out to be strengths.`
+  };
+  return lines[theme] || `Both ${A} and ${B} carry the ${theme} pattern.`;
+}
+
 function renderPatterns() {
   const listEl = document.getElementById("patterns-list");
   const chosen = picks.map(id => MYTHS.find(x => x.id === id)).filter(Boolean);
@@ -3581,8 +3615,18 @@ function renderPatterns() {
   }
   listEl.innerHTML = shared.map(t => {
     const names = chosen.map(m => '<strong>' + escapeHtml(m.name) + '</strong>').join(", ");
+    // pairwise bridge lines: how each pair connects on this theme (same logic as the Bridges view)
+    const bridges = [];
+    for (let i = 0; i < chosen.length; i++) {
+      for (let j = i + 1; j < chosen.length; j++) {
+        bridges.push(bridgeExplanation(t, chosen[i], chosen[j]));
+      }
+    }
     return '<div class="pattern-note"><h4>' + THEME_TAGS[t] + ": " + cap(t) + '</h4>'
-      + '<p>' + PATTERN_LIBRARY[t] + ' <em>All of these carry the pattern — ' + names + '.</em></p></div>';
+      + '<p>' + PATTERN_LIBRARY[t] + ' <em>All of these carry the pattern — ' + names + '.</em></p>'
+      + '<div class="pattern-bridges"><h5>How the bridge crosses</h5>'
+      + bridges.map(b => '<p class="pattern-bridge">' + escapeHtml(b) + '</p>').join("")
+      + '</div></div>';
   }).join("");
 }
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -4232,7 +4276,7 @@ const LOCAL_WIKI = {
   naga:        { lang: "ms", title: "Naga Seri Gumum" },
   lembayang:   { lang: "ms", title: "Puteri Gunung Ledang" },
   bunian:      { lang: "ms", title: "Orang bunian" },
-  pontianak:   { lang: "ms", title: "Pontianak" },
+  pontianak:   { lang: "ms", title: "Puntianak" },
   mahsuri:     { lang: "ms", title: "Mahsuri" },
   nyai:        { lang: "id", title: "Nyi Roro Kidul" },
   bawang:      { lang: "id", title: "Bawang Putih Bawang Merah" },
@@ -4244,9 +4288,7 @@ const LOCAL_WIKI = {
   laclong:     { lang: "vi", title: "Lạc Long Quân" },
   bakunawa:    { lang: "tl", title: "Bakunawa" },
   garuda:      { lang: "zh", title: "迦楼罗" },
-  kraithong:   { lang: "th", title: "ครุธง" },
-  manohara:    { lang: "th", title: "มโนห์รา" },
-  reamker:     { lang: "km", title: "រាមកេរ្តិ៍" },
+  manohara:    { lang: "th", title: "กินนร" },
   "hang-tuah": { lang: "ms", title: "Hang Tuah" },
   "si-tanggang": { lang: "ms", title: "Si Tanggang" }
 };
