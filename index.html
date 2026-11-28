@@ -226,6 +226,7 @@
     background: transparent; color: var(--ink-soft); cursor: pointer;
   }
   .wiki-ask .wiki-suggest button:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .wiki-ask .wiki-loading { color: #8f7d63; font-size: 0.85rem; font-style: italic; }
 
   /* Compare view */
   .compare-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
@@ -3726,10 +3727,12 @@ document.getElementById("modal-content").addEventListener("click", e => {
   if (cmp) { togglePick(cmp.getAttribute("data-modal-compare")); openModal(cmp.getAttribute("data-modal-compare")); return; }
   const go = e.target.closest("[data-modal-open-list]");
   if (go) { closeModal(); switchTab("compare"); }
-  const sug = e.target.closest("[data-wiki-suggest]");
+  const sug = e.target.closest("[data-suggest-idx]");
   if (sug) {
-    const input = document.getElementById("wiki-input");
-    if (input) { input.value = sug.textContent; askWiki(sug.getAttribute("data-wiki-suggest"), sug.textContent); }
+    const panel = sug.closest(".wiki-ask");
+    const set = WIKI_SUGGESTS[panel.getAttribute("data-myth")];
+    const pair = set && set[parseInt(sug.getAttribute("data-suggest-idx"), 10)];
+    if (pair) showVerifiedAnswer(pair);
   }
 });
 
@@ -3737,18 +3740,89 @@ document.getElementById("modal-content").addEventListener("click", e => {
 // Each card's first Wikipedia ref anchors the chat; the API (free, no key, CORS-enabled)
 // supplies the article text, and questions are matched against it.
 const STOP_WORDS = new Set(["the","a","an","is","are","was","were","do","does","did","what","who","how","why","when","where","tell","me","about","of","in","on","and","or","to","it","this","that","there","isnt","arent","can","could","would","should","i","you","they","we","my","your","with","for","from","at","by","as","be","been","has","have","had","if","then","so","its"]);
+
+// Cache of pre-fetched suggestion sets, keyed by card id.
+const WIKI_SUGGESTS = {};
+
+// Pull the article(s) for a card and distill verified question/answer pairs.
+// The legend's own Wikipedia entry anchors the chat; the storied place and the
+// nation serve as fallback articles so "where is this?" always has an answer.
+async function buildWikiSuggestions(m, title) {
+  const articles = [{ label: title }];
+  // place: prefer the part before "·" (e.g. "Pahang" from "Pahang · Tasik Chini")
+  const placePart = (m.region.split("·")[0] || "").trim();
+  if (placePart && placePart.toLowerCase() !== title.toLowerCase()) articles.push({ label: placePart });
+  const nationPart = m.nation.split("(")[0].trim();
+  if (nationPart && !articles.some(a => a.label.toLowerCase() === nationPart.toLowerCase())) articles.push({ label: nationPart });
+
+  const texts = [];
+  for (const a of articles) {
+    try {
+      const api = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&exintro=1&exsectionformat=plain&format=json&origin=*&redirects=1&titles="
+        + encodeURIComponent(a.label.replace(/ /g, "_"));
+      const res = await fetch(api);
+      const data = await res.json();
+      const pages = data.query.pages;
+      const pid = Object.keys(pages)[0];
+      if (pid !== "-1" && pages[pid].extract) {
+        a.extract = pages[pid].extract;
+        texts.push(a);
+      }
+    } catch (e) { /* offline: suggestions simply stay loading */ }
+  }
+  if (!texts.length) { WIKI_SUGGESTS[m.id] = []; renderSuggestChips(m.id); return; }
+
+  const main = texts[0];
+  const sents = main.extract.split(/(?<=[.!?])\s+/).filter(s => s.length > 40);
+  const placeArticle = texts.find(t => t !== main);
+  const suggests = [];
+
+  // 1) Opening fact — the article's own lead sentence, always present.
+  if (sents.length) suggests.push({ q: "What is this, really?", a: sents[0], src: main.label });
+
+  // 2) A "where" question — from the main article if it names the region,
+  //    otherwise from the place/nation article (guaranteed by the fallback list).
+  const placeWords = wikiTokenize(m.region + " " + m.nation).slice(0, 6);
+  const geoSent = sents.find(s => placeWords.some(w => s.toLowerCase().includes(w)));
+  if (geoSent) suggests.push({ q: "Where does it sit in the world?", a: geoSent, src: main.label });
+  else if (placeArticle) {
+    const ps = placeArticle.extract.split(/(?<=[.!?])\s+/).find(s => s.length > 60);
+    if (ps) suggests.push({ q: "Where is " + placePart + "?", a: ps, src: placeArticle.label });
+  }
+
+  // 3) A number/date fact — anything with digits tends to be a real, checkable detail.
+  const numSent = sents.find((s, i) => i > 0 && /\d/.test(s));
+  if (numSent) suggests.push({ q: "Any figures worth knowing?", a: numSent, src: main.label });
+
+  // 4) A "what else" from a location article — guaranteed different flavor.
+  if (placeArticle) {
+    const ps2 = placeArticle.extract.split(/(?<=[.!?])\s+/).filter(s => s.length > 80)[1];
+    if (ps2) suggests.push({ q: "More about " + placeArticle.label + "?", a: ps2, src: placeArticle.label });
+  }
+
+  WIKI_SUGGESTS[m.id] = suggests.slice(0, 3);
+  renderSuggestChips(m.id);
+}
+
+function renderSuggestChips(id) {
+  const bar = document.querySelector('.wiki-ask[data-myth="' + id + '"] .wiki-suggest');
+  if (!bar) return;
+  const set = WIKI_SUGGESTS[id];
+  if (!set) { bar.innerHTML = '<span class="wiki-loading">Verifying questions against the archive…</span>'; return; }
+  if (!set.length) { bar.innerHTML = '<span class="wiki-loading">No verified questions could be gathered — try your own below.</span>'; return; }
+  bar.innerHTML = set.map((s, i) =>
+    '<button type="button" data-suggest-idx="' + i + '">' + escapeHtml(s.q) + '</button>'
+  ).join("");
+}
+
 function wikiAskHTML(m) {
   const wikiRef = m.refs.find(r => /en\.wikipedia\.org\/wiki\//.test(r.url));
   if (!wikiRef) return "";
   const title = decodeURIComponent(wikiRef.url.split("/wiki/")[1]).replace(/_/g, " ");
-  const suggests = [
-    "What is the origin of this legend?",
-    "Where is " + (m.region.split("·")[0] || m.region).trim() + "?",
-    "Are there similar legends elsewhere?"
-  ];
-  return '<div class="wiki-ask" data-wiki-title="' + escapeHtml(title) + '">'
+  buildWikiSuggestions(m, title);
+  return '<div class="wiki-ask" data-wiki-title="' + escapeHtml(title) + '" data-myth="' + m.id + '">'
     + '<h4>Ask the Archive</h4>'
-    + '<div class="wiki-suggest">' + suggests.map(s => '<button type="button" data-wiki-suggest="' + escapeHtml(title) + '">' + escapeHtml(s) + '</button>').join("") + '</div>'
+    + '<div class="wiki-suggest"><span class="wiki-loading">Verifying questions against the archive…</span></div>'
     + '<div class="wiki-log" id="wiki-log"></div>'
     + '<div class="wiki-bar">'
     + '<input type="text" id="wiki-input" placeholder="Ask about this legend — answers come from Wikipedia…" aria-label="Ask a question about this legend">'
@@ -3760,6 +3834,22 @@ function wikiAskHTML(m) {
 
 function wikiTokenize(q) {
   return q.toLowerCase().split(/[^a-z0-9āēīōū'’-]+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+}
+
+// Render a pre-verified suggestion answer instantly into the chat log.
+function showVerifiedAnswer(pair) {
+  const log = document.getElementById("wiki-log");
+  if (!log) return;
+  const qEl = document.createElement("div");
+  qEl.className = "wiki-msg q";
+  qEl.innerHTML = '<span class="who">Suggested</span>' + escapeHtml(pair.q);
+  log.appendChild(qEl);
+  const aEl = document.createElement("div");
+  aEl.className = "wiki-msg a";
+  aEl.innerHTML = '<span class="who">The Archive · ' + escapeHtml(pair.src) + '</span>' + escapeHtml(pair.a)
+    + '<br><a class="wiki-src" href="https://en.wikipedia.org/wiki/' + encodeURIComponent(pair.src.replace(/ /g, "_")) + '" target="_blank" rel="noopener noreferrer">Read more on Wikipedia →</a>';
+  log.appendChild(aEl);
+  log.scrollTop = log.scrollHeight;
 }
 
 async function askWiki(articleTitle, question) {
