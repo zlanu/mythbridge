@@ -3991,8 +3991,8 @@ const STOP_WORDS = new Set(["the","a","an","is","are","was","were","do","does","
 const WIKI_SUGGESTS = {};
 
 // Pull the article(s) for a card and distill verified question/answer pairs.
-// The legend's own Wikipedia entry anchors the chat; the storied place and the
-// nation serve as fallback articles so "where is this?" always has an answer.
+// Questions are built from the article's own key terms, so every card gets
+// different, card-specific questions that its Wikipedia entry provably answers.
 async function buildWikiSuggestions(m, title) {
   const articles = [{ label: title }];
   // place: prefer the part before "·" (e.g. "Pahang" from "Pahang · Tasik Chini")
@@ -4004,7 +4004,8 @@ async function buildWikiSuggestions(m, title) {
   const texts = [];
   for (const a of articles) {
     try {
-      const api = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&exintro=1&exsectionformat=plain&format=json&origin=*&redirects=1&titles="
+      // full article (not just the intro) so later sections yield distinct facts
+      const api = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&origin=*&redirects=1&titles="
         + encodeURIComponent(a.label.replace(/ /g, "_"));
       const res = await fetch(api);
       const data = await res.json();
@@ -4018,35 +4019,78 @@ async function buildWikiSuggestions(m, title) {
   }
   if (!texts.length) { WIKI_SUGGESTS[m.id] = []; renderSuggestChips(m.id); return; }
 
+  // Extract a distinctive key term from a sentence: longest run of capitalized
+  // words (a proper noun), else the longest non-stopword token.
+  function keyTermOf(sentence, mainTitle) {
+    const runs = sentence.match(/\b[A-ZĀĒĪŌŪÄÖÜ][a-zāēīōūäöüáéíóú'’-]+(?:\s+(?:of|the|de|la|der|van|von|ibn|al)\s+[A-ZĀĒĪŌŪÄÖÜ][a-zāēīōūäöüáéíóú'’-]+|\s+[A-ZĀĒĪŌŪÄÖÜ][a-zāēīōūäöüáéíóú'’-]+)*/g) || [];
+    let best = "";
+    runs.forEach(r => {
+      const t = r.replace(/\s+(of|the|de|la|der|van|von)$/i, "").trim();
+      if (t.length > best.length && t.toLowerCase() !== mainTitle.toLowerCase()) best = t;
+    });
+    if (best) return best;
+    const toks = wikiTokenize(sentence).filter(w => !mainTitle.toLowerCase().includes(w));
+    toks.sort((a, b) => b.length - a.length);
+    return toks[0] ? toks[0][0].toUpperCase() + toks[0].slice(1) : null;
+  }
+
+  // Build one question/answer pair from a sentence, with a card-specific question.
+  function pairFrom(sentence, src) {
+    const term = keyTermOf(sentence, texts[0].label);
+    if (!term) return null;
+    const yearM = sentence.match(/\b(?:\d{3,4}\s*(?:BCE|BC|CE|AD)?|\d{1,2}\w{0,2}\s+century)\b/i);
+    let q;
+    if (yearM) q = "What does the archive say about " + term + " in " + yearM[0] + "?";
+    else if (/\b(island|lake|river|mountain|city|town|village|sea|coast|district|region|temple|cave|cave|forest)\b/i.test(sentence))
+      q = "What or where is " + term + "?";
+    else q = "What does the archive record about " + term + "?";
+    const a = sentence.length > 420 ? sentence.slice(0, 420).replace(/\s+\S*$/, "") + "…" : sentence;
+    return { q, a, src };
+  }
+
+  // Candidate sentences: prefer the article's lead (first ~4 paragraphs), where
+  // the subject itself is defined — deep-article proper nouns are often off-topic
+  // (disambiguation lists, unrelated sections).
   const main = texts[0];
-  const sents = main.extract.split(/(?<=[.!?])\s+/).filter(s => s.length > 40);
-  const placeArticle = texts.find(t => t !== main);
+  const allParas = main.extract.split(/\n+/).filter(p => p.length > 150 && !/^[=\|]/.test(p));
+  const paras = allParas.slice(0, 4).length ? allParas.slice(0, 4) : allParas;
+  const scored = [];
+  paras.forEach(p => {
+    p.split(/(?<=[.!?])\s+/).forEach(s => {
+      if (s.length < 80 || s.length > 520) return;
+      const props = (s.match(/\b[A-Z][a-z]+/g) || []).length;
+      const digits = /\d/.test(s) ? 1 : 0;
+      const variety = new Set(s.toLowerCase().match(/[a-zāēīōū'’-]+/g) || []).size;
+      scored.push({ s, score: props * 2 + digits * 3 + Math.min(10, variety / 4) });
+    });
+  });
+  scored.sort((a, b) => b.score - a.score);
+
+  // Build 3 pairs from distinct sentences, avoiding repeated key terms
   const suggests = [];
-
-  // 1) Opening fact — the article's own lead sentence, always present.
-  if (sents.length) suggests.push({ q: "What is this, really?", a: sents[0], src: main.label });
-
-  // 2) A "where" question — from the main article if it names the region,
-  //    otherwise from the place/nation article (guaranteed by the fallback list).
-  const placeWords = wikiTokenize(m.region + " " + m.nation).slice(0, 6);
-  const geoSent = sents.find(s => placeWords.some(w => s.toLowerCase().includes(w)));
-  if (geoSent) suggests.push({ q: "Where does it sit in the world?", a: geoSent, src: main.label });
-  else if (placeArticle) {
-    const ps = placeArticle.extract.split(/(?<=[.!?])\s+/).find(s => s.length > 60);
-    if (ps) suggests.push({ q: "Where is " + placePart + "?", a: ps, src: placeArticle.label });
+  const usedTerms = new Set();
+  for (const cand of scored) {
+    if (suggests.length >= 3) break;
+    const p = pairFrom(cand.s, main.label);
+    if (!p) continue;
+    if (usedTerms.has(p.q)) continue;
+    usedTerms.add(p.q);
+    suggests.push(p);
+  }
+  // If the main article yielded too little, top up from the place article.
+  const placeArticle = texts.find(t => t !== main);
+  if (suggests.length < 3 && placeArticle) {
+    const psents = placeArticle.extract.split(/(?<=[.!?])\s+/).filter(s => s.length > 80);
+    for (const ps of psents) {
+      if (suggests.length >= 3) break;
+      const p = pairFrom(ps, placeArticle.label);
+      if (!p) continue;
+      if (suggests.some(x => x.q === p.q)) continue;
+      suggests.push(p);
+    }
   }
 
-  // 3) A number/date fact — anything with digits tends to be a real, checkable detail.
-  const numSent = sents.find((s, i) => i > 0 && /\d/.test(s));
-  if (numSent) suggests.push({ q: "Any figures worth knowing?", a: numSent, src: main.label });
-
-  // 4) A "what else" from a location article — guaranteed different flavor.
-  if (placeArticle) {
-    const ps2 = placeArticle.extract.split(/(?<=[.!?])\s+/).filter(s => s.length > 80)[1];
-    if (ps2) suggests.push({ q: "More about " + placeArticle.label + "?", a: ps2, src: placeArticle.label });
-  }
-
-  WIKI_SUGGESTS[m.id] = suggests.slice(0, 3);
+  WIKI_SUGGESTS[m.id] = suggests;
   renderSuggestChips(m.id);
 }
 
