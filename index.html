@@ -3381,8 +3381,30 @@ function selHint(m) {
 }
 
 // ---------- Myth List ----------
+// Shuffled view order: fresh shuffle per page load so "All Realms" doesn't always
+// lead with the same legends. Grouped by realm so realm clusters stay intact.
+function shuffledMyths() {
+  const groups = {};
+  MYTHS.forEach(m => {
+    const g = m.type === "malaysia" ? "malaysia" : (m.continent || "asia");
+    (groups[g] = groups[g] || []).push(m);
+  });
+  const ORDER = ["malaysia", "southeast-asia", "asia", "europe", "africa", "oceania", "americas"];
+  const out = [];
+  ORDER.forEach(g => {
+    const list = (groups[g] || []).slice();
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    out.push(...list);
+  });
+  return out;
+}
+let viewOrder = shuffledMyths();
+
 function renderList() {
-  const visible = MYTHS.filter(matches);
+  const visible = viewOrder.filter(matches);
   if (visible.length === 0) {
     grid.innerHTML = '<div class="empty-note">No entries match “' + escapeHtml(searchWord) + '”. Try a shorter word — “dragon”, “river”, “spirit”.</div>';
     return;
