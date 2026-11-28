@@ -3556,7 +3556,7 @@ function ensureBridges() {
   const used = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
   keyEl.innerHTML = used.map(t =>
     '<span class="bridge-key-chip' + (bridgeActiveTheme === t ? ' active' : '') + '" data-theme="' + t + '">'
-    + '<b style="color:' + (THEME_COLOR[t] || "#d4a24e") + '">â—</b> '
+    + '<b style="color:' + (THEME_COLOR[t] || "#d4a24e") + '">●</b> '
     + (BRIDGE_THEME_LABEL[t] || t) + ' <span style="opacity:0.65">' + counts[t] + '</span></span>'
   ).join(" ");
   if (bridgeActiveTheme) renderBridgeBoard(bridgeActiveTheme);
@@ -3569,7 +3569,7 @@ function renderBridgeBoard(theme) {
   const clustersEl = document.getElementById("bridge-clusters");
   board.hidden = false;
   header.innerHTML = 'The <span style="color:' + (THEME_COLOR[theme] || '#d4a24e') + '">' + (BRIDGE_THEME_LABEL[theme] || theme) + '</span> Bridge '
-    + '<span class="bridge-theme-count">â€” every legend that carries the ' + (BRIDGE_THEME_LABEL[theme] || theme).toLowerCase() + ' theme, gathered by region</span>';
+    + '<span class="bridge-theme-count">— every legend that carries the ' + (BRIDGE_THEME_LABEL[theme] || theme).toLowerCase() + ' theme, gathered by region</span>';
   const groups = {};
   MYTHS.forEach(m => {
     if (!tagFor(m).includes(theme)) return;
@@ -3580,13 +3580,13 @@ function renderBridgeBoard(theme) {
   BRIDGE_ORDER.forEach(g => {
     const list = groups[g];
     if (!list || !list.length) return;
-    html += '<div class="bridge-cluster"><p class="bridge-cluster-title">' + (CONTINENT_LABEL[g] || g) + ' Â· ' + list.length + ' legends</p><div class="bridge-card-grid">';
+    html += '<div class="bridge-cluster"><p class="bridge-cluster-title">' + (CONTINENT_LABEL[g] || g) + ' · ' + list.length + ' legends</p><div class="bridge-card-grid">';
     list.forEach(m => {
       const onShelf = picks.includes(m.id);
       html += '<div class="bridge-legend' + (onShelf ? ' on-shelf' : '') + '" data-legend="' + m.id + '">'
         + '<span class="bl-name">' + escapeHtml(tlShort(m.name, 34)) + '</span>'
         + '<span class="bl-region">' + escapeHtml(tlShort(m.nation, 30)) + '</span>'
-        + '<button class="bl-add' + (onShelf ? ' on' : '') + '" data-bridge-add="' + m.id + '">' + (onShelf ? 'On the Shelf â¤¢' : 'Add to Compare') + '</button>'
+        + '<button class="bl-add' + (onShelf ? ' on' : '') + '" data-bridge-add="' + m.id + '">' + (onShelf ? 'On the Shelf ⤢' : 'Add to Compare') + '</button>'
         + '</div>';
     });
     html += '</div></div>';
